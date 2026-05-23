@@ -6,7 +6,7 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 // disponible Nora, Material, Lara
 
 import { routes } from './app.routes';
@@ -22,5 +22,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     MessageService,
+    ConfirmationService,
   ],
 };
