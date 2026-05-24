@@ -29,4 +29,8 @@ export class Navbar implements OnInit {
       { label: 'Contacto', route: '/contact', icon: '📧' },
     ];
   }
+
+  toggleDarkMode(): void {
+    document.documentElement.classList.toggle('dark');
+  }
 }
