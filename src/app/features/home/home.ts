@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Navbar } from '@src/app/shared/components/navbar/navbar';
+
+import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
+
+import { ConfirmationModalService } from '@src/app/core/services/confirmation.service';
 
 @Component({
   selector: 'app-home',
@@ -7,4 +11,35 @@ import { Navbar } from '@src/app/shared/components/navbar/navbar';
   templateUrl: './home.html',
   styles: ``,
 })
-export class Home {}
+export class Home implements OnInit {
+  private readonly localStorageState = inject(LocalStorageStateService);
+  private readonly confirmationModalService = inject(ConfirmationModalService);
+
+  private USER_SAY_TO_BE_LEGAL_AGE_KEY = 'zg_user_say_to_be_legal_age';
+
+  isLegalAge = signal(false);
+
+  ngOnInit(): void {
+    this.verifyCurrentAge();
+  }
+
+  verifyCurrentAge(): void {
+    const userSaysToBeLegalAge = this.localStorageState.getState(
+      this.USER_SAY_TO_BE_LEGAL_AGE_KEY,
+      null,
+    );
+    if (!userSaysToBeLegalAge) {
+      this.confirmationModalService.confirm({
+        header: '!ATENCION¡',
+        message: 'Debes ser mayor de edad para acceder a zonagree.co',
+        reject: () => this.isLegalAge.set(false),
+        acceptLabel: 'Sí, soy mayor de edad',
+        rejectLabel: 'No, no soy mayor de edad',
+        accept: () => {
+          this.isLegalAge.set(true);
+          this.localStorageState.setState(this.USER_SAY_TO_BE_LEGAL_AGE_KEY, true);
+        },
+      });
+    }
+  }
+}

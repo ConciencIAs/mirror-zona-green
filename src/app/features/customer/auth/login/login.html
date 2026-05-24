@@ -1,34 +1,27 @@
 <div class="max-w-md mx-auto my-10 p-6 bg-white rounded-3xl shadow-lg shadow-slate-200">
   <form (ngSubmit)="submit(); $event.preventDefault()" class="space-y-4">
-    <app-form-input
-      [control]="loginForm.email"
-      label="Correo electrónico"
-      type="email"
-      placeholder="correo@ejemplo.com"
-    />
+    <app-form-input [control]="loginForm.email" label="Correo electrónico" type="email"
+      placeholder="correo@ejemplo.com" />
 
     <div class="flex justify-between items-center text-sm text-slate-500">
       <span>¿No tienes cuenta?</span>
       <a class="text-blue-600 hover:underline" routerLink="/auth/register">Regístrate</a>
     </div>
 
-    <button
-      type="submit"
-      [disabled]="loading()"
-      class="w-full rounded-xl bg-primary-500 px-4 py-3 text-white font-semibold transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-    >
+    <button type="submit" [disabled]="loading()"
+      class="w-full rounded-xl bg-primary-500 px-4 py-3 text-white font-semibold transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-slate-400">
       @if (!loading()) {
-        <span>Enviar enlace mágico</span>
+      <span>Enviar enlace mágico</span>
       }
       @if (loading()) {
-        <span>Enviando...</span>
+      <span>Enviando...</span>
       }
     </button>
   </form>
 
   @if (generalError()) {
-    <div class="rounded-xl border border-red-200 bg-red-50 p-4 mt-5 text-sm text-red-700">
-      {{ generalError() }}
-    </div>
+  <div class="rounded-xl border border-red-200 bg-red-50 p-4 mt-5 text-sm text-red-700">
+    {{ generalError() }}
+  </div>
   }
 </div>

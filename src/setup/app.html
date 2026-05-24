@@ -1,3 +1,20 @@
 <router-outlet />
 <p-toast />
-<p-confirmDialog />
+<p-confirmDialog>
+    <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
+        @if (message) {
+        <div class="flex flex-col items-center p-8 bg-white dark:bg-white-900 rounded w-96 max-w-md">
+            <div
+                class="rounded-full bg-primary text-primary-contrast inline-flex justify-center items-center h-24 w-24 -mt-20">
+                <i class="pi {{ message.icon }} !text-5xl"></i>
+            </div>
+            <span class="text-primary font-bold text-2xl block mb-2 mt-6 text-center">{{ message.header }}</span>
+            <p class="mb-0 text-center">{{ message.message }}</p>
+            <div class="flex flex-col items-center gap-2 mt-6 w-full">
+                <p-button [label]="message.acceptLabel" (onClick)="onAccept()"></p-button>
+                <p-button [label]="message.rejectLabel" [outlined]="true" (onClick)="onReject()"></p-button>
+            </div>
+        </div>
+        }
+    </ng-template>
+</p-confirmDialog>
