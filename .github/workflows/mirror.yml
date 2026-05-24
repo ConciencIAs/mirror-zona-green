@@ -16,14 +16,21 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Setup SSH
+      - name: Setup SSH agent
         run: |
-          eval $(ssh-agent -s)
-          echo "${{ secrets.SSH_KEY }}" | ssh-add -
+          eval "$(ssh-agent -s)"
+
+          # 🔐 cargar private key desde secrets
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+
+          # 🔑 evitar prompts de autenticación
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-      
-      - name: Push
+
+      - name: Test SSH connection
+        run: ssh -T git@github.com || true
+
+      - name: Push to mirror repo
         run: |
           git remote add mirror git@github.com:ConciencIAs/mirror-zona-green.git
           git push mirror main
