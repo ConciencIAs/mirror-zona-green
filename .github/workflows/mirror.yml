@@ -24,4 +24,4 @@ jobs:
       - name: Push to mirror repo
         run: |
           git remote add mirror git@github.com:ConciencIAs/mirror-zona-green.git
-          git push mirror main
+          git push mirror main -f
