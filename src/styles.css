@@ -1,4 +1,51 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
-@import "primeicons/primeicons.css";
+@import 'primeicons/primeicons.css';
+@import 'tailwindcss-primeui';
+
+@theme {
+  /* 🟢 Verde Principal (#20A038) asignado a la familia 'primary' */
+  --color-primary-50: #ecf7ed;
+  --color-primary-100: #cfeecd;
+  --color-primary-200: #a2dd9f;
+  --color-primary-300: #6bc767;
+  --color-primary-400: #3cb038;
+  --color-primary-500: #20a038;
+  --color-primary-600: #167f2b;
+  --color-primary-700: #146424;
+  --color-primary-800: #135020;
+  --color-primary-900: #11421d;
+  --color-primary-950: #08250e;
+
+  /* 🔵 Azul Secundario (#336FB6) asignado a la familia 'secondary' */
+  --color-secondary-50: #edf4fc;
+  --color-secondary-100: #d2e5f7;
+  --color-secondary-200: #abd0f0;
+  --color-secondary-300: #74b2e6;
+  --color-secondary-400: #4894d8;
+  --color-secondary-500: #336fb6;
+  --color-secondary-600: #275794;
+  --color-secondary-700: #204676;
+  --color-secondary-800: #1d3a60;
+  --color-secondary-900: #1c324f;
+  --color-secondary-950: #101d30;
+}
+
+/* 🔄 2. ACOPLAMIENTO CON PRIMENG v18+ */
+@layer base {
+  :root {
+    /* Mapeamos los tokens de PrimeNG para que lean los colores de Tailwind v4 */
+    --p-primary-50: var(--color-primary-50);
+    --p-primary-100: var(--color-primary-100);
+    --p-primary-200: var(--color-primary-200);
+    --p-primary-300: var(--color-primary-300);
+    --p-primary-400: var(--color-primary-400);
+    --p-primary-500: var(--color-primary-500);
+    --p-primary-600: var(--color-primary-600);
+    --p-primary-700: var(--color-primary-700);
+    --p-primary-800: var(--color-primary-800);
+    --p-primary-900: var(--color-primary-900);
+    --p-primary-950: var(--color-primary-950);
+  }
+}
