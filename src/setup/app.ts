@@ -11,9 +11,4 @@ import { ToastModule } from 'primeng/toast';
 })
 export class App {
   protected readonly title = signal('zg');
-  protected readonly counter = signal(0);
-
-  increment() {
-    this.counter.update((v) => v + 1);
-  }
 }

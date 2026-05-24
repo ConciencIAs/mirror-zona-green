@@ -6,6 +6,10 @@ import { SupabaseClientService } from './supabase-client.service';
 export class SupabaseAuthService {
   private readonly supabaseClient = inject(SupabaseClientService);
 
+  get auth() {
+    return this.supabaseClient.supabase.auth;
+  }
+
   signInWithEmail(email: string, password: string) {
     return this.supabaseClient.supabase.auth.signInWithPassword({
       email,

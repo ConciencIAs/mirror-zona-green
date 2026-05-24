@@ -1,6 +1,4 @@
 export enum  TableName {
-  User = 'users',
-  Profile = 'profiles',
-  Post = 'posts',
-  Comment = 'comments',
+  PERFILES = 'perfiles',
+  USUARIOS_PUBLICOS = 'usuarios_publicos',
 }
