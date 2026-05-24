@@ -1,8 +1,7 @@
 <div class="max-w-md mx-auto my-10 p-6 bg-white rounded-3xl shadow-lg shadow-slate-200">
-  <form (ngSubmit)="submit(); $event.preventDefault()" class="space-y-4">
+  <form (submit)="submit($event)" class="space-y-4">
     <app-form-input [control]="loginForm.email" label="Correo electrónico" type="email"
       placeholder="correo@ejemplo.com" />
-
     <div class="flex justify-between items-center text-sm text-slate-500">
       <span>¿No tienes cuenta?</span>
       <a class="text-blue-600 hover:underline" routerLink="/auth/register">Regístrate</a>
@@ -11,10 +10,10 @@
     <button type="submit" [disabled]="loading()"
       class="w-full rounded-xl bg-primary-500 px-4 py-3 text-white font-semibold transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-slate-400">
       @if (!loading()) {
-      <span>Enviar enlace mágico</span>
+      <span>Iniciar sesión</span>
       }
       @if (loading()) {
-      <span>Enviando...</span>
+      <span>Iniciando sesión...</span>
       }
     </button>
   </form>

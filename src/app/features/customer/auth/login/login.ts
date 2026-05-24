@@ -6,8 +6,9 @@ import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-au
 import { ToastService } from '@src/app/core/services/toast.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ConfirmationModalService } from '@src/app/core/services/confirmation.service';
-import { FormInputComponent } from '@src/app/shared/components/form-input/form-input';
+import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import { userSchemaLogin } from '@src/app/core/models/schemas/auth.schema';
+
 @Component({
   selector: 'app-login',
   imports: [FormInputComponent, RouterLink],
@@ -32,7 +33,8 @@ export class Login {
     validateStandardSchema(schemaPath, userSchemaLogin);
   });
 
-  async submit() {
+  async submit(event: Event) {
+    event.preventDefault();
     this.loading.set(true);
     this.generalError.set(null);
 

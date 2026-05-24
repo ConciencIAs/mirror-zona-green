@@ -6,11 +6,11 @@ import { LocalStorageStateService } from '@src/app/core/services/local-storage-s
 import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
 import { PENDING_DATA_KEY } from '@src/app/core/models/constans/localstate/storage';
 import { form, validateStandardSchema } from '@angular/forms/signals';
-import { FormInputComponent } from '@src/app/shared/components/form-input/form-input';
+import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import {
   FormSelectComponent,
   SelectOption,
-} from '@src/app/shared/components/form-select/form-select';
+} from '@src/app/shared/components/form/form-select/form-select';
 import { userSchemaRegister } from '@src/app/core/models/schemas/auth.schema';
 
 @Component({
@@ -94,7 +94,8 @@ export class Register {
     this.showErrorsModal.set(false);
   }
 
-  async submit(): Promise<void> {
+  async submit(event: Event): Promise<void> {
+    event.preventDefault();
     this.loading.set(true);
     this.generalError.set(null);
 

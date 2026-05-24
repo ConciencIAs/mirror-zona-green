@@ -15,20 +15,24 @@ export class Home implements OnInit {
   private readonly localStorageState = inject(LocalStorageStateService);
   private readonly confirmationModalService = inject(ConfirmationModalService);
 
-  private USER_SAY_TO_BE_LEGAL_AGE_KEY = 'zg_user_say_to_be_legal_age';
+  private readonly USER_SAY_TO_BE_LEGAL_AGE_KEY = 'zg_user_say_to_be_legal_age';
 
   isLegalAge = signal(false);
 
   ngOnInit(): void {
+    this.isLegalAge.set(this.userSaysToBeLegalAge);
     this.verifyCurrentAge();
   }
 
-  verifyCurrentAge(): void {
-    const userSaysToBeLegalAge = this.localStorageState.getState(
+  get userSaysToBeLegalAge(): boolean {
+    return this.localStorageState.getState(
       this.USER_SAY_TO_BE_LEGAL_AGE_KEY,
-      null,
+      false,
     );
-    if (!userSaysToBeLegalAge) {
+  }
+
+  verifyCurrentAge(): void {
+    if (!this.userSaysToBeLegalAge) {
       this.confirmationModalService.confirm({
         header: '!ATENCION¡',
         message: 'Debes ser mayor de edad para acceder a zonagree.co',
