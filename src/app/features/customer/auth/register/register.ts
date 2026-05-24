@@ -3,14 +3,19 @@ import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-au
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/toast.service';
 import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
-import { CustomerData } from '@src/app/core/models/customer/customer';
+import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
 import { PENDING_DATA_KEY } from '@src/app/core/models/constans/localstate/storage';
-import { form, FormField, required, email, pattern, minLength } from '@angular/forms/signals';
-import { CommonModule } from '@angular/common';
+import { form, validateStandardSchema } from '@angular/forms/signals';
+import { FormInputComponent } from '@src/app/shared/components/form-input/form-input';
+import {
+  FormSelectComponent,
+  SelectOption,
+} from '@src/app/shared/components/form-select/form-select';
+import { userSchemaRegister } from '@src/app/core/models/schemas/auth.schema';
 
 @Component({
   selector: 'app-register',
-  imports: [FormField, CommonModule],
+  imports: [FormInputComponent, FormSelectComponent],
   templateUrl: './register.html',
   styles: ``,
 })
@@ -24,7 +29,13 @@ export class Register {
   readonly showErrorsModal = signal(false);
   readonly generalError = signal<string | null>(null);
 
-  // Estado del formulario usando Signals
+  readonly documentTypeOptions: SelectOption[] = [
+    { value: 'CC', label: 'CC' },
+    { value: 'CE', label: 'CE' },
+    { value: 'NIT', label: 'NIT' },
+    { value: 'Pasaporte', label: 'Pasaporte' },
+  ];
+
   readonly formModel = signal<CustomerData>({
     full_name: '',
     correo: '',
@@ -35,46 +46,14 @@ export class Register {
     ubicacion: '',
   });
 
-  // 3. Declaración del FieldTree con sus validadores nativos (Adiós Zod en este componente)
-  readonly registerForm = form(this.formModel, (f) => {
-    required(f.full_name);
-    minLength(f.full_name, 2);
-
-    required(f.correo);
-    email(f.correo);
-
-    required(f.telefono);
-    pattern(f.telefono, /^\+?\d{7,15}$/);
-
-    required(f.documento);
-    minLength(f.documento, 4);
-
-    required(f.fecha_nacimiento);
-    required(f.ubicacion);
-    minLength(f.ubicacion, 2);
+  readonly registerForm = form(this.formModel, (schemaPath) => {
+    validateStandardSchema(schemaPath, userSchemaRegister);
   });
 
-  readonly errorEntries = computed(() => {
-    const list: [string, string][] = [];
-    const rf = this.registerForm;
-
-    if (rf.full_name().invalid())
-      list.push(['Nombre', 'Nombre demasiado corto (mín. 2 caracteres).']);
-    if (rf.correo().invalid())
-      list.push(['Correo', 'El formato del correo electrónico no es válido.']);
-    if (rf.telefono().invalid())
-      list.push(['Teléfono', 'Teléfono inválido (ingresa de 7 a 15 dígitos sin espacios).']);
-    if (rf.documento().invalid())
-      list.push(['Documento', 'Documento de identidad no válido (mín. 4 caracteres).']);
-    if (rf.fecha_nacimiento().invalid())
-      list.push(['Fecha', 'La fecha de nacimiento es requerida.']);
-    if (rf.ubicacion().invalid())
-      list.push(['Ubicación', 'La ubicación provista es demasiado corta.']);
-
-    if (this.generalError()) {
-      list.push(['Servidor', this.generalError()!]);
-    }
-    return list;
+  errorEntries = computed(() => {
+    const errors = this.registerForm().errors();
+    if (!errors) return [];
+    return Object.entries(errors);
   });
 
   async verificarSiExisteUsuario(correo: string): Promise<boolean> {
@@ -119,7 +98,6 @@ export class Register {
     this.loading.set(true);
     this.generalError.set(null);
 
-    // 5. Validación del estado global del árbol del formulario directamente desde su señal estructural
     if (this.registerForm().invalid()) {
       this.showErrorsModal.set(true);
       this.loading.set(false);
@@ -133,7 +111,10 @@ export class Register {
       const exists = await this.verificarSiExisteUsuario(currentData.correo);
       const { success, error } = await this.enviarMagicLink(currentData, !exists);
 
-      if (exists) this.toastService.info('Ya existe una cuenta con este correo. Se ha enviado un enlace mágico para iniciar sesión.');
+      if (exists)
+        this.toastService.info(
+          'Ya existe una cuenta con este correo. Se ha enviado un enlace mágico para iniciar sesión.',
+        );
 
       if (!success) {
         const msgError = error ?? 'Error al enviar enlace mágico';

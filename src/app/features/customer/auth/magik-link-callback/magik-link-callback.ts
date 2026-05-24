@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CustomerData } from '@src/app/core/models/customer/customer';
+import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/toast.service';
