@@ -32,6 +32,7 @@ Extensión de la tabla nativa `auth.users` de Supabase. Guarda la información c
 *   `rol` (rol_usuario, Default: 'customer'): Rol asignado en el sistema.
 *   `correo` (text, Not Null)
 *   `telefono` (text)
+*   `full_name` (text)
 *   `documento` (text)
 *   `tipo_documento` (tipo_doc)
 *   `ubicacion` (text): Dirección o geolocalización de envío.
