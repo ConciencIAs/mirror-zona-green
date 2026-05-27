@@ -19,6 +19,11 @@ export const routes: Routes = [
         title: 'home',
         loadComponent: () => import('@src/app/features/home/home').then((m) => m.Home),
       },
+      {
+        path: 'customer/home',
+        title: 'Customer Home',
+        loadComponent: () => import('@src/app/features/customer/home/home').then((m) => m.CustomerHome),
+      },
       ...routerAuthCustomer,
       ...marketplaceRoutes,
       ...adminRoutes,

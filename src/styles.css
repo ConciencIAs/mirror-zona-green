@@ -32,7 +32,74 @@
   --color-secondary-950: #101d30;
 }
 
-/* 🔄 2. ACOPLAMIENTO CON PRIMENG v18+ */
+/* ================================================================
+   ZONA GREEN — Auth Dark Mode
+   Activa cuando #zg-dark-auth está checked (auth layout)
+================================================================ */
+
+/* Contenedor principal del form */
+body:has(#zg-dark-auth:checked) .bg-white {
+  background-color: #162916 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Títulos y texto principal */
+body:has(#zg-dark-auth:checked) .text-slate-900 {
+  color: #d8e8cc !important;
+}
+body:has(#zg-dark-auth:checked) .text-slate-500,
+body:has(#zg-dark-auth:checked) .text-slate-700 {
+  color: #85a078 !important;
+}
+body:has(#zg-dark-auth:checked) .text-gray-700 {
+  color: #9ab890 !important;
+}
+body:has(#zg-dark-auth:checked) .text-blue-600 {
+  color: #4ade80 !important;
+}
+
+/* Inputs */
+body:has(#zg-dark-auth:checked) input {
+  background-color: #0f1f0f !important;
+  color: #d8e8cc !important;
+  border-color: #2a4a2a !important;
+}
+body:has(#zg-dark-auth:checked) input::placeholder {
+  color: #4a6a4a !important;
+}
+body:has(#zg-dark-auth:checked) input:focus {
+  border-color: #20a038 !important;
+  box-shadow: 0 0 0 2px rgba(32, 160, 56, 0.3) !important;
+}
+body:has(#zg-dark-auth:checked) input.border-gray-300 {
+  border-color: #2a4a2a !important;
+}
+
+/* Select */
+body:has(#zg-dark-auth:checked) select {
+  background-color: #0f1f0f !important;
+  color: #d8e8cc !important;
+  border-color: #2a4a2a !important;
+}
+body:has(#zg-dark-auth:checked) select option {
+  background-color: #0f1f0f;
+  color: #d8e8cc;
+}
+body:has(#zg-dark-auth:checked) select:focus {
+  border-color: #20a038 !important;
+  box-shadow: 0 0 0 2px rgba(32, 160, 56, 0.3) !important;
+}
+body:has(#zg-dark-auth:checked) select.border-gray-300 {
+  border-color: #2a4a2a !important;
+}
+
+/* Error modal overlay */
+body:has(#zg-dark-auth:checked) .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ================================================================
+   2. ACOPLAMIENTO CON PRIMENG v18+ */
 @layer base {
   :root {
     /* Mapeamos los tokens de PrimeNG para que lean los colores de Tailwind v4 */

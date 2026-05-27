@@ -1,0 +1,274 @@
+<div class="zg-app">
+
+  <!-- ── Controls (hidden) ── -->
+  <input type="checkbox" id="zg-dark" class="zg-ctrl">
+  <input type="checkbox" id="zg-menu" class="zg-ctrl">
+
+  <!-- ── Overlay ── -->
+  <label class="zg-overlay" for="zg-menu" aria-hidden="true"></label>
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="zg-sidebar" aria-label="Menú principal">
+
+    <div class="sidebar-head">
+      <img
+        src="images/logo-zona-green-blanco.svg"
+        alt="Zona Green"
+        class="sidebar-logo">
+      <label for="zg-menu" class="sidebar-close" aria-label="Cerrar menú">
+        <span class="x-bar"></span>
+        <span class="x-bar"></span>
+      </label>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+
+        <li class="nav-item">
+          <a href="#inicio" class="nav-link">Inicio</a>
+        </li>
+
+        <!-- Cannabis — con submenú -->
+        <li class="nav-item has-sub">
+          <input type="checkbox" id="sub-cannabis" class="zg-ctrl sub-ctrl">
+          <label for="sub-cannabis" class="nav-link nav-parent">
+            <span>Cannabis medicinal en Colombia</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </label>
+          <div class="subnav">
+            <a href="#cannabis" class="btn-subnav-outline">Más información</a>
+            <ul class="sub-list">
+              <li><a href="#legislacion">Legislación</a></li>
+              <li><a href="#tecnologia">Trazabilidad y Tecnología</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <!-- Médicos — próximamente -->
+        <li class="nav-item">
+          <div class="nav-link nav-disabled">
+            <span>Médicos especialistas en cannabis</span>
+            <span class="badge-soon">Próximamente</span>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#marketplace" class="nav-link">Selección informada — Marketplace</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#rrd" class="nav-link">Reducción de Riesgos y Daños</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#faq" class="nav-link">Preguntas frecuentes</a>
+        </li>
+
+      </ul>
+    </nav>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       PAGE
+  ══════════════════════════════════════════ -->
+  <div class="zg-page">
+
+    <!-- ── Navbar ── -->
+    <header class="zg-navbar">
+
+      <a href="#inicio" class="brand">
+        <img
+          src="images/logo-zona-green.svg"
+          alt="Zona Green"
+          class="brand-logo logo-light">
+        <img
+          src="images/logo-zona-green-blanco.svg"
+          alt="Zona Green"
+          class="brand-logo logo-dark">
+      </a>
+
+      <label for="zg-dark" class="dark-toggle" title="Cambiar tema" aria-label="Cambiar tema">
+        <!-- Sun -->
+        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        <!-- Moon -->
+        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </label>
+
+      <label for="zg-menu" class="hamburger" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+    </header>
+
+    <!-- ── Main content ── -->
+    <main class="zg-content">
+
+      <!-- ════════════════════════
+           SECCIÓN HERO
+      ════════════════════════ -->
+      <section class="section-hero" id="inicio">
+        <div class="container">
+          <div class="hero-grid">
+
+            <!-- Columna izquierda -->
+            <div class="hero-left">
+              <div class="hero-logo-wrap">
+                <img src="images/logo-zona-green.svg" alt="Zona Green" class="hero-logo hero-logo-light">
+                <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="hero-logo hero-logo-dark">
+              </div>
+              <h1 class="hero-title">
+                Acceso informado y regulado al
+                <span class="text-green">cannabis medicinal</span>
+                en Colombia
+              </h1>
+              <p class="hero-text">
+                Conectamos usuarios, profesionales de la salud y aliados autorizados
+                a través de una plataforma diseñada para promover bienestar,
+                trazabilidad y reducción de riesgos.
+              </p>
+              <p class="hero-text">
+                Buscamos facilitar un ecosistema donde la información, la trazabilidad
+                y el acompañamiento profesional ayuden a los usuarios a tomar
+                decisiones más seguras e informadas.
+              </p>
+              <div class="hero-actions">
+                <a routerLink="/auth/register" class="btn btn-primary">Regístrate ahora</a>
+                <span class="login-link">
+                  ¿Ya tienes cuenta?
+                  <a routerLink="/auth/login" class="link-green">Iniciar sesión</a>
+                </span>
+              </div>
+            </div>
+
+            <!-- Columna derecha -->
+            <div class="hero-right">
+              <div class="eco-card">
+                <p class="eco-intro">
+                  Ecosistema digital orientado al acceso informado, seguro y regulado
+                  alrededor del cannabis medicinal, donde las personas puedan encontrar:
+                </p>
+                <ul class="eco-list">
+                  <li class="eco-item">
+                    <span class="eco-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span>Información clara, comprensible y basada en evidencia</span>
+                  </li>
+                  <li class="eco-item">
+                    <span class="eco-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span>Acompañamiento profesional durante todo el proceso</span>
+                  </li>
+                  <li class="eco-item">
+                    <span class="eco-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span>Orientación regulatoria y educativa accesible</span>
+                  </li>
+                  <li class="eco-item">
+                    <span class="eco-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span>Trazabilidad y transparencia en cada etapa</span>
+                  </li>
+                  <li class="eco-item">
+                    <span class="eco-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span>Entorno digital seguro y confiable</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════
+           SECCIÓN PASOS
+      ════════════════════════ -->
+      <section class="section-steps" id="como-funciona">
+        <div class="container">
+
+          <div class="section-head">
+            <h2 class="section-title">¿Cómo funciona?</h2>
+            <p class="section-sub">Pasos para ser parte de Zona Green.</p>
+          </div>
+
+          <div class="steps-grid">
+
+            <div class="step-card">
+              <div class="step-num">1</div>
+              <h3 class="step-title">Registro</h3>
+              <p class="step-text">
+                Crea tu perfil y acepta los términos necesarios para acceder a la plataforma.
+              </p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">2</div>
+              <h3 class="step-title">Evaluación profesional</h3>
+              <p class="step-text">
+                Agenda una consulta con profesionales de la salud aliados para evaluar
+                tu caso de manera individual.
+              </p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">3</div>
+              <h3 class="step-title">Prescripción y validación</h3>
+              <p class="step-text">
+                En caso de ser apto para tratamiento, la prescripción será validada
+                dentro del ecosistema autorizado.
+              </p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-num">4</div>
+              <h3 class="step-title">Acceso seguro</h3>
+              <p class="step-text">
+                Accede a procesos de dispensación y seguimiento bajo criterios
+                de trazabilidad y responsabilidad.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /zg-page -->
+
+</div><!-- /zg-app -->

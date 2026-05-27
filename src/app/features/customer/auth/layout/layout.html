@@ -1,1 +1,115 @@
-<router-outlet></router-outlet>
+<div class="zg-app">
+
+  <!-- ── Controls (hidden) ── -->
+  <input type="checkbox" id="zg-dark-auth" class="zg-ctrl">
+  <input type="checkbox" id="zg-menu-auth" class="zg-ctrl">
+
+  <!-- ── Overlay ── -->
+  <label class="zg-overlay" for="zg-menu-auth" aria-hidden="true"></label>
+
+  <!-- ══════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════ -->
+  <aside class="zg-sidebar" aria-label="Menú principal">
+
+    <div class="sidebar-head">
+      <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="sidebar-logo">
+      <label for="zg-menu-auth" class="sidebar-close" aria-label="Cerrar menú">
+        <span class="x-bar"></span>
+        <span class="x-bar"></span>
+      </label>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+
+        <li class="nav-item">
+          <a routerLink="/customer/home" class="nav-link">Inicio</a>
+        </li>
+
+        <li class="nav-item has-sub">
+          <input type="checkbox" id="sub-cannabis-auth" class="zg-ctrl sub-ctrl">
+          <label for="sub-cannabis-auth" class="nav-link nav-parent">
+            <span>Cannabis medicinal en Colombia</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </label>
+          <div class="subnav">
+            <a href="#" class="btn-subnav-outline">Más información</a>
+            <ul class="sub-list">
+              <li><a href="#">Legislación</a></li>
+              <li><a href="#">Trazabilidad y Tecnología</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <div class="nav-link nav-disabled">
+            <span>Médicos especialistas en cannabis</span>
+            <span class="badge-soon">Próximamente</span>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/marketplace" class="nav-link">Selección informada — Marketplace</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">Reducción de Riesgos y Daños</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">Preguntas frecuentes</a>
+        </li>
+
+      </ul>
+    </nav>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════
+       PAGE
+  ══════════════════════════════════════════ -->
+  <div class="zg-page">
+
+    <header class="zg-navbar">
+
+      <a routerLink="/customer/home" class="brand" aria-label="Ir al inicio">
+        <img src="images/logo-zona-green.svg" alt="Zona Green" class="brand-logo logo-light">
+        <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="brand-logo logo-dark">
+      </a>
+
+      <label for="zg-dark-auth" class="dark-toggle" title="Cambiar tema" aria-label="Cambiar tema">
+        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </label>
+
+      <label for="zg-menu-auth" class="hamburger" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+    </header>
+
+    <main class="zg-content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+</div>
