@@ -1,4 +1,15 @@
-export enum  TableName {
+export enum TableName {
+  CARRITO = 'carrito',
+  CATEGORIAS = 'categorias',
+  HISTORIAL_INVENTARIO = 'historial_inventario',
+  ORDENES = 'ordenes',
+  PAGE_DOCUMENTOS = 'page_documentos',
+  PAGE_CONFIG = 'page_config',
+  PAGE_HOME = 'page_home',
   PERFILES = 'perfiles',
+  PRODUCTOS_VARIANTES = 'productos_variantes',
+  PRODUCTOS = 'productos',
+  ROLES = 'roles',
+  TAGS = 'tags',
   USUARIOS_PUBLICOS = 'usuarios_publicos',
 }

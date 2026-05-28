@@ -129,7 +129,7 @@ export class LocalStorageStateService {
   }
 
   private parse<T>(value: string | null, defaultValue: T): T {
-    if (value === null) return defaultValue;
+    if (!value || !JSON.parse(value)) return defaultValue;
 
     try {
       return JSON.parse(value) as T;

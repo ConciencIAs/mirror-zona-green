@@ -1,7 +1,7 @@
 @if (isLegalAge()) {
-  <app-navbar></app-navbar>
+<router-outlet></router-outlet>
 } @else {
-  <h1 class="text-2xl font-bold text-center mt-20">
-    Lo siento, debes ser mayor de edad para acceder a este sitio.
-  </h1>
+<h1 class="text-2xl font-bold text-center mt-20">
+  Lo siento, debes ser mayor de edad para acceder a este sitio.|
+</h1>
 }
