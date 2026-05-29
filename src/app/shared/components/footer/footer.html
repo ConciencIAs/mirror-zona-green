@@ -1,1 +1,167 @@
-<p>footer works!</p>
+<footer class="zg-footer">
+
+  <!-- ── Área principal ── -->
+  <div class="footer-main">
+    <div class="footer-wrap">
+
+      <!-- Logo -->
+      <div class="footer-brand">
+        <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="footer-logo">
+      </div>
+
+      <!-- NAVEGACIÓN -->
+      <nav class="footer-col" aria-label="Navegación del sitio">
+        <h4 class="footer-heading">NAVEGACIÓN</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/customer/home" class="footer-link">Inicio</a></li>
+          <li><a routerLink="/customer/home" fragment="como-funciona" class="footer-link">¿Cómo funciona?</a></li>
+          @if (!isAuthenticated()) {
+            <li><a routerLink="/auth/register" class="footer-link">Regístrate</a></li>
+          }
+          <li><a routerLink="/cannabismedicinalencolombia" class="footer-link">Cannabis medicinal</a></li>
+          @if (isAuthenticated()) {
+            <li><a routerLink="/marketplace" class="footer-link">Marketplace</a></li>
+          }
+          <li><a routerLink="/faq" class="footer-link">Preguntas frecuentes</a></li>
+        </ul>
+      </nav>
+
+      <!-- LEGAL -->
+      <div class="footer-col">
+        <h4 class="footer-heading">LEGAL</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/terminos-y-condiciones" class="footer-link">Términos y condiciones</a></li>
+          <li><a href="#" class="footer-link">Política de privacidad</a></li>
+          <li><a href="#" class="footer-link">Tratamiento de datos</a></li>
+          <li><a href="#" class="footer-link">Capítulo legal</a></li>
+          <li><a href="#" class="footer-link">Aviso de cookies</a></li>
+        </ul>
+      </div>
+
+      <!-- AYUDA -->
+      <div class="footer-col">
+        <h4 class="footer-heading">AYUDA</h4>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Centro de ayuda</a></li>
+          <li><a href="#" class="footer-link">Contacto</a></li>
+          <li><a href="#" class="footer-link">Trabaja con nosotros</a></li>
+        </ul>
+      </div>
+
+      <!-- CONTACTO -->
+      <div class="footer-col">
+        <h4 class="footer-heading">CONTACTO</h4>
+        <ul class="footer-contact">
+          <li>
+            <span class="footer-contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72c.12.81.28 1.61.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c1.2.42 2 .58 2.81.7A2 2 0 0 1 21.8 16"/>
+              </svg>
+            </span>
+            <a href="https://wa.me/573001234567" class="footer-link" target="_blank" rel="noopener">+57 300 123 4567</a>
+          </li>
+          <li>
+            <span class="footer-contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </span>
+            <a href="mailto:hola@zonagreen.co" class="footer-link">hola@zonagreen.co</a>
+          </li>
+          <li>
+            <span class="footer-contact-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </span>
+            <span class="footer-link">Bogotá, Colombia</span>
+          </li>
+        </ul>
+
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="#" class="social-link" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+          </a>
+          <a href="#" class="social-link" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+              <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- SUSCRÍBETE + SEGURIDAD -->
+      <div class="footer-col footer-col-right">
+        <h4 class="footer-heading">SUSCRÍBETE AL BOLETÍN</h4>
+        <p class="footer-newsletter-desc">
+          Recibe contenido exclusivo sobre educación, regulación y bienestar.
+        </p>
+        <form class="footer-newsletter-form" (submit)="$event.preventDefault()">
+          <input
+            type="email"
+            placeholder="Tu correo electrónico"
+            class="footer-newsletter-input"
+            aria-label="Tu correo electrónico">
+          <button type="submit" class="footer-newsletter-btn" aria-label="Suscribirse">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+
+        <div class="footer-security">
+          <div class="footer-security-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <div class="footer-security-text">
+            <strong>Plataforma segura<br>y regulada</strong>
+            <p>Cumplimos con la Ley 1581 de 2012 y demás normas aplicables.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Barra inferior ── -->
+  <div class="footer-bottom">
+    <div class="footer-wrap footer-bottom-inner">
+      <span class="footer-copy">© 2025 Zona Green. Todos los derechos reservados.</span>
+      <nav class="footer-bottom-links" aria-label="Legal">
+        <a routerLink="/terminos-y-condiciones" class="footer-bottom-link">Términos y condiciones</a>
+        <span class="footer-sep" aria-hidden="true">|</span>
+        <a href="#" class="footer-bottom-link">Política de privacidad</a>
+        <span class="footer-sep" aria-hidden="true">|</span>
+        <a href="#" class="footer-bottom-link">Tratamiento de datos</a>
+        <span class="footer-sep" aria-hidden="true">|</span>
+        <a href="#" class="footer-bottom-link">Capítulo legal</a>
+        <span class="footer-sep" aria-hidden="true">|</span>
+        <a href="#" class="footer-bottom-link">Aviso de cookies</a>
+      </nav>
+    </div>
+  </div>
+
+</footer>

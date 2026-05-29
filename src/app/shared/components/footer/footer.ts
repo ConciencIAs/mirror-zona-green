@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 
 @Component({
   selector: 'app-footer',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './footer.html',
-  styles: ``,
+  styleUrl: './footer.css',
 })
-export class Footer {}
+export class Footer {
+  private readonly authService = inject(SupabaseAuthService);
+  protected isAuthenticated = this.authService.isAuthenticated;
+}

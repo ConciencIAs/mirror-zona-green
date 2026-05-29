@@ -1,0 +1,296 @@
+/* ================================================================
+   ZONA GREEN — Footer
+   Mobile-first · Verde oscuro · Público/Privado via isAuthenticated
+================================================================ */
+
+:host { display: block; }
+
+.zg-footer {
+  background: #0f1e0f;
+  color: #9ab890;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* ── Wrapper (contenedor centrado) ── */
+.footer-wrap {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+
+/* ================================================================
+   ÁREA PRINCIPAL
+================================================================ */
+.footer-main {
+  padding: 52px 0 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.footer-main .footer-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+}
+
+/* Logo */
+.footer-brand { display: flex; align-items: flex-start; }
+.footer-logo { height: 54px; width: auto; object-fit: contain; }
+
+/* Encabezados de columna */
+.footer-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: #e0ead4;
+  margin: 0 0 16px;
+}
+
+/* Listas de enlaces */
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-link {
+  color: #7a9670;
+  text-decoration: none;
+  font-size: 13.5px;
+  transition: color 0.2s;
+}
+.footer-link:hover { color: #ffffff; }
+
+
+/* ── Contacto ── */
+.footer-contact {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-contact-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #20a038;
+}
+.footer-contact-icon svg { width: 100%; height: 100%; }
+
+
+/* ── Redes sociales ── */
+.footer-social {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(224, 234, 212, 0.22);
+  color: #9ab890;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.social-link:hover {
+  background: rgba(32, 160, 56, 0.18);
+  border-color: rgba(32, 160, 56, 0.45);
+  color: #ffffff;
+}
+.social-link svg { width: 16px; height: 16px; }
+
+
+/* ── Newsletter ── */
+.footer-newsletter-desc {
+  font-size: 13px;
+  color: #5a7a54;
+  line-height: 1.65;
+  margin: 0 0 16px;
+}
+
+.footer-newsletter-form {
+  display: flex;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 28px;
+  transition: border-color 0.2s;
+}
+.footer-newsletter-form:focus-within {
+  border-color: rgba(32, 160, 56, 0.4);
+}
+
+.footer-newsletter-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 10px 14px;
+  color: #e0ead4;
+  font-size: 13px;
+  font-family: inherit;
+  min-width: 0;
+}
+.footer-newsletter-input::placeholder { color: #3a5a3a; }
+
+.footer-newsletter-btn {
+  background: #20a038;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.footer-newsletter-btn:hover { background: #178030; }
+.footer-newsletter-btn svg { width: 16px; height: 16px; }
+
+
+/* ── Badge de seguridad ── */
+.footer-security {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.footer-security-icon {
+  width: 46px;
+  height: 46px;
+  background: rgba(32, 160, 56, 0.10);
+  border: 1.5px solid rgba(32, 160, 56, 0.28);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #20a038;
+}
+.footer-security-icon svg { width: 22px; height: 22px; }
+
+.footer-security-text strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #e0ead4;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+.footer-security-text p {
+  font-size: 12px;
+  color: #5a7a54;
+  line-height: 1.5;
+  margin: 0;
+}
+
+
+/* ================================================================
+   BARRA INFERIOR
+================================================================ */
+.footer-bottom {
+  background: #091409;
+  padding: 15px 0;
+}
+
+.footer-bottom-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.footer-copy {
+  font-size: 12.5px;
+  color: #486644;
+}
+
+.footer-bottom-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.footer-bottom-link {
+  font-size: 12px;
+  color: #486644;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.footer-bottom-link:hover { color: #9ab890; }
+
+.footer-sep {
+  font-size: 12px;
+  color: #1e3a1e;
+}
+
+
+/* ================================================================
+   RESPONSIVE — Tablet (640px)
+================================================================ */
+@media (min-width: 640px) {
+  .footer-main .footer-wrap {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-brand {
+    grid-column: span 2;
+  }
+
+  .footer-bottom-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+
+/* ================================================================
+   RESPONSIVE — Desktop (1024px)
+================================================================ */
+@media (min-width: 1024px) {
+  .footer-main .footer-wrap {
+    grid-template-columns: 130px repeat(4, 1fr) 1.3fr;
+    align-items: start;
+    gap: 40px;
+  }
+
+  .footer-brand {
+    grid-column: auto;
+  }
+
+  .footer-main {
+    padding: 64px 0 56px;
+  }
+}
