@@ -32,7 +32,358 @@
   --color-secondary-950: #101d30;
 }
 
-/* 🔄 2. ACOPLAMIENTO CON PRIMENG v18+ */
+/* ================================================================
+   ZONA GREEN — Auth Dark Mode
+   Activa cuando #zg-dark-auth está checked (auth layout)
+================================================================ */
+
+/* Contenedor principal del form */
+body:has(#zg-dark-auth:checked) .bg-white {
+  background-color: #162916 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Títulos y texto principal */
+body:has(#zg-dark-auth:checked) .text-slate-900 {
+  color: #d8e8cc !important;
+}
+
+body:has(#zg-dark-auth:checked) .text-slate-500,
+body:has(#zg-dark-auth:checked) .text-slate-700 {
+  color: #85a078 !important;
+}
+
+body:has(#zg-dark-auth:checked) .text-gray-700 {
+  color: #9ab890 !important;
+}
+
+body:has(#zg-dark-auth:checked) .text-blue-600 {
+  color: #4ade80 !important;
+}
+
+/* Inputs */
+body:has(#zg-dark-auth:checked) input {
+  background-color: #0f1f0f !important;
+  color: #d8e8cc !important;
+  border-color: #2a4a2a !important;
+}
+
+body:has(#zg-dark-auth:checked) input::placeholder {
+  color: #4a6a4a !important;
+}
+
+body:has(#zg-dark-auth:checked) input:focus {
+  border-color: #20a038 !important;
+  box-shadow: 0 0 0 2px rgba(32, 160, 56, 0.3) !important;
+}
+
+body:has(#zg-dark-auth:checked) input.border-gray-300 {
+  border-color: #2a4a2a !important;
+}
+
+/* Select */
+body:has(#zg-dark-auth:checked) select {
+  background-color: #0f1f0f !important;
+  color: #d8e8cc !important;
+  border-color: #2a4a2a !important;
+}
+
+body:has(#zg-dark-auth:checked) select option {
+  background-color: #0f1f0f;
+  color: #d8e8cc;
+}
+
+body:has(#zg-dark-auth:checked) select:focus {
+  border-color: #20a038 !important;
+  box-shadow: 0 0 0 2px rgba(32, 160, 56, 0.3) !important;
+}
+
+body:has(#zg-dark-auth:checked) select.border-gray-300 {
+  border-color: #2a4a2a !important;
+}
+
+/* Error modal overlay */
+body:has(#zg-dark-auth:checked) .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ================================================================
+   ZONA GREEN — Dark mode global (páginas públicas)
+   Activado por html.dark vía navbar toggle (localStorage)
+================================================================ */
+
+/* ── Cannabis Medicinal ── */
+html.dark .cm-page {
+  background: #0d1a0d;
+  color: #d8e8cc;
+}
+
+html.dark .cm-body {
+  background: #0d1a0d;
+}
+
+html.dark .cm-main p,
+html.dark .cm-list li {
+  color: #a8c8a0;
+}
+
+html.dark .cm-lead {
+  color: #c8dabb;
+}
+
+html.dark .cm-h2 {
+  color: #e0ead4;
+  border-bottom-color: #20a038;
+}
+
+html.dark .cm-h3 {
+  color: #c8dabb;
+}
+
+html.dark .cm-norm-card,
+html.dark .cm-role-card,
+html.dark .cm-opp-item {
+  background: #162916;
+  border-color: #243424;
+}
+
+html.dark .cm-norm-title,
+html.dark .cm-role-title,
+html.dark .cm-opp-title {
+  color: #e0ead4;
+}
+
+html.dark .cm-norm-body,
+html.dark .cm-opp-body {
+  color: #85a078;
+}
+
+html.dark .cm-role-list li {
+  color: #9ab890;
+}
+
+html.dark .cm-toc-inner {
+  background: #162916;
+  border-color: #243424;
+}
+
+html.dark .cm-toc-title {
+  color: #5a7a54;
+}
+
+html.dark .cm-toc-link {
+  color: #7a9670;
+}
+
+html.dark .cm-toc-link:hover {
+  color: #66c47a;
+  border-left-color: #20a038;
+}
+
+html.dark .cm-callout {
+  background: rgba(255, 160, 0, .08);
+  border-color: rgba(255, 160, 0, .3);
+}
+
+html.dark .cm-callout-text {
+  color: #d4b060;
+}
+
+html.dark .cm-cta-box {
+  background: linear-gradient(135deg, #0d1a0d 0%, #162916 100%);
+}
+
+/* ── Médicos Cannabis ── */
+html.dark .mc-page {
+  background: #0d1a0d;
+}
+
+html.dark .mc-feature {
+  background: rgba(255, 255, 255, .04);
+  border-color: rgba(255, 255, 255, .07);
+}
+
+/* ── RRD ── */
+html.dark .rrd-page {
+  background: #0d1a0d;
+  color: #d8e8cc;
+}
+
+html.dark .rrd-body {
+  background: #0d1a0d;
+}
+
+html.dark .rrd-page p {
+  color: #a8c8a0;
+}
+
+html.dark .rrd-h2,
+html.dark .rrd-h2-sm {
+  color: #e0ead4;
+}
+
+html.dark .rrd-principle-card,
+html.dark .rrd-risk-item,
+html.dark .rrd-how-item,
+html.dark .rrd-visual-card,
+html.dark .rrd-link-card {
+  background: #162916;
+  border-color: #243424;
+}
+
+html.dark .rrd-principle-title,
+html.dark .rrd-risk-title,
+html.dark .rrd-how-title,
+html.dark .rrd-link-title {
+  color: #e0ead4;
+}
+
+html.dark .rrd-principle-body,
+html.dark .rrd-risk-body,
+html.dark .rrd-how-body {
+  color: #85a078;
+}
+
+html.dark .rrd-link-sub {
+  color: #5a7a54;
+}
+
+html.dark .rrd-visual-label {
+  color: #7a9670;
+}
+
+html.dark .rrd-risk-mitigation {
+  background: rgba(32, 160, 56, .08);
+  color: #66c47a;
+}
+
+html.dark .rrd-callout {
+  background: rgba(255, 160, 0, .08);
+  border-color: rgba(255, 160, 0, .3);
+}
+
+html.dark .rrd-callout-text {
+  color: #d4b060;
+}
+
+/* ── FAQ ── */
+html.dark .faq-page {
+  background: #0d1a0d;
+  color: #d8e8cc;
+}
+
+html.dark .faq-body {
+  background: #0d1a0d;
+}
+
+html.dark .faq-section-title {
+  color: #e0ead4;
+  border-bottom-color: #20a038;
+}
+
+html.dark .faq-item {
+  background: #162916;
+  border-color: #243424;
+}
+
+html.dark .faq-question {
+  color: #e0ead4;
+}
+
+html.dark .faq-question:hover {
+  background: rgba(32, 160, 56, .08);
+}
+
+html.dark .faq-answer p,
+html.dark .faq-answer li {
+  color: #a8c8a0;
+}
+
+html.dark .faq-cat-link {
+  background: #162916;
+  border-color: #243424;
+  color: #7a9670;
+}
+
+html.dark .faq-cat-link:hover {
+  background: rgba(32, 160, 56, .12);
+  border-color: rgba(32, 160, 56, .4);
+  color: #c8dabb;
+}
+
+html.dark .faq-cta {
+  background: #162916;
+  border-color: #243424;
+}
+
+html.dark .faq-cta-text {
+  color: #7a9670;
+}
+
+/* ── Términos y condiciones ── */
+html.dark .tc-page {
+  background: #0d1a0d;
+  color: #d8e8cc;
+}
+
+html.dark .tc-body {
+  background: #0d1a0d;
+}
+
+html.dark .tc-main p {
+  color: #a8c8a0;
+}
+
+html.dark .tc-h2 {
+  color: #e0ead4;
+}
+
+html.dark .tc-h3 {
+  color: #c8dabb;
+}
+
+html.dark .tc-intro-box {
+  background: rgba(32, 160, 56, .08);
+  border-color: rgba(32, 160, 56, .25);
+}
+
+html.dark .tc-intro-box p {
+  color: #9ab890;
+}
+
+html.dark .tc-section {
+  border-bottom-color: #1e301e;
+}
+
+html.dark .tc-ul li,
+html.dark .tc-ol li {
+  color: #a8c8a0;
+}
+
+html.dark .tc-toc-inner {
+  background: #162916;
+  border-color: #243424;
+}
+
+html.dark .tc-toc-title {
+  color: #5a7a54;
+}
+
+html.dark .tc-toc-link {
+  color: #7a9670;
+}
+
+html.dark .tc-toc-link:hover {
+  background: rgba(32, 160, 56, .1);
+  color: #c8dabb;
+}
+
+html.dark .tc-nav-bottom {
+  border-top-color: #1e301e;
+}
+
+/* ================================================================
+   2. ACOPLAMIENTO CON PRIMENG v18+ */
 @layer base {
   :root {
     /* Mapeamos los tokens de PrimeNG para que lean los colores de Tailwind v4 */
@@ -47,5 +398,416 @@
     --p-primary-800: var(--color-primary-800);
     --p-primary-900: var(--color-primary-900);
     --p-primary-950: var(--color-primary-950);
+  }
+}
+
+
+/* ================================================================
+   ZONA GREEN — Auth Layout
+   Mismo sistema de navbar/sidebar que customer home
+================================================================ */
+
+:host {
+  display: block;
+}
+
+.zg-app {
+  --green: #20a038;
+  --green-dk: #178030;
+  --green-pale: rgba(32, 160, 56, 0.10);
+
+  --bg: #f5f5f0;
+  --text: #1d1d1b;
+  --text-2: #5a5a52;
+  --border: #d4d4c4;
+
+  --sidebar-bg: #0f1f0f;
+  --sidebar-text: #e0ead4;
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-hover: rgba(255, 255, 255, 0.07);
+
+  --navbar-bg: #ffffff;
+  --navbar-border: #e4e4d4;
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.07);
+  --tr: 0.25s ease;
+
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Dark mode */
+#zg-dark-auth:checked~.zg-page {
+  --bg: #0d1a0d;
+  --text: #d8e8cc;
+  --text-2: #85a078;
+  --border: #243424;
+  --navbar-bg: #0d1a0d;
+  --navbar-border: #1e301e;
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Controls ocultos */
+.zg-ctrl {
+  display: none;
+}
+
+/* ── Overlay ── */
+.zg-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(3px);
+  z-index: 100;
+  cursor: pointer;
+}
+
+#zg-menu-auth:checked~.zg-overlay {
+  display: block;
+}
+
+/* ── Sidebar ── */
+.zg-sidebar {
+  position: fixed;
+  inset-block: 0;
+  left: 0;
+  width: min(300px, 85vw);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+
+#zg-menu-auth:checked~.zg-sidebar {
+  transform: translateX(0);
+}
+
+.sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px 18px 20px;
+  border-bottom: 1px solid var(--sidebar-border);
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
+.sidebar-close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background var(--tr);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sidebar-close:hover {
+  background: var(--sidebar-hover);
+}
+
+.x-bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--sidebar-text);
+  border-radius: 1px;
+  position: absolute;
+}
+
+.x-bar:first-child {
+  transform: rotate(45deg);
+}
+
+.x-bar:last-child {
+  transform: rotate(-45deg);
+}
+
+.sidebar-nav {
+  padding: 8px 0;
+  flex: 1;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  transition: background var(--tr), color var(--tr);
+  cursor: pointer;
+  gap: 12px;
+}
+
+.nav-link:hover {
+  background: var(--sidebar-hover);
+  color: #fff;
+}
+
+.nav-link.nav-disabled {
+  cursor: default;
+  opacity: 0.65;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nav-link.nav-disabled:hover {
+  background: transparent;
+}
+
+.nav-parent {
+  cursor: pointer;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform var(--tr);
+}
+
+.sub-ctrl:checked~.nav-parent .chevron {
+  transform: rotate(90deg);
+}
+
+.subnav {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.32s ease;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.sub-ctrl:checked~.subnav {
+  max-height: 220px;
+}
+
+.btn-subnav-outline {
+  display: inline-block;
+  margin: 12px 20px 8px;
+  padding: 7px 18px;
+  border: 1.5px solid var(--green);
+  border-radius: 20px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--tr);
+}
+
+.btn-subnav-outline:hover {
+  background: rgba(32, 160, 56, 0.15);
+}
+
+.sub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 20px 12px;
+}
+
+.sub-list li a {
+  display: block;
+  padding: 9px 0;
+  color: rgba(224, 234, 212, 0.75);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color var(--tr);
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.sub-list li:first-child a {
+  border-top: none;
+}
+
+.sub-list li a:hover {
+  color: var(--green);
+}
+
+.badge-soon {
+  display: inline-block;
+  padding: 3px 10px;
+  background: rgba(32, 160, 56, 0.15);
+  border: 1px solid rgba(32, 160, 56, 0.3);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ── Page ── */
+.zg-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  transition: background var(--tr), color var(--tr);
+}
+
+/* ── Navbar ── */
+.zg-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 16px;
+  height: 60px;
+  gap: 12px;
+  transition: background var(--tr), border-color var(--tr);
+  box-shadow: var(--shadow-sm);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-dark {
+  display: none;
+}
+
+#zg-dark-auth:checked~.zg-page .logo-light {
+  display: none;
+}
+
+#zg-dark-auth:checked~.zg-page .logo-dark {
+  display: block;
+}
+
+.dark-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 20px;
+  transition: background var(--tr);
+  flex-shrink: 0;
+  margin-left: auto;
+  margin-right: 4px;
+}
+
+.dark-toggle:hover {
+  background: var(--green-pale);
+}
+
+.toggle-icon {
+  width: 15px;
+  height: 15px;
+  color: var(--text-2);
+  display: block;
+  flex-shrink: 0;
+}
+
+.toggle-track {
+  width: 38px;
+  height: 21px;
+  background: var(--border);
+  border-radius: 11px;
+  position: relative;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+#zg-dark-auth:checked~.zg-page .toggle-track {
+  background: var(--green);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 15px;
+  height: 15px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#zg-dark-auth:checked~.zg-page .toggle-thumb {
+  left: 20px;
+}
+
+.hamburger {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background var(--tr);
+  flex-shrink: 0;
+}
+
+.hamburger:hover {
+  background: var(--green-pale);
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 1px;
+  transition: background var(--tr);
+}
+
+/* ── Content ── */
+.zg-content {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .zg-navbar {
+    padding: 0 24px;
+    height: 64px;
+  }
+}
+
+@media (min-width: 900px) {
+  .zg-navbar {
+    padding: 0 32px;
+    height: 68px;
   }
 }

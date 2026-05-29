@@ -1,74 +1,86 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AvatarModule } from 'primeng/avatar';
-import { BadgeModule } from 'primeng/badge';
-import { MenubarModule } from 'primeng/menubar';
-import { InputTextModule } from 'primeng/inputtext';
-import { RippleModule } from 'primeng/ripple';
-import { MenuItem } from 'primeng/api';
+import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
-import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
+
 import { ButtonModule } from 'primeng/button';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { CartStore } from '@src/app/core/state/card/card.state';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
+
+const LS_KEY = 'zg-dark';
 
 @Component({
   selector: 'app-navbar',
-  imports: [ProfileMenu, RouterModule, CommonModule, AvatarModule, BadgeModule, MenubarModule, InputTextModule, RippleModule, ButtonModule, OverlayBadgeModule],
+  imports: [RouterLink, ProfileMenu],
   templateUrl: './navbar.html',
-  styles: [],
 })
 export class Navbar implements OnInit {
-  private readonly supabaseAuthService = inject(SupabaseAuthService);
   private readonly cartStore = inject(CartStore);
+  private readonly userStore = inject(UserStore);
 
-  items: MenuItem[] | undefined;
+  protected authDropOpen = signal(false);
+  protected sidebarOpen = signal(false);
+  protected isDark = signal(false);
 
-  isAuthenticated = this.supabaseAuthService.isAuthenticated()
-  totalCartItems = this.cartStore.totalItems()
-
-  ngOnInit(): void {
-    this.loadNavigationItems();
+  ngOnInit() {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved === 'true') {
+      this.applyDark(true);
+      this.isDark.set(true);
+    }
   }
 
-  loadNavigationItems(): void {
-    this.items = [
-      {
-        label: 'Home',
-        icon: 'pi pi-home'
-      },
-      {
-        label: 'Projects',
-        icon: 'pi pi-search',
-        badge: '3',
-        items: [
-          {
-            label: 'Core',
-            icon: 'pi pi-bolt',
-            shortcut: '⌘+S'
-          },
-          {
-            label: 'Blocks',
-            icon: 'pi pi-server',
-            shortcut: '⌘+B'
-          },
-          {
-            separator: true
-          },
-          {
-            label: 'UI Kit',
-            icon: 'pi pi-pencil',
-            shortcut: '⌘+U'
-          }
-        ]
-      }
-    ];
+  private applyDark(on: boolean): void {
+    document.documentElement.classList.toggle('dark', on);
   }
 
-  toggleDarkMode(): void {
-    document.documentElement.classList.toggle('dark');
+  toggleDark(): void {
+    const next = !this.isDark();
+    this.isDark.set(next);
+    this.applyDark(next);
+    localStorage.setItem(LS_KEY, String(next));
   }
 
+  isAuthenticated() {
+    return this.userStore.isAuthenticated();
+  }
 
+  get isAdmin() {
+    return this.userStore.isAdmin();
+  }
+
+  get isCustomer() {
+    return this.userStore.isCustomer();
+  }
+
+  get isAgent() {
+    return this.userStore.isAgent();
+  }
+
+  get fullName() {
+    return this.userStore.fullName();
+  }
+
+  get currentRole() {
+    return this.userStore.currentRole();
+  }
+
+  toggleAuthDrop(): void { this.authDropOpen.update(v => !v); }
+  closeAuthDrop(): void { this.authDropOpen.set(false); }
+  openSidebar(): void { this.sidebarOpen.set(true); }
+  closeSidebar(): void { this.sidebarOpen.set(false); }
+
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!(event.target as HTMLElement).closest('.nav-auth-wrap')) {
+      this.authDropOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.authDropOpen.set(false);
+    this.sidebarOpen.set(false);
+  }
 }

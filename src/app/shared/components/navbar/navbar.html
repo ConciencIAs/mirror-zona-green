@@ -1,72 +1,201 @@
-<div class="card">
-  <p-menubar [model]="items">
-    <ng-template #start>
-      <svg width="31" height="33" viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg"
-        class="block mx-auto">
-        <path
-          d="M15.1934 0V0V0L0.0391235 5.38288L2.35052 25.3417L15.1934 32.427V32.427V32.427L28.0364 25.3417L30.3478 5.38288L15.1934 0Z"
-          fill="var(--p-primary-color)" />
-        <mask id="mask0_1_52" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="31" height="33">
-          <path
-            d="M15.1934 0V0V0L0.0391235 5.38288L2.35052 25.3417L15.1934 32.427V32.427V32.427L28.0364 25.3417L30.3478 5.38288L15.1934 0Z"
-            fill="var(--ground-background)" />
-        </mask>
-        <g mask="url(#mask0_1_52)">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M15.1935 0V3.5994V3.58318V20.0075V20.0075V32.427V32.427L28.0364 25.3417L30.3478 5.38288L15.1935 0Z"
-            fill="var(--p-primary-color)" />
-        </g>
-        <path
-          d="M19.6399 15.3776L18.1861 15.0547L19.3169 16.6695V21.6755L23.1938 18.4458V12.9554L21.4169 13.6013L19.6399 15.3776Z"
-          fill="var(--ground-background)" />
-        <path
-          d="M10.5936 15.3776L12.0474 15.0547L10.9166 16.6695V21.6755L7.03966 18.4458V12.9554L8.81661 13.6013L10.5936 15.3776Z"
-          fill="var(--ground-background)" />
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M11.3853 16.9726L12.6739 15.0309L13.4793 15.5163H16.7008L17.5061 15.0309L18.7947 16.9726V24.254L17.8283 25.7103L16.7008 26.843H13.4793L12.3518 25.7103L11.3853 24.254V16.9726Z"
-          fill="var(--ground-background)" />
-        <path d="M19.3168 24.7437L21.4168 22.6444V20.5451L19.3168 22.3214V24.7437Z" fill="var(--ground-background)" />
-        <path d="M10.9166 24.7437L8.81662 22.6444V20.5451L10.9166 22.3214V24.7437Z" fill="var(--ground-background)" />
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M13.0167 5.68861L11.7244 8.7568L13.8244 14.8932H14.7936V5.68861H13.0167ZM15.4397 5.68861V14.8932H16.5706L18.5091 8.7568L17.2167 5.68861H15.4397Z"
-          fill="var(--ground-background)" />
-        <path d="M13.8244 14.8932L6.87813 12.3094L5.90888 8.27235L11.8859 8.7568L13.9859 14.8932H13.8244Z"
-          fill="var(--ground-background)" />
-        <path d="M16.5706 14.8932L23.5169 12.3094L24.4861 8.27235L18.3476 8.7568L16.4091 14.8932H16.5706Z"
-          fill="var(--ground-background)" />
-        <path d="M18.8321 8.27235L22.2245 7.94938L19.9629 5.68861H17.7013L18.8321 8.27235Z"
-          fill="var(--ground-background)" />
-        <path d="M11.4013 8.27235L8.00893 7.94938L10.2705 5.68861H12.5321L11.4013 8.27235Z"
-          fill="var(--ground-background)" />
-      </svg>
-    </ng-template>
-    <ng-template #item let-item let-root="root">
-      <a pRipple class="flex items-center px-4 py-3 cursor-pointer gap-2">
-        <span>{{ item.label }}</span>
-        @if (item.badge) {
-        <p-badge [ngClass]="{ 'ms-auto': !root }" [value]="item.badge" />
-        }
-        @if (item.shortcut) {
-        <span class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut
-          }}</span>
-        }
-        @if (item.items) {
-        <i [ngClass]="['ms-auto pi', root ? 'pi-angle-down' : 'pi-angle-right']"></i>
-        }
-      </a>
-    </ng-template>
-    <ng-template #end>
-      <div class="flex items-center gap-4">
-        @if (isAuthenticated) {
-        <input type="text" pInputText placeholder="Search" class="w-36" />
-        <app-profile-menu />
-        <p-overlayBadge [value]="totalCartItems">
-          <i class="pi-cart-minus pi" style="font-size: 2rem;"></i>
-        </p-overlayBadge>
-        } @else {
-        <p-button routerLink="/auth/login" label="Login" size="small" />
-        }
+<!-- ── Overlay del sidebar ── -->
+@if (sidebarOpen()) {
+<div class="fixed inset-0 bg-black/48 backdrop-blur-[3px] z-40 cursor-pointer" (click)="closeSidebar()"
+  aria-hidden="true"></div>
+}
+
+<!-- ── Sidebar ── -->
+<aside
+  class="fixed inset-y-0 right-0 w-[min(300px,85vw)] bg-[#0f1f0f] text-[#e0ead4] z-50 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-y-auto"
+  [class.translate-x-full]="!sidebarOpen()" [class.translate-x-0]="sidebarOpen()" aria-label="Menú de navegación">
+  <div class="flex items-center justify-between p-[18px_16px_18px_20px] border-b border-white/7 shrink-0">
+    <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[38px] w-auto object-contain">
+    <button
+      class="w-9 h-9 flex items-center justify-center cursor-pointer rounded-lg bg-none border-none relative shrink-0 transition-colors duration-200 hover:bg-white/7"
+      (click)="closeSidebar()" aria-label="Cerrar menú">
+      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute rotate-45"></span>
+      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute -rotate-45"></span>
+    </button>
+  </div>
+
+  <nav class="py-2 flex-1">
+    <ul class="list-none m-0 p-0">
+      <li class="border-b border-white/7">
+        <a routerLink="/customer/home"
+          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+          (click)="closeSidebar()">Inicio</a>
+      </li>
+      <li class="border-b border-white/7">
+        <a routerLink="/cannabismedicinalencolombia"
+          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+          (click)="closeSidebar()">Cannabis medicinal en Colombia</a>
+      </li>
+
+      <li class="border-b border-white/7">
+        <div
+          class="flex items-center justify-between py-[15px] px-5 text-white/65 cursor-default opacity-65 flex-wrap gap-2 text-[14px]">
+          <span>Médicos especialistas en cannabis</span>
+          <span
+            class="inline-block py-[3px] px-2.5 bg-[#20a038]/15 border border-solid border-[#20a038]/30 rounded-[20px] text-[10px] font-semibold text-[#20a038] tracking-[0.3px] uppercase">Próximamente</span>
+        </div>
+      </li>
+      <li class="border-b border-white/7">
+        <a routerLink="/rrd"
+          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+          (click)="closeSidebar()">Reducción de Riesgos y Daños</a>
+      </li>
+      <li class="border-b border-white/7">
+        <a routerLink="/faq"
+          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+          (click)="closeSidebar()">Preguntas frecuentes</a>
+      </li>
+      @if (isAuthenticated()) {
+      <li class="border-b border-white/7">
+        <a routerLink="/marketplace"
+          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+          (click)="closeSidebar()">Marketplace</a>
+      </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="p-5 border-t border-white/7 flex flex-col gap-3">
+    @if (!isAuthenticated()) {
+    <a routerLink="/auth/register"
+      class="block p-3 bg-[#20a038] text-white no-underline rounded-lg text-[14px] font-semibold text-center transition-colors duration-200 hover:bg-[#178030]"
+      (click)="closeSidebar()">Regístrate gratis</a>
+    <a routerLink="/auth/login"
+      class="block text-[13px] text-[#7a9670] no-underline text-center transition-colors duration-200 hover:text-[#c8dabb]"
+      (click)="closeSidebar()">Ya tengo cuenta → Ingresar</a>
+    }
+  </div>
+</aside>
+
+<!-- ── Navbar ── -->
+<header class="fixed top-0 left-0 right-0 z-40 font-sans transition-all duration-300 ease-in-out"
+  [class]="isDark() ? 'bg-[#0d1a0d] border-b border-[#1e301e] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'bg-white border-b border-[#e4e4d4] shadow-[0_1px_4px_rgba(0,0,0,0.06)]'">
+  <div
+    class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 h-[60px] sm:h-[64px] lg:h-[68px] flex items-center gap-[10px]">
+
+    <!-- Logo -->
+    <a routerLink="/customer/home" class="flex items-center shrink-0 no-underline" aria-label="Zona Green — Inicio">
+      <img src="/images/logo-zona-green.svg" alt="Zona Green" class="h-[34px] sm:h-[38px] w-auto object-contain block"
+        [class.hidden]="isDark()" [class.block]="!isDark()">
+      <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[34px] sm:h-[38px] w-auto object-contain"
+        [class.block]="isDark()" [class.hidden]="!isDark()">
+    </a>
+
+    <div class="flex-grow"></div>
+
+    <!-- Auth: no autenticado → botón con dropdown -->
+    @if (!isAuthenticated()) {
+    <div class="relative shrink-0">
+      <button
+        class="inline-flex items-center gap-1 sm:gap-1.5 py-1.5 px-3 sm:py-2 sm:px-[13px] bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg text-[11.5px] sm:text-[13px] font-semibold font-inherit cursor-pointer transition-colors duration-200 whitespace-nowrap"
+        (click)="toggleAuthDrop()" [attr.aria-expanded]="authDropOpen()" aria-haspopup="true">
+        <span class="inline sm:hidden">Ingresar</span>
+        <span class="hidden sm:inline">Regístrate o Ingresa</span>
+        <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 transition-transform duration-200"
+          [class.rotate-180]="authDropOpen()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      @if (authDropOpen()) {
+      <div
+        class="absolute top-[calc(100%+6px)] right-0 min-w-[210px] rounded-xl shadow-lg border overflow-hidden z-50 animate-[drop-in_0.15s_ease]"
+        [class]="isDark() ? 'bg-[#162916] border-[#243424] shadow-[0_8px_24px_rgba(0,0,0,0.4)]' : 'bg-white border-[#e4e4d4] shadow-[0_8px_24px_rgba(0,0,0,0.1)]'"
+        role="menu">
+        <a routerLink="/auth/register"
+          class="flex items-center gap-3 p-[13px_16px] text-[14px] no-underline transition-colors duration-150 border-b border-solid last:border-b-0"
+          [class]="isDark() ? 'text-[#d8e8cc] border-b-[#243424] hover:bg-[#20a038]/12' : 'text-[#1d1d1b] border-b-[#f0f0e8] hover:bg-[#20a038]/7'"
+          role="menuitem" (click)="closeAuthDrop()">
+          <div class="w-8 h-8 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] shrink-0"
+            aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <line x1="19" y1="8" x2="19" y2="14" />
+              <line x1="22" y1="11" x2="16" y2="11" />
+            </svg>
+          </div>
+          <div class="nav-auth-option-label">
+            <strong class="block text-[13.5px] font-semibold">Regístrate</strong>
+            <span class="block text-[11.5px] mt-[1px]" [class]="isDark() ? 'text-[#5a7a54]' : 'text-[#888880]'">Crea tu
+              cuenta gratis</span>
+          </div>
+        </a>
+        <a routerLink="/auth/login"
+          class="flex items-center gap-3 p-[13px_16px] text-[14px] no-underline transition-colors duration-150 border-b border-solid last:border-b-0"
+          [class]="isDark() ? 'text-[#d8e8cc] border-b-[#243424] hover:bg-[#20a038]/12' : 'text-[#1d1d1b] border-b-[#f0f0e8] hover:bg-[#20a038]/7'"
+          role="menuitem" (click)="closeAuthDrop()">
+          <div class="w-8 h-8 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] shrink-0"
+            aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+          </div>
+          <div class="nav-auth-option-label">
+            <strong class="block text-[13.5px] font-semibold">Ingresar</strong>
+            <span class="block text-[11.5px] mt-[1px]" [class]="isDark() ? 'text-[#5a7a54]' : 'text-[#888880]'">Ya tengo
+              una cuenta</span>
+          </div>
+        </a>
       </div>
-    </ng-template>
-  </p-menubar>
-</div>
+      }
+    </div>
+    }
+
+    <!-- Auth: autenticado → menú de perfil -->
+    @if (isAuthenticated()) {
+    <div class="shrink-0">
+      <app-profile-menu />
+    </div>
+    }
+
+    <!-- Dark / Light toggle -->
+    <button
+      class="flex items-center gap-[5px] bg-none border-none cursor-pointer p-[5px] rounded-full shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10"
+      (click)="toggleDark()" [attr.aria-label]="isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+      <svg class="w-[15px] h-[15px] block shrink-0" [class]="isDark() ? 'text-[#9ab890]' : 'text-[#5a5a52]'"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="5" />
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </svg>
+      <span class="w-[38px] h-[21px] rounded-[11px] relative transition-colors duration-300 shrink-0 block"
+        [class]="isDark() ? 'bg-[#20a038]' : 'bg-[#d4d4c4]'">
+        <span
+          class="absolute top-[3px] w-[15px] h-[15px] bg-white rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.22)] transition-all duration-300 block"
+          [class]="isDark() ? 'left-[20px]' : 'left-[3px]'"></span>
+      </span>
+      <svg class="w-[15px] h-[15px] block shrink-0" [class]="isDark() ? 'text-[#9ab890]' : 'text-[#5a5a52]'"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </svg>
+    </button>
+
+    <!-- Hamburguesa -->
+    <button
+      class="w-10 h-10 flex flex-col items-center justify-center gap-[5px] cursor-pointer rounded-lg bg-none border-none p-0 shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10"
+      [class.hover:bg-white/7]="isDark()" (click)="openSidebar()" aria-label="Abrir menú">
+      <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+      <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+      <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+    </button>
+
+  </div>
+</header>

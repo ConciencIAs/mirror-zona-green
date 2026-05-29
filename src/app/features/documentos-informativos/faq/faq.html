@@ -1,0 +1,285 @@
+<div class="min-h-screen bg-[#f5f5f0] text-[#1d1d1b] dark:bg-[#0d1a0d] dark:text-[#d8e8cc] font-sans pb-16 transition-colors duration-200">
+
+  <!-- ── Hero ── -->
+  <header class="relative bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] text-[#e0ead4] py-16 overflow-hidden">
+    <!-- Decorative elements -->
+    <div class="absolute w-[480px] h-[480px] border-[60px] border-solid border-[#20a038]/18 rounded-full -top-40 -right-40 pointer-events-none z-0"></div>
+    <div class="absolute top-6 right-9 w-[120px] h-[120px] bg-[radial-gradient(circle,rgba(200,218,187,0.5)_1.5px,transparent_1.5px)] bg-[size:14px_14px] pointer-events-none z-0"></div>
+
+    <div class="relative max-w-[1200px] mx-auto px-6 z-10">
+      <div class="flex items-center gap-2 mb-6 text-[13px]" aria-label="Ruta de navegación">
+        <a routerLink="/customer/home" class="text-[#7a9670] hover:text-[#c8dabb] no-underline transition-colors duration-200">Inicio</a>
+        <span class="text-[#3a5a3a]" aria-hidden="true">›</span>
+        <span class="text-[#9ab890]">Preguntas frecuentes</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">Preguntas frecuentes</h1>
+      <p class="text-sm sm:text-base text-[#9ab890] max-w-[600px] leading-relaxed">Todo lo que necesitas saber sobre cannabis medicinal y la plataforma Zona Green.</p>
+    </div>
+  </header>
+
+  <!-- ── Cuerpo ── -->
+  <div class="max-w-[1200px] mx-auto px-6 py-10 lg:py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-10 items-start">
+
+      <!-- Navegación de categorías -->
+      <nav class="flex flex-wrap lg:flex-col gap-2.5" aria-label="Categorías de preguntas">
+        <a href="#general"     class="block py-2.5 px-4 bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-lg text-sm text-[#5a7a54] dark:text-[#7a9670] hover:bg-[#20a038]/7 dark:hover:bg-[#20a038]/12 hover:border-[#20a038]/30 transition-all duration-200 no-underline font-medium">General</a>
+        <a href="#acceso"      class="block py-2.5 px-4 bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-lg text-sm text-[#5a7a54] dark:text-[#7a9670] hover:bg-[#20a038]/7 dark:hover:bg-[#20a038]/12 hover:border-[#20a038]/30 transition-all duration-200 no-underline font-medium">Acceso y registro</a>
+        <a href="#medicos"     class="block py-2.5 px-4 bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-lg text-sm text-[#5a7a54] dark:text-[#7a9670] hover:bg-[#20a038]/7 dark:hover:bg-[#20a038]/12 hover:border-[#20a038]/30 transition-all duration-200 no-underline font-medium">Médicos y prescripción</a>
+        <a href="#productos"   class="block py-2.5 px-4 bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-lg text-sm text-[#5a7a54] dark:text-[#7a9670] hover:bg-[#20a038]/7 dark:hover:bg-[#20a038]/12 hover:border-[#20a038]/30 transition-all duration-200 no-underline font-medium">Productos y uso</a>
+        <a href="#legal"       class="block py-2.5 px-4 bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-lg text-sm text-[#5a7a54] dark:text-[#7a9670] hover:bg-[#20a038]/7 dark:hover:bg-[#20a038]/12 hover:border-[#20a038]/30 transition-all duration-200 no-underline font-medium">Legal y privacidad</a>
+        <a href="#plataforma"  class="block py-2.5 px-4 bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-lg text-sm text-[#5a7a54] dark:text-[#7a9670] hover:bg-[#20a038]/7 dark:hover:bg-[#20a038]/12 hover:border-[#20a038]/30 transition-all duration-200 no-underline font-medium">Plataforma</a>
+      </nav>
+
+      <!-- Preguntas -->
+      <main class="space-y-12">
+
+        <!-- General -->
+        <section id="general" class="space-y-6">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038]">General</h2>
+
+          <p-accordion [multiple]="true">
+            <p-accordion-panel value="g1" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Qué es el cannabis medicinal?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">El cannabis medicinal hace referencia al uso de la planta Cannabis sativa y sus derivados (cannabinoides como THC y CBD) con fines terapéuticos, bajo prescripción médica y en el marco de un sistema regulado.</p>
+                <p class="m-0">En Colombia, este uso está autorizado desde la Ley 1787 de 2016 y sus decretos reglamentarios. El cannabis medicinal se diferencia del uso recreativo por requerir diagnóstico médico, prescripción, dispensación en establecimientos autorizados y seguimiento clínico.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="g2" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Para qué condiciones médicas se prescribe cannabis?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">La evidencia científica respaldada por la OMS y múltiples revisiones sistemáticas reconoce el uso medicinal del cannabis para condiciones como:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li>Dolor crónico neuropático y oncológico</li>
+                  <li>Epilepsia refractaria (especialmente con CBD)</li>
+                  <li>Esclerosis múltiple y espasticidad</li>
+                  <li>Náuseas y vómitos por quimioterapia</li>
+                  <li>Caquexia y pérdida de apetito en VIH/SIDA</li>
+                  <li>Ansiedad, insomnio y PTSD (con evidencia moderada)</li>
+                  <li>Fibromialgia (con evidencia emergente)</li>
+                </ul>
+                <p class="m-0">Solo un médico habilitado puede determinar si el cannabis es apropiado para tu condición específica.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="g3" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿El cannabis medicinal produce dependencia?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">El riesgo de dependencia al cannabis es real pero relativamente bajo comparado con otras sustancias. Aproximadamente el 9% de usuarios habituales desarrollan algún grado de dependencia.</p>
+                <p class="m-0">Bajo supervisión médica con dosis controladas, el riesgo se reduce significativamente. Las formulaciones con alta proporción de CBD y bajo THC tienen menor potencial adictivo. El médico tratante monitorea signos de dependencia durante el seguimiento.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="g4" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Cuál es la diferencia entre THC y CBD?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3"><strong>THC (tetrahidrocannabinol)</strong> es el principal cannabinoide psicoactivo del cannabis. Es responsable del efecto euforizante pero también tiene propiedades analgésicas, antiemáticas y estimulantes del apetito. Está sujeto a mayor regulación.</p>
+                <p class="mb-3"><strong>CBD (cannabidiol)</strong> es no psicoactivo. Tiene propiedades antiinflamatorias, ansiolíticas, antiepilépticas y neuroprotectoras, sin producir el "efecto high". Es el cannabinoide más estudiado en contextos clínicos controlados.</p>
+                <p class="m-0">La mayoría de formulaciones medicinales combinan ambos en diferentes proporciones según la condición a tratar.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+
+        <!-- Acceso y registro -->
+        <section id="acceso" class="space-y-6">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038]">Acceso y registro</h2>
+
+          <p-accordion [multiple]="true">
+            <p-accordion-panel value="a1" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Quién puede registrarse en Zona Green?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Pueden registrarse personas mayores de 18 años residentes en Colombia que tengan interés en acceder a información o servicios relacionados con cannabis medicinal bajo supervisión médica.</p>
+                <p class="m-0">El acceso a la plataforma completa requiere verificación de edad y, según el tipo de servicio, puede requerir documentación adicional. No se admiten menores de edad bajo ninguna circunstancia.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="a2" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Cómo funciona la verificación de edad?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Al ingresar a la plataforma por primera vez, se solicita confirmación de mayoría de edad. Durante el registro, se verifica la fecha de nacimiento con el número de documento de identidad.</p>
+                <p class="m-0">Esta verificación cumple con los requisitos establecidos por el marco regulatorio colombiano y las políticas de protección de menores de Zona Green.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="a3" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Es gratuito el uso de la plataforma?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="m-0">El registro y el acceso a contenido educativo son gratuitos. El acceso a servicios específicos como conexión con médicos especialistas, teleconsulta o dispensación puede tener costos asociados que se informan de manera transparente antes de cada transacción.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+
+        <!-- Médicos y prescripción -->
+        <section id="medicos" class="space-y-6">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038]">Médicos y prescripción</h2>
+
+          <p-accordion [multiple]="true">
+            <p-accordion-panel value="m1" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Cualquier médico puede prescribir cannabis medicinal?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">En Colombia, cualquier médico legalmente habilitado puede prescribir cannabis medicinal. Sin embargo, los médicos especializados en el área (medicina del dolor, neurología, oncología, medicina integrativa) tienen mayor formación para identificar candidatos apropiados y diseñar protocolos de tratamiento.</p>
+                <p class="m-0">Zona Green conecta con médicos que han completado formación específica en cannabis medicinal y están registrados ante el sistema de salud.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="m2" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Qué pasa si mi EPS no cubre el tratamiento?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">La Sentencia SU-226 de 2024 de la Corte Constitucional obligó a las EPS a cubrir tratamientos de cannabis medicinal cuando existan prescripción médica y evidencia de eficacia terapéutica para la condición del paciente.</p>
+                <p class="m-0">Si tu EPS niega la cobertura, puedes instaurar una acción de tutela invocando el derecho a la salud (Art. 49 Constitución) y la Sentencia SU-226/2024. Te recomendamos consultar con un abogado o con las organizaciones de pacientes.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="m3" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Con qué frecuencia debo consultar al médico?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">La frecuencia de consultas depende de la condición, la fase del tratamiento y la respuesta individual. Generalmente:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li><strong>Fase de titulación:</strong> cada 2–4 semanas para ajustar dosis</li>
+                  <li><strong>Fase de mantenimiento:</strong> cada 1–3 meses</li>
+                  <li><strong>Condiciones crónicas estables:</strong> cada 3–6 meses</li>
+                </ul>
+                <p class="m-0">El médico define el protocolo de seguimiento según tu caso específico.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+
+        <!-- Productos y uso -->
+        <section id="productos" class="space-y-6">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038]">Productos y uso</h2>
+
+          <p-accordion [multiple]="true">
+            <p-accordion-panel value="p1" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Qué formas de presentación existen?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Los derivados de cannabis medicinal disponibles en Colombia incluyen:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li><strong>Aceites y tinturas:</strong> administración sublingual, inicio de efecto 15–45 min</li>
+                  <li><strong>Cápsulas y geles blandos:</strong> vía oral, inicio 60–120 min, efecto prolongado</li>
+                  <li><strong>Flores vaporizadas:</strong> inicio rápido 5–10 min, duración 2–3 horas</li>
+                  <li><strong>Preparaciones tópicas:</strong> cremas y ungüentos para aplicación local</li>
+                  <li><strong>Preparaciones magistrales:</strong> formuladas por farmacias autorizadas según prescripción individual</li>
+                </ul>
+                <p class="m-0">La vía de administración se elige según la condición, el perfil de riesgo y las preferencias del paciente, siempre bajo criterio médico.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="p2" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Puedo conducir si estoy en tratamiento con cannabis?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3"><strong>No se recomienda conducir durante el efecto agudo del THC.</strong> El THC altera la percepción, el tiempo de reacción y la coordinación motora, lo que aumenta el riesgo de accidentes.</p>
+                <p class="m-0">Para formulaciones con CBD puro y sin THC significativo el impacto es mínimo, pero consulta siempre con tu médico. En Colombia, las pruebas de alcoholemia pueden incluir detección de cannabis; el resultado puede ser positivo durante horas o días después del último uso.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="p3" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿El cannabis medicinal interactúa con otros medicamentos?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Sí. El cannabis puede interactuar con múltiples medicamentos a través del sistema enzimático CYP450. Las interacciones más relevantes se dan con:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li>Anticoagulantes (warfarina, acenocumarol)</li>
+                  <li>Antidepresivos (especialmente ISRS e IMAO)</li>
+                  <li>Ansiolíticos y sedantes (benzodiazepinas)</li>
+                  <li>Antiepilépticos (valproato, fenitoína)</li>
+                  <li>Inmunosupresores (tacrolimus, ciclosporina)</li>
+                </ul>
+                <p class="m-0">Informa a tu médico de <strong>todos</strong> los medicamentos, suplementos y hierbas que consumes antes de iniciar un tratamiento con cannabis.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+
+        <!-- Legal y privacidad -->
+        <section id="legal" class="space-y-6">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038]">Legal y privacidad</h2>
+
+          <p-accordion [multiple]="true">
+            <p-accordion-panel value="l1" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Es legal el cannabis medicinal en Colombia?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Sí. El cannabis medicinal es plenamente legal en Colombia bajo el marco de la <strong>Ley 1787 de 2016</strong> y sus decretos reglamentarios (Decreto 613/2017, Decreto 811/2021, entre otros).</p>
+                <p class="m-0">La cadena completa desde el cultivo hasta la dispensación está regulada y supervisada por el Ministerio de Salud y el INVIMA. El acceso requiere prescripción médica y dispensación en establecimientos autorizados.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="l2" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Cómo protege Zona Green mis datos de salud?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Los datos de salud son datos sensibles bajo la Ley 1581 de 2012. Zona Green aplica:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li>Cifrado en tránsito (TLS 1.3) y en reposo (AES-256)</li>
+                  <li>Acceso controlado: solo el médico tratante y el paciente acceden a la historia clínica</li>
+                  <li>Consentimiento explícito antes de cualquier tratamiento de datos</li>
+                  <li>Derecho a supresión: puedes solicitar la eliminación de tus datos en cualquier momento</li>
+                  <li>Nunca se venden datos de salud a terceros</li>
+                </ul>
+                <p class="m-0">Consulta nuestra <a routerLink="/terminos-y-condiciones" class="text-[#20a038] hover:underline font-semibold">Política de privacidad completa</a> para más detalles.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="l3" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Puedo portar mi medicamento de cannabis en Colombia?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Sí, siempre que cuentes con la prescripción médica vigente y el medicamento haya sido dispensado en un establecimiento autorizado. Se recomienda:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li>Portar la fórmula médica original o copia vigente</li>
+                  <li>Mantener el medicamento en su empaque original con etiqueta del dispensador</li>
+                  <li>Llevar el carnet del paciente si tu médico lo emitió</li>
+                </ul>
+                <p class="m-0">Para viajes internacionales, el cannabis medicinal <strong>no puede trasladarse entre países</strong> sin autorización específica de las autoridades sanitarias de cada país.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+
+        <!-- Plataforma -->
+        <section id="plataforma" class="space-y-6">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038]">Plataforma</h2>
+
+          <p-accordion [multiple]="true">
+            <p-accordion-panel value="pl1" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Zona Green vende cannabis directamente?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">No. Zona Green es una plataforma tecnológica de información y conexión. No cultiva, produce, transforma ni vende cannabis ni sus derivados.</p>
+                <p class="m-0">Facilitamos la conexión entre pacientes y actores autorizados del sector (médicos habilitados, dispensadores con licencia), pero la dispensación ocurre en establecimientos regulados y autorizados por el INVIMA, no en la plataforma.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="pl2" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿Cómo puedo reportar un problema técnico?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Puedes reportar problemas técnicos por los siguientes canales:</p>
+                <ul class="list-disc pl-5 mb-3 space-y-1">
+                  <li>Correo: <a href="mailto:hola@zonagreen.co" class="text-[#20a038] hover:underline font-semibold">hola@zonagreen.co</a></li>
+                  <li>WhatsApp: <a href="https://wa.me/573001234567" class="text-[#20a038] hover:underline font-semibold" target="_blank" rel="noopener">+57 300 123 4567</a></li>
+                </ul>
+                <p class="m-0">Nuestro equipo responde en horario de lunes a viernes de 8 a.m. a 6 p.m. (hora Colombia).</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+
+            <p-accordion-panel value="pl3" class="border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-xl overflow-hidden mb-3 bg-white dark:bg-[#162916] shadow-sm">
+              <p-accordion-header class="w-full text-left py-4 px-5 text-sm sm:text-base font-semibold text-[#1d1d1b] dark:text-[#e0ead4] hover:bg-[#20a038]/5 dark:hover:bg-[#20a038]/8 flex justify-between items-center transition-colors">¿La plataforma está disponible en todo Colombia?</p-accordion-header>
+              <p-accordion-content class="p-5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed border-t border-solid border-[#e8e8dc] dark:border-[#243424]">
+                <p class="mb-3">Sí. El contenido informativo y el registro están disponibles para cualquier usuario en Colombia con acceso a internet.</p>
+                <p class="m-0">Los servicios de conexión con médicos están disponibles mediante teleconsulta en todo el país. La disponibilidad de dispensadores físicos varía por ciudad; la cobertura está en expansión.</p>
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+
+        <!-- CTA -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-white dark:bg-[#162916] border border-solid border-[#e8e8dc] dark:border-[#243424] rounded-2xl shadow-sm">
+          <p class="text-sm sm:text-base text-[#5a7a54] dark:text-[#7a9670] m-0 font-medium text-center sm:text-left">¿No encontraste la respuesta que buscabas?</p>
+          <a href="mailto:hola@zonagreen.co" class="inline-block py-2.5 px-6 bg-[#20a038] hover:bg-[#178030] text-white font-semibold rounded-xl transition-colors duration-200 no-underline shadow-md">Contáctanos</a>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+</div>
