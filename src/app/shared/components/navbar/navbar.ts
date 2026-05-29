@@ -11,7 +11,7 @@ import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-men
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ButtonModule } from 'primeng/button';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
-import { CartService } from '@src/app/core/services/cart.service';
+import { CartStore } from '@src/app/core/state/card/card.state';
 
 @Component({
   selector: 'app-navbar',
@@ -21,12 +21,12 @@ import { CartService } from '@src/app/core/services/cart.service';
 })
 export class Navbar implements OnInit {
   private readonly supabaseAuthService = inject(SupabaseAuthService);
-  private readonly cartService = inject(CartService);
+  private readonly cartStore = inject(CartStore);
 
   items: MenuItem[] | undefined;
 
   isAuthenticated = this.supabaseAuthService.isAuthenticated()
-  totalCartItems = this.cartService.totalItems()
+  totalCartItems = this.cartStore.totalItems()
 
   ngOnInit(): void {
     this.loadNavigationItems();

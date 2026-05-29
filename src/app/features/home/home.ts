@@ -1,14 +1,13 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { Navbar } from '@src/app/shared/components/navbar/navbar';
 
 import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
 
-import { ConfirmationModalService } from '@src/app/core/services/confirmation.service';
+import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  imports: [Navbar, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './home.html',
   styles: ``,
 })

@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { ToastService } from '@src/app/core/services/toast.service';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
 import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
 import { PENDING_DATA_KEY } from '@src/app/core/models/constans/localstate/storage';

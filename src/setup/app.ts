@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { LocalStorageStateService } from '@src/app/core/services//local-storage-state.service';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
 
 @Component({
   selector: 'app-root',
@@ -20,11 +21,15 @@ export class App implements OnInit {
   private readonly supabaseAuthService = inject(SupabaseAuthService);
   private readonly supabaseDbService = inject(SupabaseDbService);
   private readonly LocalStorageStateService = inject(LocalStorageStateService);
+  private readonly UserStore = inject(UserStore);
 
   ngOnInit(): void {
     this.supabaseAuthService.onAuthStateChange();
-    this.supabaseAuthService.currentUserEvent.pipe(distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event)).subscribe((event) => {
-      this.LocalStorageStateService.setState('zg-customer', event.session)
+    this.supabaseAuthService.currentUserEvent.pipe(
+      distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event)
+    ).subscribe(async (event) => {
+      const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.PERFILES).select('*').eq('id', event.session?.user.id).single();
+      if (!error) this.UserStore.setPerfil(data);
     });
     this.getRoles();
   }

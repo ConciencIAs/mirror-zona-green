@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { ToastService } from '@src/app/core/services/toast.service';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
 import {
   PENDING_DATA_KEY,
@@ -29,7 +29,6 @@ export class MagikLinkCallback implements OnInit {
 
   private escucharCambiosDeSesion(): void {
     this.authService.auth.onAuthStateChange(async (event, session) => {
-      this.localStorageState.setState(CURRENT_SESSION_KEY, session);
 
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
         await this.procesarOnboardingPendiente(session.user.id);
