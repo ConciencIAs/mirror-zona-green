@@ -48,7 +48,7 @@ export const routes: Routes = [
       {
         path: 'terminos-y-condiciones',
         title: 'Términos y condiciones',
-        loadComponent: () => import('@src/app/features/terminos/terminos').then((m) => m.Terminos),
+        loadComponent: () => import('@src/app/features/documentos-informativos/terminos/terminos').then((m) => m.Terminos),
       },
       ...routerAuthCustomer,
       ...marketplaceRoutes,
