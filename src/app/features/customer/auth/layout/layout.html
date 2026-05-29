@@ -1,66 +1,87 @@
-<div class="zg-app">
-
-  <!-- ── Controls (hidden) ── -->
-  <input type="checkbox" id="zg-dark-auth" class="zg-ctrl">
-  <input type="checkbox" id="zg-menu-auth" class="zg-ctrl">
+<div class="min-h-screen bg-[#f5f5f0] text-[#1d1d1b] dark:bg-[#0d1a0d] dark:text-[#d8e8cc] font-sans overflow-x-hidden">
 
   <!-- ── Overlay ── -->
-  <label class="zg-overlay" for="zg-menu-auth" aria-hidden="true"></label>
+  @if (sidebarOpen()) {
+  <div class="fixed inset-0 bg-black/48 backdrop-blur-[3px] z-40 cursor-pointer" (click)="closeSidebar()"
+    aria-hidden="true"></div>
+  }
 
   <!-- ══════════════════════════════════════════
        SIDEBAR
   ══════════════════════════════════════════ -->
-  <aside class="zg-sidebar" aria-label="Menú principal">
+  <aside
+    class="fixed inset-y-0 left-0 w-[min(300px,85vw)] bg-[#0f1f0f] text-[#e0ead4] z-50 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-y-auto"
+    [class.-translate-x-full]="!sidebarOpen()" [class.translate-x-0]="sidebarOpen()" aria-label="Menú principal">
 
-    <div class="sidebar-head">
-      <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="sidebar-logo">
-      <label for="zg-menu-auth" class="sidebar-close" aria-label="Cerrar menú">
-        <span class="x-bar"></span>
-        <span class="x-bar"></span>
-      </label>
+    <div class="flex items-center justify-between p-[18px_16px_18px_20px] border-b border-white/7 shrink-0">
+      <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[38px] w-auto object-contain">
+      <button
+        class="w-9 h-9 flex items-center justify-center cursor-pointer rounded-lg relative shrink-0 transition-colors duration-200 hover:bg-white/7 border-none bg-none"
+        (click)="closeSidebar()" aria-label="Cerrar menú">
+        <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute rotate-45"></span>
+        <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute -rotate-45"></span>
+      </button>
     </div>
 
-    <nav class="sidebar-nav">
-      <ul class="nav-list">
+    <nav class="py-2 flex-grow">
+      <ul class="list-none m-0 p-0">
 
-        <li class="nav-item">
-          <a routerLink="/customer/home" class="nav-link">Inicio</a>
+        <li class="border-b border-white/7">
+          <a routerLink="/customer/home"
+            class="flex items-center justify-between py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+            (click)="closeSidebar()">Inicio</a>
         </li>
 
-        <li class="nav-item has-sub">
-          <input type="checkbox" id="sub-cannabis-auth" class="zg-ctrl sub-ctrl">
-          <label for="sub-cannabis-auth" class="nav-link nav-parent">
+        <li class="border-b border-white/7">
+          <button (click)="toggleSubmenu()"
+            class="w-full text-left flex items-center justify-between py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white border-none bg-none cursor-pointer gap-3">
             <span>Cannabis medicinal en Colombia</span>
-            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg class="w-4 h-4 shrink-0 transition-transform duration-200" [class.rotate-90]="submenuOpen()"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
-          </label>
-          <div class="subnav">
-            <a href="#" class="btn-subnav-outline">Más información</a>
-            <ul class="sub-list">
-              <li><a href="#">Legislación</a></li>
-              <li><a href="#">Trazabilidad y Tecnología</a></li>
+          </button>
+          <div class="overflow-hidden transition-all duration-300 ease-in-out bg-black/20"
+            [class.max-h-0]="!submenuOpen()" [class.max-h-[220px]]="submenuOpen()">
+            <a routerLink="/cannabismedicinalencolombia"
+              class="inline-block m-[12px_20px_8px] py-1.5 px-[18px] border-[1.5px] border-solid border-[#20a038] rounded-[20px] color-[#20a038] text-[12px] font-semibold no-underline transition-colors duration-200 hover:bg-[#20a038]/15"
+              (click)="closeSidebar()">Más información</a>
+            <ul class="list-none m-0 p-[0_20px_12px]">
+              <li><a routerLink="/cannabismedicinalencolombia" fragment="legislacion"
+                  class="block py-2.2 text-white/75 text-[13px] no-underline transition-colors duration-200 border-t border-solid border-white/7 hover:text-[#20a038]"
+                  (click)="closeSidebar()">Legislación</a></li>
+              <li><a routerLink="/cannabismedicinalencolombia" fragment="trazabilidad"
+                  class="block py-2.2 text-white/75 text-[13px] no-underline transition-colors duration-200 border-t border-solid border-white/7 hover:text-[#20a038]"
+                  (click)="closeSidebar()">Trazabilidad y Tecnología</a></li>
             </ul>
           </div>
         </li>
 
-        <li class="nav-item">
-          <div class="nav-link nav-disabled">
+        <li class="border-b border-white/7">
+          <div
+            class="flex items-center justify-between py-[15px] px-5 text-white/65 cursor-default opacity-65 flex-wrap gap-2 text-[14px]">
             <span>Médicos especialistas en cannabis</span>
-            <span class="badge-soon">Próximamente</span>
+            <span
+              class="inline-block py-[3px] px-2.5 bg-[#20a038]/15 border border-solid border-[#20a038]/30 rounded-[20px] text-[10px] font-semibold text-[#20a038] tracking-[0.3px] uppercase">Próximamente</span>
           </div>
         </li>
 
-        <li class="nav-item">
-          <a routerLink="/marketplace" class="nav-link">Selección informada — Marketplace</a>
+        <li class="border-b border-white/7">
+          <a routerLink="/marketplace"
+            class="flex items-center justify-between py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+            (click)="closeSidebar()">Selección informada — Marketplace</a>
         </li>
 
-        <li class="nav-item">
-          <a href="#" class="nav-link">Reducción de Riesgos y Daños</a>
+        <li class="border-b border-white/7">
+          <a routerLink="/rrd"
+            class="flex items-center justify-between py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+            (click)="closeSidebar()">Reducción de Riesgos y Daños</a>
         </li>
 
-        <li class="nav-item">
-          <a href="#" class="nav-link">Preguntas frecuentes</a>
+        <li class="border-b border-white/7">
+          <a routerLink="/faq"
+            class="flex items-center justify-between py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
+            (click)="closeSidebar()">Preguntas frecuentes</a>
         </li>
 
       </ul>
@@ -71,17 +92,27 @@
   <!-- ══════════════════════════════════════════
        PAGE
   ══════════════════════════════════════════ -->
-  <div class="zg-page">
+  <div class="min-h-screen bg-[#f5f5f0] text-[#1d1d1b] transition-colors duration-200"
+    [class]="isDark() ? 'bg-[#0d1a0d] text-[#d8e8cc]' : 'bg-[#f5f5f0] text-[#1d1d1b]'">
 
-    <header class="zg-navbar">
+    <header
+      class="sticky top-0 z-40 flex items-center justify-start px-4 sm:px-6 lg:px-8 h-[60px] sm:h-[64px] lg:h-[68px] gap-3 transition-colors duration-250 border-b border-solid shadow-[0_1px_4px_rgba(0,0,0,0.07)]"
+      [class]="isDark() ? 'bg-[#0d1a0d] border-[#1e301e] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'bg-white border-[#e4e4d4]'">
 
-      <a routerLink="/customer/home" class="brand" aria-label="Ir al inicio">
-        <img src="images/logo-zona-green.svg" alt="Zona Green" class="brand-logo logo-light">
-        <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="brand-logo logo-dark">
+      <a routerLink="/customer/home" class="flex items-center no-underline" aria-label="Ir al inicio">
+        <img src="images/logo-zona-green.svg" alt="Zona Green" class="h-[34px] w-auto object-contain"
+          [class.hidden]="isDark()">
+        <img src="images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[34px] w-auto object-contain"
+          [class.hidden]="!isDark()">
       </a>
 
-      <label for="zg-dark-auth" class="dark-toggle" title="Cambiar tema" aria-label="Cambiar tema">
-        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- Toggle Dark mode -->
+      <button
+        class="flex items-center gap-[5px] cursor-pointer p-[5px] rounded-full transition-colors duration-200 shrink-0 hover:bg-[#20a038]/10 ml-auto border-none bg-none"
+        (click)="toggleDark()" [attr.aria-label]="isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <!-- Sun -->
+        <svg class="w-[15px] h-[15px] block shrink-0" [class]="isDark() ? 'text-[#9ab890]' : 'text-[#5a5a52]'"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -92,24 +123,35 @@
           <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
-        <span class="toggle-track"><span class="toggle-thumb"></span></span>
-        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <span class="w-[38px] h-[21px] rounded-[11px] relative transition-colors duration-300 shrink-0 block"
+          [class]="isDark() ? 'bg-[#20a038]' : 'bg-[#d4d4c4]'">
+          <span
+            class="absolute top-[3px] w-[15px] h-[15px] bg-white rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.22)] transition-all duration-300 block"
+            [class]="isDark() ? 'left-[20px]' : 'left-[3px]'"></span>
+        </span>
+        <!-- Moon -->
+        <svg class="w-[15px] h-[15px] block shrink-0" [class]="isDark() ? 'text-[#9ab890]' : 'text-[#5a5a52]'"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
-      </label>
+      </button>
 
-      <label for="zg-menu-auth" class="hamburger" aria-label="Abrir menú">
-        <span></span>
-        <span></span>
-        <span></span>
-      </label>
+      <!-- Hamburger -->
+      <button
+        class="w-10 h-10 flex flex-col items-center justify-center gap-[5px] cursor-pointer rounded-lg transition-colors duration-200 shrink-0 hover:bg-[#20a038]/10 border-none bg-none p-0"
+        (click)="openSidebar()" aria-label="Abrir menú">
+        <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+        <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+        <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+      </button>
 
     </header>
 
-    <main class="zg-content">
+    <main class="w-full">
       <router-outlet></router-outlet>
     </main>
 
   </div>
+
 
 </div>

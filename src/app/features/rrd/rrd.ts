@@ -5,6 +5,5 @@ import { RouterLink } from '@angular/router';
   selector: 'app-rrd',
   imports: [RouterLink],
   templateUrl: './rrd.html',
-  styleUrl: './rrd.css',
 })
 export class Rrd {}

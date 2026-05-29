@@ -2,83 +2,83 @@
 
 <!-- ── Overlay del sidebar ── -->
 @if (sidebarOpen()) {
-  <div class="nav-overlay" (click)="closeSidebar()" aria-hidden="true"></div>
+  <div class="fixed inset-0 bg-black/48 backdrop-blur-[3px] z-40 cursor-pointer" (click)="closeSidebar()" aria-hidden="true"></div>
 }
 
 <!-- ── Sidebar ── -->
-<aside class="nav-sidebar" [class.open]="sidebarOpen()" aria-label="Menú de navegación">
-  <div class="nav-sidebar-head">
-    <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="nav-sidebar-logo">
-    <button class="nav-sidebar-close" (click)="closeSidebar()" aria-label="Cerrar menú">
-      <span class="x-bar"></span>
-      <span class="x-bar"></span>
+<aside class="fixed inset-y-0 right-0 w-[min(300px,85vw)] bg-[#0f1f0f] text-[#e0ead4] z-50 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-y-auto" [class.translate-x-full]="!sidebarOpen()" [class.translate-x-0]="sidebarOpen()" aria-label="Menú de navegación">
+  <div class="flex items-center justify-between p-[18px_16px_18px_20px] border-b border-white/7 shrink-0">
+    <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[38px] w-auto object-contain">
+    <button class="w-9 h-9 flex items-center justify-center cursor-pointer rounded-lg bg-none border-none relative shrink-0 transition-colors duration-200 hover:bg-white/7" (click)="closeSidebar()" aria-label="Cerrar menú">
+      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute rotate-45"></span>
+      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute -rotate-45"></span>
     </button>
   </div>
 
-  <nav class="nav-sidebar-nav">
-    <ul class="nav-sidebar-list">
-      <li class="nav-sidebar-item">
-        <a routerLink="/customer/home" class="nav-sidebar-link" (click)="closeSidebar()">Inicio</a>
+  <nav class="py-2 flex-1">
+    <ul class="list-none m-0 p-0">
+      <li class="border-b border-white/7">
+        <a routerLink="/customer/home" class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white" (click)="closeSidebar()">Inicio</a>
       </li>
-      <li class="nav-sidebar-item">
-        <a routerLink="/cannabismedicinalencolombia" class="nav-sidebar-link" (click)="closeSidebar()">Cannabis medicinal en Colombia</a>
+      <li class="border-b border-white/7">
+        <a routerLink="/cannabismedicinalencolombia" class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white" (click)="closeSidebar()">Cannabis medicinal en Colombia</a>
       </li>
-      <li class="nav-sidebar-item">
-        <a routerLink="/medicoscannabiscolombia" class="nav-sidebar-link" (click)="closeSidebar()">Médicos especialistas</a>
+      <li class="border-b border-white/7">
+        <a routerLink="/medicoscannabiscolombia" class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white" (click)="closeSidebar()">Médicos especialistas</a>
       </li>
-      <li class="nav-sidebar-item">
-        <a routerLink="/rrd" class="nav-sidebar-link" (click)="closeSidebar()">Reducción de Riesgos y Daños</a>
+      <li class="border-b border-white/7">
+        <a routerLink="/rrd" class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white" (click)="closeSidebar()">Reducción de Riesgos y Daños</a>
       </li>
-      <li class="nav-sidebar-item">
-        <a routerLink="/faq" class="nav-sidebar-link" (click)="closeSidebar()">Preguntas frecuentes</a>
+      <li class="border-b border-white/7">
+        <a routerLink="/faq" class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white" (click)="closeSidebar()">Preguntas frecuentes</a>
       </li>
       @if (isAuthenticated()) {
-        <li class="nav-sidebar-item">
-          <a routerLink="/marketplace" class="nav-sidebar-link" (click)="closeSidebar()">Marketplace</a>
+        <li class="border-b border-white/7">
+          <a routerLink="/marketplace" class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white" (click)="closeSidebar()">Marketplace</a>
         </li>
       }
     </ul>
   </nav>
 
-  <div class="nav-sidebar-footer">
+  <div class="p-5 border-t border-white/7 flex flex-col gap-3">
     @if (!isAuthenticated()) {
-      <a routerLink="/auth/register" class="nav-sidebar-cta" (click)="closeSidebar()">Regístrate gratis</a>
-      <a routerLink="/auth/login" class="nav-sidebar-login" (click)="closeSidebar()">Ya tengo cuenta → Ingresar</a>
+      <a routerLink="/auth/register" class="block p-3 bg-[#20a038] text-white no-underline rounded-lg text-[14px] font-semibold text-center transition-colors duration-200 hover:bg-[#178030]" (click)="closeSidebar()">Regístrate gratis</a>
+      <a routerLink="/auth/login" class="block text-[13px] text-[#7a9670] no-underline text-center transition-colors duration-200 hover:text-[#c8dabb]" (click)="closeSidebar()">Ya tengo cuenta → Ingresar</a>
     }
   </div>
 </aside>
 
 <!-- ── Navbar ── -->
-<header class="zg-navbar" [class.dark]="isDark()">
-  <div class="nav-wrap">
+<header class="fixed top-0 left-0 right-0 z-40 font-sans transition-all duration-300 ease-in-out" [class]="isDark() ? 'bg-[#0d1a0d] border-b border-[#1e301e] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'bg-white border-b border-[#e4e4d4] shadow-[0_1px_4px_rgba(0,0,0,0.06)]'">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 h-[60px] sm:h-[64px] lg:h-[68px] flex items-center gap-[10px]">
 
     <!-- Logo -->
-    <a routerLink="/customer/home" class="nav-brand" aria-label="Zona Green — Inicio">
-      <img src="/images/logo-zona-green.svg"        alt="Zona Green" class="nav-logo nav-logo-light">
-      <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="nav-logo nav-logo-dark">
+    <a routerLink="/customer/home" class="flex items-center shrink-0 no-underline" aria-label="Zona Green — Inicio">
+      <img src="/images/logo-zona-green.svg" alt="Zona Green" class="h-[34px] sm:h-[38px] w-auto object-contain block" [class.hidden]="isDark()" [class.block]="!isDark()">
+      <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[34px] sm:h-[38px] w-auto object-contain" [class.block]="isDark()" [class.hidden]="!isDark()">
     </a>
 
-    <div class="nav-spacer"></div>
+    <div class="flex-grow"></div>
 
     <!-- Auth: no autenticado → botón con dropdown -->
     @if (!isAuthenticated()) {
-      <div class="nav-auth-wrap" [class.open]="authDropOpen()">
+      <div class="relative shrink-0">
         <button
-          class="nav-auth-btn"
+          class="inline-flex items-center gap-1 sm:gap-1.5 py-1.5 px-3 sm:py-2 sm:px-[13px] bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg text-[11.5px] sm:text-[13px] font-semibold font-inherit cursor-pointer transition-colors duration-200 whitespace-nowrap"
           (click)="toggleAuthDrop()"
           [attr.aria-expanded]="authDropOpen()"
           aria-haspopup="true">
-          <span class="nav-btn-short">Ingresar</span>
-          <span class="nav-btn-full">Regístrate o Ingresa</span>
-          <svg class="nav-auth-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <span class="inline sm:hidden">Ingresar</span>
+          <span class="hidden sm:inline">Regístrate o Ingresa</span>
+          <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 transition-transform duration-200" [class.rotate-180]="authDropOpen()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </button>
 
         @if (authDropOpen()) {
-          <div class="nav-auth-drop" role="menu">
-            <a routerLink="/auth/register" class="nav-auth-option" role="menuitem" (click)="closeAuthDrop()">
-              <div class="nav-auth-option-icon" aria-hidden="true">
+          <div class="absolute top-[calc(100%+6px)] right-0 min-w-[210px] rounded-xl shadow-lg border overflow-hidden z-50 animate-[drop-in_0.15s_ease]" [class]="isDark() ? 'bg-[#162916] border-[#243424] shadow-[0_8px_24px_rgba(0,0,0,0.4)]' : 'bg-white border-[#e4e4d4] shadow-[0_8px_24px_rgba(0,0,0,0.1)]'" role="menu">
+            <a routerLink="/auth/register" class="flex items-center gap-3 p-[13px_16px] text-[14px] no-underline transition-colors duration-150 border-b border-solid last:border-b-0" [class]="isDark() ? 'text-[#d8e8cc] border-b-[#243424] hover:bg-[#20a038]/12' : 'text-[#1d1d1b] border-b-[#f0f0e8] hover:bg-[#20a038]/7'" role="menuitem" (click)="closeAuthDrop()">
+              <div class="w-8 h-8 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] shrink-0" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                   <circle cx="9" cy="7" r="4"/>
@@ -87,12 +87,12 @@
                 </svg>
               </div>
               <div class="nav-auth-option-label">
-                <strong>Regístrate</strong>
-                <span>Crea tu cuenta gratis</span>
+                <strong class="block text-[13.5px] font-semibold">Regístrate</strong>
+                <span class="block text-[11.5px] mt-[1px]" [class]="isDark() ? 'text-[#5a7a54]' : 'text-[#888880]'">Crea tu cuenta gratis</span>
               </div>
             </a>
-            <a routerLink="/auth/login" class="nav-auth-option" role="menuitem" (click)="closeAuthDrop()">
-              <div class="nav-auth-option-icon" aria-hidden="true">
+            <a routerLink="/auth/login" class="flex items-center gap-3 p-[13px_16px] text-[14px] no-underline transition-colors duration-150 border-b border-solid last:border-b-0" [class]="isDark() ? 'text-[#d8e8cc] border-b-[#243424] hover:bg-[#20a038]/12' : 'text-[#1d1d1b] border-b-[#f0f0e8] hover:bg-[#20a038]/7'" role="menuitem" (click)="closeAuthDrop()">
+              <div class="w-8 h-8 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] shrink-0" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
                   <polyline points="10 17 15 12 10 7"/>
@@ -100,8 +100,8 @@
                 </svg>
               </div>
               <div class="nav-auth-option-label">
-                <strong>Ingresar</strong>
-                <span>Ya tengo una cuenta</span>
+                <strong class="block text-[13.5px] font-semibold">Ingresar</strong>
+                <span class="block text-[11.5px] mt-[1px]" [class]="isDark() ? 'text-[#5a7a54]' : 'text-[#888880]'">Ya tengo una cuenta</span>
               </div>
             </a>
           </div>
@@ -111,17 +111,17 @@
 
     <!-- Auth: autenticado → menú de perfil -->
     @if (isAuthenticated()) {
-      <div class="nav-profile-wrap">
+      <div class="shrink-0">
         <app-profile-menu />
       </div>
     }
 
     <!-- Dark / Light toggle -->
     <button
-      class="nav-dark-toggle"
+      class="flex items-center gap-[5px] bg-none border-none cursor-pointer p-[5px] rounded-full shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10"
       (click)="toggleDark()"
       [attr.aria-label]="isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
-      <svg class="nav-toggle-icon nav-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="w-[15px] h-[15px] block shrink-0" [class]="isDark() ? 'text-[#9ab890]' : 'text-[#5a5a52]'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="5"/>
         <line x1="12" y1="1"  x2="12" y2="3"/>
         <line x1="12" y1="21" x2="12" y2="23"/>
@@ -132,19 +132,19 @@
         <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
         <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
       </svg>
-      <span class="nav-toggle-track" [class.active]="isDark()">
-        <span class="nav-toggle-thumb"></span>
+      <span class="w-[38px] h-[21px] rounded-[11px] relative transition-colors duration-300 shrink-0 block" [class]="isDark() ? 'bg-[#20a038]' : 'bg-[#d4d4c4]'">
+        <span class="absolute top-[3px] w-[15px] h-[15px] bg-white rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.22)] transition-all duration-300 block" [class]="isDark() ? 'left-[20px]' : 'left-[3px]'"></span>
       </span>
-      <svg class="nav-toggle-icon nav-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="w-[15px] h-[15px] block shrink-0" [class]="isDark() ? 'text-[#9ab890]' : 'text-[#5a5a52]'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     </button>
 
     <!-- Hamburguesa -->
-    <button class="nav-hamburger" (click)="openSidebar()" aria-label="Abrir menú">
-      <span></span>
-      <span></span>
-      <span></span>
+    <button class="w-10 h-10 flex flex-col items-center justify-center gap-[5px] cursor-pointer rounded-lg bg-none border-none p-0 shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10" [class.hover:bg-white/7]="isDark()" (click)="openSidebar()" aria-label="Abrir menú">
+      <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+      <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
+      <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
     </button>
 
   </div>

@@ -6,7 +6,6 @@ import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-au
   selector: 'app-customer-home',
   imports: [RouterLink],
   templateUrl: './home.html',
-  styleUrl: './home.css',
 })
 export class CustomerHome {
   private readonly authService = inject(SupabaseAuthService);

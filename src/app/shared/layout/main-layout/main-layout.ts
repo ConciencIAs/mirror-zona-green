@@ -7,6 +7,5 @@ import { Navbar } from "@src/app/shared/components/navbar/navbar";
   selector: 'app-main-layout',
   imports: [RouterOutlet, Footer, Navbar],
   templateUrl: './main-layout.html',
-  styleUrl: './main-layout.css',
 })
 export class MainLayout { }

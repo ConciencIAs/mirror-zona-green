@@ -1,51 +1,56 @@
-<article class="cm-page">
+<article class="font-sans text-[#1d1d1b] bg-[#f5f5f0] dark:bg-[#0d1a0d] dark:text-[#d8e8cc] leading-relaxed pb-16 transition-colors duration-200">
 
   <!-- ── Hero ── -->
-  <header class="cm-hero">
-    <div class="cm-wrap">
-      <div class="cm-breadcrumb" aria-label="Ruta de navegación">
-        <a routerLink="/customer/home" class="cm-breadcrumb-link">Inicio</a>
-        <span class="cm-breadcrumb-sep" aria-hidden="true">›</span>
-        <span class="cm-breadcrumb-current">Cannabis medicinal en Colombia</span>
+  <header class="relative bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] text-[#e0ead4] py-12 sm:py-16 lg:py-20 overflow-hidden">
+    <!-- Decorative background elements -->
+    <div class="absolute w-[480px] h-[480px] border-[60px] border-solid border-[#20a038]/18 rounded-full -top-40 -right-40 pointer-events-none z-0"></div>
+    <div class="absolute top-6 right-9 w-[120px] h-[120px] bg-[radial-gradient(circle,rgba(200,218,187,0.5)_1.5px,transparent_1.5px)] bg-[size:14px_14px] pointer-events-none z-0"></div>
+
+    <div class="relative max-w-[1200px] mx-auto px-5 z-10">
+      <div class="flex items-center gap-2 mb-6 font-medium text-[13px]" aria-label="Ruta de navegación">
+        <a routerLink="/customer/home" class="text-[#7a9670] hover:text-[#c8dabb] no-underline transition-colors duration-200">Inicio</a>
+        <span class="text-[#3a5a3a]" aria-hidden="true">›</span>
+        <span class="text-[#9ab890]">Cannabis medicinal en Colombia</span>
       </div>
-      <h1 class="cm-hero-title">Cannabis medicinal<br class="cm-hero-br"> en Colombia</h1>
-      <p class="cm-hero-sub">
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">Cannabis medicinal<br class="hidden sm:inline"> en Colombia</h1>
+      <p class="text-sm sm:text-[17px] text-[#9ab890] max-w-[600px] leading-relaxed mb-6">
         Marco legal, regulatorio y tecnológico de la industria del cannabis medicinal en Colombia.
       </p>
-      <div class="cm-hero-tags">
-        <span class="cm-tag">Legislación</span>
-        <span class="cm-tag">Regulación</span>
-        <span class="cm-tag">Trazabilidad</span>
-        <span class="cm-tag">Tecnología</span>
+      <div class="flex flex-wrap gap-2">
+        <span class="inline-block py-1 px-3 bg-[#20a038]/18 border border-solid border-[#20a038]/35 rounded-[20px] text-[12px] font-semibold text-[#66c47a] tracking-[0.3px]">Legislación</span>
+        <span class="inline-block py-1 px-3 bg-[#20a038]/18 border border-solid border-[#20a038]/35 rounded-[20px] text-[12px] font-semibold text-[#66c47a] tracking-[0.3px]">Regulación</span>
+        <span class="inline-block py-1 px-3 bg-[#20a038]/18 border border-solid border-[#20a038]/35 rounded-[20px] text-[12px] font-semibold text-[#66c47a] tracking-[0.3px]">Trazabilidad</span>
+        <span class="inline-block py-1 px-3 bg-[#20a038]/18 border border-solid border-[#20a038]/35 rounded-[20px] text-[12px] font-semibold text-[#66c47a] tracking-[0.3px]">Tecnología</span>
       </div>
     </div>
   </header>
 
   <!-- ── Cuerpo ── -->
-  <div class="cm-body">
-    <div class="cm-wrap cm-layout">
+  <div class="py-8 sm:py-12 lg:py-16">
+    <div class="max-w-[1200px] mx-auto px-5 grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8 lg:gap-12 items-start">
 
       <!-- ── Índice lateral ── -->
-      <aside class="cm-toc" aria-label="Tabla de contenidos">
-        <div class="cm-toc-inner">
-          <p class="cm-toc-title">En esta página</p>
+      <aside class="hidden lg:block sticky top-20" aria-label="Tabla de contenidos">
+        <div class="bg-white border border-solid border-[#e0e0d4] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-5 shadow-sm">
+          <p class="text-[11px] font-bold tracking-[1.2px] uppercase text-[#888880] mb-3.5">En esta página</p>
           <nav>
-            <ul class="cm-toc-list">
-              <li><a href="#introduccion" class="cm-toc-link">Introducción</a></li>
-              <li><a href="#legislacion" class="cm-toc-link">Legislación y regulación</a>
-                <ul class="cm-toc-sub">
-                  <li><a href="#derechos-fundamentales" class="cm-toc-link">Derechos fundamentales</a></li>
-                  <li><a href="#cannabis-terapeutico" class="cm-toc-link">Cannabis terapéutico</a></li>
-                  <li><a href="#comercio-exterior" class="cm-toc-link">Comercio exterior</a></li>
-                  <li><a href="#datos-personales" class="cm-toc-link">Protección de datos</a></li>
+            <ul class="list-none m-0 p-0">
+              <li><a href="#introduccion" class="block py-1.5 text-sm text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] border-l-2 border-solid border-transparent pl-2.5 -ml-2.5 transition-colors">Introducción</a></li>
+              <li>
+                <a href="#legislacion" class="block py-1.5 text-sm text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] border-l-2 border-solid border-transparent pl-2.5 -ml-2.5 transition-colors">Legislación y regulación</a>
+                <ul class="list-none m-0 pl-3.5 mt-1">
+                  <li><a href="#derechos-fundamentales" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Derechos fundamentales</a></li>
+                  <li><a href="#cannabis-terapeutico" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Cannabis terapéutico</a></li>
+                  <li><a href="#datos-personales" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Protección de datos</a></li>
                 </ul>
               </li>
-              <li><a href="#trazabilidad" class="cm-toc-link">Trazabilidad y tecnología</a>
-                <ul class="cm-toc-sub">
-                  <li><a href="#infraestructura" class="cm-toc-link">Infraestructura de la plataforma</a></li>
-                  <li><a href="#separacion-roles" class="cm-toc-link">Separación de roles</a></li>
-                  <li><a href="#oportunidades" class="cm-toc-link">Oportunidades futuras</a></li>
-                  <li><a href="#proteccion-digital" class="cm-toc-link">Protección de datos digitales</a></li>
+              <li class="mt-2">
+                <a href="#trazabilidad" class="block py-1.5 text-sm text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] border-l-2 border-solid border-transparent pl-2.5 -ml-2.5 transition-colors">Trazabilidad y tecnología</a>
+                <ul class="list-none m-0 pl-3.5 mt-1">
+                  <li><a href="#infraestructura" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Infraestructura</a></li>
+                  <li><a href="#separacion-roles" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Separación de roles</a></li>
+                  <li><a href="#oportunidades" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Oportunidades futuras</a></li>
+                  <li><a href="#proteccion-digital" class="block py-1 text-[12px] text-[#5a7a54] dark:text-[#7a9670] hover:text-[#20a038] transition-colors">Protección digital</a></li>
                 </ul>
               </li>
             </ul>
@@ -54,307 +59,307 @@
       </aside>
 
       <!-- ── Contenido principal ── -->
-      <main class="cm-main" id="main-content">
+      <main class="min-w-0" id="main-content">
 
         <!-- Introducción -->
-        <section id="introduccion" class="cm-section">
-          <p class="cm-lead">
+        <section id="introduccion" class="mb-12">
+          <p class="text-[17px] text-[#2a3a28] dark:text-[#a8c8a0] leading-relaxed mb-5">
             El cannabis medicinal en Colombia opera bajo condiciones específicas de regulación y supervisión estatal que buscan garantizar tanto el acceso terapéutico legítimo como el control riguroso del uso. Este marco establece una distinción clara entre el uso terapéutico autorizado y otras formas de consumo, reconociendo el potencial médico del cannabis dentro de límites legales bien definidos.
           </p>
-          <p>
+          <p class="text-[#3a3a38] dark:text-[#a0b0a0] mb-4">
             La industria ha evolucionado significativamente desde la Ley 1787 de 2016, pasando por múltiples decretos reglamentarios y resoluciones del Ministerio de Salud y la INVIMA, hasta llegar a un ecosistema normativo robusto que articula derechos constitucionales, regulación sanitaria, comercio exterior y protección de datos personales.
           </p>
         </section>
 
         <!-- Legislación -->
-        <section id="legislacion" class="cm-section">
-          <h2 class="cm-h2">Legislación y regulación</h2>
-          <p>
+        <section id="legislacion" class="mb-12">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] mb-3 pb-2.5 border-b-2 border-solid border-[#20a038] tracking-tight">Legislación y regulación</h2>
+          <p class="text-[#3a3a38] dark:text-[#a0b0a0] mb-6">
             El marco normativo del cannabis medicinal en Colombia es uno de los más completos de América Latina. Integra disposiciones constitucionales, jurisprudencia de la Corte Constitucional, leyes del Congreso, decretos del ejecutivo y resoluciones ministeriales, formando un sistema coherente de derechos y obligaciones para todos los actores del sector.
           </p>
 
           <!-- Derechos fundamentales -->
-          <h3 id="derechos-fundamentales" class="cm-h3">Derechos fundamentales y jurisprudencia</h3>
+          <h3 id="derechos-fundamentales" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Derechos fundamentales y jurisprudencia</h3>
 
-          <div class="cm-norm-grid">
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-const">Constitución</div>
-              <h4 class="cm-norm-title">Artículo 16 — Libre desarrollo de la personalidad</h4>
-              <p class="cm-norm-body">
-                Reconoce el derecho de toda persona a actuar según sus propias decisiones sin más limitaciones que las que imponen los derechos de los demás y el orden jurídico. Fundamento constitucional del uso personal del cannabis.
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mb-8">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#e8f4f8] text-[#1565c0] dark:bg-[#1565c0]/20 dark:text-[#64b5f6] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Constitución</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Artículo 16 — Libre desarrollo</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Reconoce el derecho de toda persona a actuar según sus propias decisiones sin más limitaciones que las que imponen los derechos de los demás y el orden jurídico. Fundamento constitucional del uso personal.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-jurisprudencia">Sentencia</div>
-              <h4 class="cm-norm-title">Sentencia C-221/1994 — Despenalización del porte</h4>
-              <p class="cm-norm-body">
-                La Corte Constitucional declaró inexequible el artículo 51 del Estatuto Nacional de Estupefacientes que penalizaba el consumo de drogas en dosis personal. Hito fundacional de la política de drogas colombiana basada en derechos.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#f3e8ff] text-[#6a0dad] dark:bg-[#6a0dad]/20 dark:text-[#ce93d8] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Sentencia</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Sentencia C-221/1994 — Dosis personal</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                La Corte Constitucional declaró inexequible la penalización del consumo de drogas en dosis personal. Hito fundacional de la política de drogas basada en derechos.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-const">Acto Legislativo</div>
-              <h4 class="cm-norm-title">Acto Legislativo 02/2009 — Prohibición constitucional</h4>
-              <p class="cm-norm-body">
-                Modificó el artículo 49 de la Constitución para prohibir el porte y consumo de sustancias estupefacientes. Tensión normativa posterior resuelta por jurisprudencia a favor del uso medicinal regulado.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#e8f4f8] text-[#1565c0] dark:bg-[#1565c0]/20 dark:text-[#64b5f6] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Acto Legislativo</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Acto Legislativo 02/2009 — Prohibición</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Modificó el artículo 49 constitucional para prohibir el porte y consumo de sustancias estupefacientes. Tensión resuelta jurisprudencialmente a favor del uso medicinal regulado.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-jurisprudencia">Sentencia</div>
-              <h4 class="cm-norm-title">Sentencia C-491/2012 — Uso terapéutico</h4>
-              <p class="cm-norm-body">
-                Diferenció el uso terapéutico del consumo recreativo. Estableció que el tratamiento médico con sustancias controladas, cuando existe prescripción profesional, no vulnera el Acto Legislativo 02 de 2009.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#f3e8ff] text-[#6a0dad] dark:bg-[#6a0dad]/20 dark:text-[#ce93d8] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Sentencia</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Sentencia C-491/2012 — Uso terapéutico</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Diferenció el uso terapéutico del consumo recreativo. Estableció que el tratamiento médico con prescripción no vulnera la prohibición del Acto Legislativo de 2009.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-jurisprudencia">Sentencia</div>
-              <h4 class="cm-norm-title">SP228-2023 — Diferenciación penal</h4>
-              <p class="cm-norm-body">
-                Precisó los límites de la dosis personal y la distinción entre porte para consumo propio y tráfico de estupefacientes. Relevante para la cadena de distribución de cannabis medicinal y sus límites legales.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#f3e8ff] text-[#6a0dad] dark:bg-[#6a0dad]/20 dark:text-[#ce93d8] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Sentencia</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">SP228-2023 — Límites penales</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Precisó los límites de la dosis personal y la distinción entre porte para consumo y tráfico, protegiendo la cadena de distribución regulada de cannabis medicinal.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-jurisprudencia">Sentencia</div>
-              <h4 class="cm-norm-title">C-127/2023 — Programa médico de cannabis</h4>
-              <p class="cm-norm-body">
-                Avaló constitucionalmente los programas médicos de prescripción de cannabis. Ratificó que el acceso a tratamientos de cannabis bajo supervisión médica es un derecho derivado del artículo 49 constitucional (salud).
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#f3e8ff] text-[#6a0dad] dark:bg-[#6a0dad]/20 dark:text-[#ce93d8] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Sentencia</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">C-127/2023 — Programa médico</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Avaló los programas de prescripción médica de cannabis y ratificó el derecho al acceso a estos tratamientos como derivado del artículo 49 de la Constitución.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-politica">Política</div>
-              <h4 class="cm-norm-title">Política Nacional de Drogas 2023-2033</h4>
-              <p class="cm-norm-body">
-                Marco estratégico decenal que orienta la política de drogas bajo un enfoque de salud pública, derechos humanos y desarrollo alternativo. Reconoce el cannabis medicinal como sector de oportunidad económica y terapéutica.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#e0f7fa] text-[#00695c] dark:bg-[#00695c]/20 dark:text-[#80deea] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Política</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Política Nacional de Drogas 2023-2033</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Marco estratégico decenal enfocado en salud pública y derechos humanos, que promueve el cannabis medicinal como una oportunidad económica y terapéutica.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-jurisprudencia">Sentencia</div>
-              <h4 class="cm-norm-title">SU-226/2024 — Unificación de tutelas</h4>
-              <p class="cm-norm-body">
-                Sentencia de unificación que resolvió múltiples tutelas relacionadas con el acceso a tratamientos de cannabis medicinal. Obligó a EPS y entidades del SGSSS a cubrir tratamientos prescritos cuando existan pruebas de eficacia terapéutica.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#f3e8ff] text-[#6a0dad] dark:bg-[#6a0dad]/20 dark:text-[#ce93d8] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Sentencia</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">SU-226/2024 — Unificación de tutelas</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Unificó tutelas obligando a EPS y entidades de salud a cubrir tratamientos de cannabis medicinal cuando se compruebe su necesidad y eficacia terapéutica.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-decreto">Decreto</div>
-              <h4 class="cm-norm-title">Decreto 1138/2025 — Reglamentación reciente</h4>
-              <p class="cm-norm-body">
-                Actualiza y complementa el régimen de licencias para cultivo, producción y transformación de cannabis. Introduce nuevas categorías de actores autorizados y simplifica trámites para pequeños y medianos productores.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fff3e0] text-[#e65100] dark:bg-[#e65100]/20 dark:text-[#ffb74d] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Decreto</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Decreto 1138/2025 — Actualización</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Reglamenta licencias de cultivo y transformación del cannabis. Simplifica trámites e introduce facilidades operativas para pequeños productores.
               </p>
             </div>
           </div>
 
           <!-- Cannabis terapéutico -->
-          <h3 id="cannabis-terapeutico" class="cm-h3">Marco regulatorio del cannabis terapéutico</h3>
+          <h3 id="cannabis-terapeutico" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Marco regulatorio del cannabis terapéutico</h3>
 
-          <div class="cm-norm-grid">
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-decreto">Decreto</div>
-              <h4 class="cm-norm-title">Decreto 780/2016 — Sector salud</h4>
-              <p class="cm-norm-body">
-                Decreto único reglamentario del sector salud. Incorpora las disposiciones sobre acceso y uso racional de medicamentos derivados del cannabis, incluyendo los requisitos de prescripción y dispensación.
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mb-8">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fff3e0] text-[#e65100] dark:bg-[#e65100]/20 dark:text-[#ffb74d] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Decreto</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Decreto 780/2016 — Sector salud</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Decreto único del sector salud. Regula el acceso, la prescripción profesional y la dispensación técnica de los medicamentos y preparados a base de cannabis.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-resolucion">Resolución</div>
-              <h4 class="cm-norm-title">Resolución 2654/2019 — Preparaciones magistrales</h4>
-              <p class="cm-norm-body">
-                Reglamenta la elaboración y dispensación de preparaciones magistrales a base de cannabis. Establece los estándares de calidad, los requisitos de las farmacias magistrales autorizadas y las condiciones de prescripción.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fce4ec] text-[#ad1457] dark:bg-[#ad1457]/20 dark:text-[#f48fb1] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Resolución</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Resolución 2654/2019 — Magistrales</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Regula la elaboración y la dispensación de preparados magistrales a base de cannabis, fijando estándares de calidad para farmacias magistrales autorizadas.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-ley">Ley</div>
-              <h4 class="cm-norm-title">Ley 1787/2016 — Marco general cannabis</h4>
-              <p class="cm-norm-body">
-                Ley fundamental del cannabis medicinal en Colombia. Creó el sistema de licencias para cultivo, producción, transformación, exportación e importación. Define categorías de uso: científico, médico e industrial.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#e8f5e9] text-[#2e7d32] dark:bg-[#1b5e20]/30 dark:text-[#a5d6a7] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Ley</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Ley 1787/2016 — Ley Marco</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Marco legal regulatorio de la industria del cannabis en Colombia. Establece licencias de cultivo, transformación, importación y exportación de uso medicinal y científico.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-decreto">Decreto</div>
-              <h4 class="cm-norm-title">Decreto 613/2017 — Reglamentación Ley 1787</h4>
-              <p class="cm-norm-body">
-                Reglamentó la Ley 1787. Definió el sistema de licencias, las autoridades competentes (Ministerio de Salud y Ministerio de Justicia), las condiciones de cultivo y las buenas prácticas agrícolas aplicables.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fff3e0] text-[#e65100] dark:bg-[#e65100]/20 dark:text-[#ffb74d] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Decreto</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Decreto 613/2017 — Regulación</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Reglamentó la Ley 1787. Definió las competencias de los Ministerios de Salud y Justicia, el sistema de cupos y las condiciones técnicas de cultivo.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-decreto">Decreto</div>
-              <h4 class="cm-norm-title">Decreto 811/2021 — Cannabis psicoactivo</h4>
-              <p class="cm-norm-body">
-                Amplió la cadena de valor al autorizar la exportación de cannabis psicoactivo en diversas presentaciones. Abrió mercados internacionales a la industria colombiana bajo estrictos controles de trazabilidad y calidad.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fff3e0] text-[#e65100] dark:bg-[#e65100]/20 dark:text-[#ffb74d] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Decreto</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Decreto 811/2021 — Exportaciones</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Habilitó la exportación de flor de cannabis seca para uso medicinal y flexibilizó el comercio exterior de extractos y productos terminados.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-resolucion">Resolución</div>
-              <h4 class="cm-norm-title">Resolución 315/2020 — BPA y seguimiento</h4>
-              <p class="cm-norm-body">
-                Establece las Buenas Prácticas Agrícolas (BPA) para el cultivo de cannabis. Regula el seguimiento y control de la cadena productiva desde semilla hasta producto terminado.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fce4ec] text-[#ad1457] dark:bg-[#ad1457]/20 dark:text-[#f48fb1] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Resolución</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Resolución 315/2020 — Control</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Establece directrices de seguimiento, control administrativo e inspección técnica para el cultivo y la transformación de cannabis psicoactivo y no psicoactivo.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-decreto">Decreto</div>
-              <h4 class="cm-norm-title">Decreto 2200/2005 — Medicamentos</h4>
-              <p class="cm-norm-body">
-                Marco general para el sistema de suministro de medicamentos. Aplica a los derivados farmacéuticos del cannabis en cuanto a su cadena de distribución, requisitos de almacenamiento y control de inventarios.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fff3e0] text-[#e65100] dark:bg-[#e65100]/20 dark:text-[#ffb74d] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Decreto</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Decreto 2200/2005 — Cadena</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Establece el reglamento técnico de almacenamiento, cadena de custodia y distribución de medicamentos, aplicable al cannabis de grado farmacéutico.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-resolucion">Resolución</div>
-              <h4 class="cm-norm-title">Resolución 1403/2007 — Modelo gestión farmacéutica</h4>
-              <p class="cm-norm-body">
-                Define el modelo de gestión del servicio farmacéutico. Base operativa para farmacias y droguerías que dispensan preparaciones magistrales de cannabis bajo prescripción médica autorizada.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fce4ec] text-[#ad1457] dark:bg-[#ad1457]/20 dark:text-[#f48fb1] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Resolución</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Resolución 1403/2007 — Gestión</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Establece el manual de condiciones esenciales del servicio farmacéutico, base operativa para la dispensación de preparados magistrales.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-resolucion">Resolución</div>
-              <h4 class="cm-norm-title">Resolución 1478/2006 — Control de precursores</h4>
-              <p class="cm-norm-body">
-                Regula el control, seguimiento y vigilancia de la importación, exportación, fabricación, distribución, transporte, almacenamiento y uso de sustancias sometidas a fiscalización. Aplica a la cadena de cannabis medicinal.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fce4ec] text-[#ad1457] dark:bg-[#ad1457]/20 dark:text-[#f48fb1] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Resolución</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Resolución 1478/2006 — Fiscalización</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Regula y vigila las sustancias sometidas a fiscalización y monopolio del Estado, en concordancia con las cuotas de cultivo y producción del cannabis medicinal.
               </p>
             </div>
           </div>
 
           <!-- Datos personales -->
-          <h3 id="datos-personales" class="cm-h3">Comercio exterior y protección de datos</h3>
+          <h3 id="datos-personales" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Comercio exterior y protección de datos</h3>
 
-          <div class="cm-norm-grid">
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-ley">Ley</div>
-              <h4 class="cm-norm-title">Ley 1581/2012 — Habeas data</h4>
-              <p class="cm-norm-body">
-                Ley estatutaria de protección de datos personales. Regula el tratamiento de información de pacientes, prescriptores y demás actores del sistema. Establece derechos de acceso, rectificación, cancelación y oposición.
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mb-8">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#e8f5e9] text-[#2e7d32] dark:bg-[#1b5e20]/30 dark:text-[#a5d6a7] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Ley</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Ley 1581/2012 — Habeas data</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Regula el tratamiento de datos personales en Colombia, estableciendo garantías para la recopilación y la protección de información sensible (como la de salud).
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-decreto">Decreto</div>
-              <h4 class="cm-norm-title">Decreto 1377/2013 — Protección de datos</h4>
-              <p class="cm-norm-body">
-                Reglamentó parcialmente la Ley 1581. Precisa los mecanismos de obtención de autorización de titulares, las políticas de tratamiento y las medidas de seguridad exigibles a responsables y encargados del tratamiento.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#fff3e0] text-[#e65100] dark:bg-[#e65100]/20 dark:text-[#ffb74d] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Decreto</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Decreto 1377/2013 — Datos</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Reglamentó la Ley 1581, fijando las condiciones de consentimiento explícito e informado de los titulares y las políticas internas de tratamiento de información.
               </p>
             </div>
 
-            <div class="cm-norm-card">
-              <div class="cm-norm-badge cm-badge-ley">Ley</div>
-              <h4 class="cm-norm-title">Ley 527/1999 — Comercio electrónico</h4>
-              <p class="cm-norm-body">
-                Define y reglamenta el acceso y uso de los mensajes de datos, el comercio electrónico y las firmas digitales. Fundamento legal para las transacciones digitales de la plataforma Zona Green.
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] p-[16px_18px] border-l-3 border-l-[#20a038] rounded-xl hover:shadow-[0_4px_16px_rgba(32,160,56,0.1)] transition-shadow duration-200">
+              <div class="inline-block py-0.5 px-2 bg-[#e8f5e9] text-[#2e7d32] dark:bg-[#1b5e20]/30 dark:text-[#a5d6a7] rounded-xl text-[10px] font-bold tracking-[0.5px] uppercase mb-2">Ley</div>
+              <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2 leading-tight">Ley 527/1999 — Comercio electrónico</h4>
+              <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">
+                Valida el valor legal de las firmas digitales y los mensajes de datos en transacciones electrónicas. Soporte para el funcionamiento de la plataforma.
               </p>
             </div>
           </div>
         </section>
 
         <!-- Trazabilidad y Tecnología -->
-        <section id="trazabilidad" class="cm-section">
-          <h2 class="cm-h2">Trazabilidad y tecnología</h2>
-          <p>
+        <section id="trazabilidad" class="mb-12">
+          <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] mb-3 pb-2.5 border-b-2 border-solid border-[#20a038] tracking-tight">Trazabilidad y tecnología</h2>
+          <p class="text-[#3a3a38] dark:text-[#a0b0a0] mb-6">
             La trazabilidad es el pilar tecnológico que garantiza la integridad del sistema de cannabis medicinal. Zona Green actúa como infraestructura neutral que conecta actores regulados, asegura la trazabilidad documental y facilita el cumplimiento normativo sin intervenir en actos médicos ni comerciales que requieren autorización especial.
           </p>
 
           <!-- Infraestructura -->
-          <h3 id="infraestructura" class="cm-h3">Infraestructura de la plataforma</h3>
-          <p>
+          <h3 id="infraestructura" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Infraestructura de la plataforma</h3>
+          <p class="text-[#3a3a38] dark:text-[#a0b0a0] mb-4">
             La plataforma funciona como un ecosistema digital de información y conexión entre actores autorizados del sector. Su diseño técnico está orientado a:
           </p>
-          <ul class="cm-list">
-            <li>Proporcionar información educativa validada sobre cannabis medicinal, regulación y uso terapéutico.</li>
-            <li>Facilitar la conexión entre pacientes verificados y médicos habilitados para prescribir.</li>
-            <li>Conectar pacientes con dispensadores autorizados (farmacias magistrales, distribuidores con licencia).</li>
-            <li>Mantener registros auditables de interacciones, en cumplimiento con la normativa de datos y la Ley 527/1999.</li>
-            <li>Generar reportes de trazabilidad compatibles con los requerimientos del INVIMA y las autoridades sanitarias.</li>
+          <ul class="list-none p-0 flex flex-col gap-2.5 my-3">
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]">Proporcionar información educativa validada sobre cannabis medicinal, regulación y uso terapéutico.</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]">Facilitar la conexión entre pacientes verificados y médicos habilitados para prescribir.</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]">Conectar pacientes con dispensadores autorizados (farmacias magistrales, distribuidores con licencia).</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]">Mantener registros auditables de interacciones, en cumplimiento con la normativa de datos y la Ley 527/1999.</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]">Generar reportes de trazabilidad compatibles con los requerimientos del INVIMA y las autoridades sanitarias.</li>
           </ul>
 
           <!-- Separación de roles -->
-          <h3 id="separacion-roles" class="cm-h3">Separación de roles y responsabilidades</h3>
+          <h3 id="separacion-roles" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Separación de roles y responsabilidades</h3>
 
-          <div class="cm-roles-grid">
-            <div class="cm-role-card">
-              <div class="cm-role-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-5 shadow-sm">
+              <div class="w-10 h-10 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] mb-3 shrink-0" aria-hidden="true">
+                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                   <circle cx="12" cy="7" r="4"/>
                 </svg>
               </div>
-              <h4 class="cm-role-title">Paciente</h4>
-              <ul class="cm-role-list">
-                <li>Verificación de edad e identidad.</li>
-                <li>Acceso a información educativa.</li>
-                <li>Conexión con médicos especialistas.</li>
-                <li>Consulta de dispensadores autorizados.</li>
+              <h4 class="text-[15px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2.5">Paciente</h4>
+              <ul class="list-none m-0 p-0 flex flex-col gap-1.5">
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Verificación de edad e identidad.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Acceso a información educativa.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Conexión con médicos especialistas.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Consulta de dispensadores.</li>
               </ul>
             </div>
 
-            <div class="cm-role-card">
-              <div class="cm-role-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-5 shadow-sm">
+              <div class="w-10 h-10 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] mb-3 shrink-0" aria-hidden="true">
+                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                 </svg>
               </div>
-              <h4 class="cm-role-title">Médico prescriptor</h4>
-              <ul class="cm-role-list">
-                <li>Habilitado por el sistema de salud (Resolución 1438/2002 y concordantes).</li>
-                <li>Responsable exclusivo de la prescripción.</li>
-                <li>Usa la plataforma para gestión de citas y seguimiento.</li>
-                <li>No puede delegar el acto médico a la plataforma.</li>
+              <h4 class="text-[15px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2.5">Médico prescriptor</h4>
+              <ul class="list-none m-0 p-0 flex flex-col gap-1.5">
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Habilitado en salud pública.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Responsable de la prescripción.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Usa plataforma para gestión.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Decisión médica indelegable.</li>
               </ul>
             </div>
 
-            <div class="cm-role-card">
-              <div class="cm-role-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-5 shadow-sm">
+              <div class="w-10 h-10 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] mb-3 shrink-0" aria-hidden="true">
+                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="3" width="20" height="14" rx="2"/>
                   <path d="M8 21h8M12 17v4"/>
                 </svg>
               </div>
-              <h4 class="cm-role-title">Dispensador autorizado</h4>
-              <ul class="cm-role-list">
-                <li>Farmacia magistral o distribuidor con licencia vigente.</li>
-                <li>Responsable de la dispensación conforme a Resolución 2654/2019.</li>
-                <li>Reporta inventarios y ventas según normativa INVIMA.</li>
-                <li>Trazabilidad lote a lote del producto.</li>
+              <h4 class="text-[15px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2.5">Dispensador</h4>
+              <ul class="list-none m-0 p-0 flex flex-col gap-1.5">
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Farmacia o distribuidor con licencia.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Dispensación técnica según ley.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Reporta inventarios al INVIMA.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Trazabilidad lote a lote.</li>
               </ul>
             </div>
 
-            <div class="cm-role-card">
-              <div class="cm-role-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="bg-white border border-solid border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-5 shadow-sm">
+              <div class="w-10 h-10 bg-[#20a038]/10 rounded-lg flex items-center justify-center text-[#20a038] mb-3 shrink-0" aria-hidden="true">
+                <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   <polyline points="9 12 11 14 15 10"/>
                 </svg>
               </div>
-              <h4 class="cm-role-title">Zona Green (plataforma)</h4>
-              <ul class="cm-role-list">
-                <li>Infraestructura tecnológica neutral.</li>
-                <li>No prescribe, no dispensa, no aconseja tratamientos.</li>
-                <li>Garantiza trazabilidad y auditoría de interacciones.</li>
-                <li>Cumple Ley 1581/2012, Decreto 1377/2013 y Ley 527/1999.</li>
+              <h4 class="text-[15px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-2.5">Zona Green</h4>
+              <ul class="list-none m-0 p-0 flex flex-col gap-1.5">
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Plataforma tecnológica neutral.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">No prescribe, no dispensa.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Garantiza trazabilidad de datos.</li>
+                <li class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] pl-4 relative before:content-['·'] before:absolute before:left-1 before:text-[#20a038] before:font-bold">Cumple Ley 1581 y Ley 527.</li>
               </ul>
             </div>
           </div>
 
           <!-- Oportunidades futuras -->
-          <h3 id="oportunidades" class="cm-h3">Oportunidades futuras de tecnología</h3>
-          <p>
+          <h3 id="oportunidades" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Oportunidades futuras de tecnología</h3>
+          <p class="text-[#3a3a38] dark:text-[#a0b0a0] mb-4">
             El ecosistema de cannabis medicinal en Colombia presenta múltiples oportunidades de integración tecnológica que la plataforma está preparada para adoptar:
           </p>
 
-          <div class="cm-opportunities">
-            <div class="cm-opp-item">
-              <div class="cm-opp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <div class="flex flex-col gap-4 my-4">
+            <div class="flex gap-4 items-start bg-white border border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-[16px_18px]">
+              <div class="w-[38px] h-[38px] bg-[#20a038]/8 rounded-lg flex items-center justify-center text-[#20a038] shrink-0" aria-hidden="true">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="2" width="20" height="8" rx="2"/>
                   <rect x="2" y="14" width="20" height="8" rx="2"/>
                   <line x1="6" y1="6" x2="6.01" y2="6"/>
@@ -362,26 +367,26 @@
                 </svg>
               </div>
               <div>
-                <h4 class="cm-opp-title">Blockchain para trazabilidad</h4>
-                <p class="cm-opp-body">Registro inmutable de la cadena de custodia desde cultivo hasta paciente, compatible con estándares internacionales de trazabilidad farmacéutica.</p>
+                <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-1.5">Blockchain para trazabilidad</h4>
+                <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">Registro inmutable de la cadena de custodia desde cultivo hasta paciente, compatible con estándares internacionales de trazabilidad farmacéutica.</p>
               </div>
             </div>
 
-            <div class="cm-opp-item">
-              <div class="cm-opp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="flex gap-4 items-start bg-white border border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-[16px_18px]">
+              <div class="w-[38px] h-[38px] bg-[#20a038]/8 rounded-lg flex items-center justify-center text-[#20a038] shrink-0" aria-hidden="true">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                 </svg>
               </div>
               <div>
-                <h4 class="cm-opp-title">Inteligencia artificial clínica</h4>
-                <p class="cm-opp-body">Apoyo a la decisión médica con análisis de evidencia científica actualizada, sin reemplazar el juicio clínico del profesional de salud.</p>
+                <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-1.5">Inteligencia artificial clínica</h4>
+                <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">Apoyo a la decisión médica con análisis de evidencia científica actualizada, sin reemplazar el juicio clínico del profesional de salud.</p>
               </div>
             </div>
 
-            <div class="cm-opp-item">
-              <div class="cm-opp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="flex gap-4 items-start bg-white border border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-[16px_18px]">
+              <div class="w-[38px] h-[38px] bg-[#20a038]/8 rounded-lg flex items-center justify-center text-[#20a038] shrink-0" aria-hidden="true">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                   <circle cx="9" cy="7" r="4"/>
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -389,48 +394,47 @@
                 </svg>
               </div>
               <div>
-                <h4 class="cm-opp-title">Telemedicina especializada</h4>
-                <p class="cm-opp-body">Plataforma de videoconsulta integrada que conecta pacientes en zonas sin acceso a especialistas con médicos certificados en prescripción de cannabis.</p>
+                <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-1.5">Telemedicina especializada</h4>
+                <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">Plataforma de videoconsulta integrada que conecta pacientes en zonas distantes con médicos certificados en prescripción de cannabis.</p>
               </div>
             </div>
 
-            <div class="cm-opp-item">
-              <div class="cm-opp-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="flex gap-4 items-start bg-white border border-[#e8e8dc] dark:bg-[#162916] dark:border-[#243424] rounded-xl p-[16px_18px]">
+              <div class="w-[38px] h-[38px] bg-[#20a038]/8 rounded-lg flex items-center justify-center text-[#20a038] shrink-0" aria-hidden="true">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="5" y="2" width="14" height="20" rx="2"/>
                   <line x1="12" y1="18" x2="12.01" y2="18"/>
                 </svg>
               </div>
               <div>
-                <h4 class="cm-opp-title">App de seguimiento terapéutico</h4>
-                <p class="cm-opp-body">Registro de síntomas, dosis y respuesta terapéutica por parte del paciente, con reporte automático al médico tratante y generación de reportes de farmacovigilancia.</p>
+                <h4 class="text-[14px] font-bold text-[#1d1d1b] dark:text-[#e0ead4] mb-1.5">App de seguimiento terapéutico</h4>
+                <p class="text-[13px] text-[#5a5a52] dark:text-[#9ab890] m-0 leading-relaxed">Registro de síntomas y dosis por el paciente, con reportes automáticos al médico tratante y generación de alertas de farmacovigilancia.</p>
               </div>
             </div>
           </div>
 
           <!-- Protección digital -->
-          <h3 id="proteccion-digital" class="cm-h3">Protección de datos en el entorno digital</h3>
-          <p>
+          <h3 id="proteccion-digital" class="text-base sm:text-lg font-bold text-[#1a3a1a] dark:text-[#9ab890] mt-8 mb-4">Protección de datos en el entorno digital</h3>
+          <p class="text-[#3a3a38] dark:text-[#a0b0a0] mb-4">
             Los datos de salud son datos sensibles bajo la Ley 1581/2012. Su tratamiento en plataformas digitales de cannabis medicinal exige:
           </p>
-          <ul class="cm-list">
-            <li><strong>Autorización explícita:</strong> consentimiento libre, previo e informado del titular para el tratamiento de sus datos de salud.</li>
-            <li><strong>Finalidad limitada:</strong> los datos recolectados solo pueden usarse para los fines declarados en la política de tratamiento.</li>
-            <li><strong>Seguridad técnica:</strong> cifrado en tránsito (TLS 1.3) y en reposo, autenticación multifactor, registros de auditoría.</li>
-            <li><strong>Derechos del titular:</strong> acceso, corrección, supresión y portabilidad de datos, ejercibles en todo momento.</li>
-            <li><strong>Transferencia internacional:</strong> cuando aplique, bajo los mecanismos habilitantes establecidos por la Superintendencia de Industria y Comercio (SIC).</li>
+          <ul class="list-none p-0 flex flex-col gap-2.5 my-3">
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]"><strong>Autorización explícita:</strong> consentimiento libre, previo e informado del titular para el tratamiento de sus datos de salud.</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]"><strong>Finalidad limitada:</strong> los datos recolectados solo pueden usarse para los fines declarados en la política de tratamiento.</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]"><strong>Seguridad técnica:</strong> cifrado en tránsito (TLS 1.3) y en reposo, autenticación multifactor, registros de auditoría.</li>
+            <li class="relative pl-5.5 text-sm sm:text-base text-[#3a3a38] dark:text-[#a8c8a0] leading-relaxed before:content-[''] before:absolute before:left-0 before:top-2 before:w-2 before:h-2 before:rounded-full before:bg-[#20a038]"><strong>Derechos del titular:</strong> acceso, corrección, supresión y portabilidad de datos, ejercibles en todo momento.</li>
           </ul>
 
-          <div class="cm-callout">
-            <div class="cm-callout-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <div class="flex gap-3.5 items-start bg-[#fff8e1] border border-[#ffe082] border-l-4 border-l-[#ffa000] dark:bg-[#fff8e1]/10 dark:border-[#ffe082]/30 dark:border-l-[#ffa000] rounded-lg p-[16px_18px] mt-6">
+            <div class="w-5.5 h-5.5 text-[#ffa000] shrink-0 mt-0.5" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="12"/>
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
             </div>
             <div>
-              <p class="cm-callout-text">
+              <p class="text-[13.5px] text-[#5a4a00] dark:text-[#ffe082] m-0 leading-relaxed">
                 <strong>Aviso importante:</strong> la información contenida en esta página es de carácter educativo e informativo. No constituye asesoría jurídica ni reemplaza la consulta con un médico habilitado. El acceso a cannabis medicinal requiere prescripción de un profesional de salud autorizado.
               </p>
             </div>
@@ -438,15 +442,15 @@
         </section>
 
         <!-- CTA -->
-        <section class="cm-cta-section">
-          <div class="cm-cta-box">
-            <h2 class="cm-cta-title">¿Listo para comenzar tu proceso?</h2>
-            <p class="cm-cta-body">
+        <section class="mt-12">
+          <div class="bg-gradient-to-br from-[#0f1e0f] to-[#1a3a1a] rounded-2xl p-8 sm:p-10 text-center">
+            <h2 class="text-lg sm:text-xl lg:text-2xl font-extrabold text-white mb-3">¿Listo para comenzar tu proceso?</h2>
+            <p class="text-sm sm:text-base text-[#9ab890] max-w-[500px] mx-auto mb-7">
               Conéctate con médicos especializados en cannabis medicinal y accede a información personalizada para tu tratamiento.
             </p>
-            <div class="cm-cta-actions">
-              <a routerLink="/medicoscannabiscolombia" class="cm-btn-primary">Ver médicos especialistas</a>
-              <a routerLink="/faq" class="cm-btn-outline">Preguntas frecuentes</a>
+            <div class="flex flex-col sm:flex-row items-center gap-3 justify-center">
+              <a routerLink="/medicoscannabiscolombia" class="inline-block py-3 px-7 bg-[#20a038] hover:bg-[#178030] text-white rounded-lg text-sm font-semibold transition-colors duration-200 no-underline shadow-md">Ver médicos especialistas</a>
+              <a routerLink="/faq" class="inline-block py-3 px-7 border-[1.5px] border-solid border-white/20 text-[#e0ead4] rounded-lg text-sm font-semibold transition-all duration-200 hover:border-white/40 hover:text-white no-underline">Preguntas frecuentes</a>
             </div>
           </div>
         </section>

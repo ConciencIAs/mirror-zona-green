@@ -7,6 +7,7 @@ const LS_KEY = 'zg-dark';
 import { ButtonModule } from 'primeng/button';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { CartStore } from '@src/app/core/state/card/card.state';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
 
 @Component({
   selector: 'app-navbar',
@@ -16,12 +17,13 @@ import { CartStore } from '@src/app/core/state/card/card.state';
 })
 export class Navbar implements OnInit {
   private readonly cartStore = inject(CartStore);
+  private readonly userStore = inject(UserStore);
 
   protected authDropOpen = signal(false);
   protected sidebarOpen = signal(false);
   protected isDark = signal(false);
 
-  constructor() {
+  ngOnInit() {
     const saved = localStorage.getItem(LS_KEY);
     if (saved === 'true') {
       this.applyDark(true);
@@ -44,10 +46,35 @@ export class Navbar implements OnInit {
     localStorage.setItem(LS_KEY, String(next));
   }
 
+  isAuthenticated() {
+    return this.userStore.isAuthenticated();
+  }
+
+  get isAdmin() {
+    return this.userStore.isAdmin();
+  }
+
+  get isCustomer() {
+    return this.userStore.isCustomer();
+  }
+
+  get isAgent() {
+    return this.userStore.isAgent();
+  }
+
+  get fullName() {
+    return this.userStore.fullName();
+  }
+
+  get currentRole() {
+    return this.userStore.currentRole();
+  }
+
   toggleAuthDrop(): void { this.authDropOpen.update(v => !v); }
   closeAuthDrop(): void { this.authDropOpen.set(false); }
   openSidebar(): void { this.sidebarOpen.set(true); }
   closeSidebar(): void { this.sidebarOpen.set(false); }
+
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {

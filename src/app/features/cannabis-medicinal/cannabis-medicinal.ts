@@ -5,6 +5,5 @@ import { RouterLink } from '@angular/router';
   selector: 'app-cannabis-medicinal',
   imports: [RouterLink],
   templateUrl: './cannabis-medicinal.html',
-  styleUrl: './cannabis-medicinal.css',
 })
 export class CannabisMedicinal {}
