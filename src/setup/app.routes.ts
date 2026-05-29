@@ -26,6 +26,31 @@ export const routes: Routes = [
         title: 'Customer Home',
         loadComponent: () => import('@src/app/features/customer/home/home').then((m) => m.CustomerHome),
       },
+      {
+        path: 'cannabismedicinalencolombia',
+        title: 'Cannabis medicinal en Colombia',
+        loadComponent: () => import('@src/app/features/cannabis-medicinal/cannabis-medicinal').then((m) => m.CannabisMedicinal),
+      },
+      {
+        path: 'medicoscannabiscolombia',
+        title: 'Médicos especialistas en cannabis medicinal',
+        loadComponent: () => import('@src/app/features/medicos-cannabis/medicos-cannabis').then((m) => m.MedicosCannabis),
+      },
+      {
+        path: 'rrd',
+        title: 'Reducción de Riesgos y Daños',
+        loadComponent: () => import('@src/app/features/rrd/rrd').then((m) => m.Rrd),
+      },
+      {
+        path: 'faq',
+        title: 'Preguntas frecuentes',
+        loadComponent: () => import('@src/app/features/faq/faq').then((m) => m.Faq),
+      },
+      {
+        path: 'terminos-y-condiciones',
+        title: 'Términos y condiciones',
+        loadComponent: () => import('@src/app/features/terminos/terminos').then((m) => m.Terminos),
+      },
       ...routerAuthCustomer,
       ...marketplaceRoutes,
       ...adminRoutes,

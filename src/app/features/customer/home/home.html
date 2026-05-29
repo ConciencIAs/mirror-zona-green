@@ -27,7 +27,7 @@
       <ul class="nav-list">
 
         <li class="nav-item">
-          <a href="#inicio" class="nav-link">Inicio</a>
+          <a routerLink="/customer/home" class="nav-link">Inicio</a>
         </li>
 
         <!-- Cannabis — con submenú -->
@@ -40,32 +40,25 @@
             </svg>
           </label>
           <div class="subnav">
-            <a href="#cannabis" class="btn-subnav-outline">Más información</a>
+            <a routerLink="/cannabismedicinalencolombia" class="btn-subnav-outline">Más información</a>
             <ul class="sub-list">
-              <li><a href="#legislacion">Legislación</a></li>
-              <li><a href="#tecnologia">Trazabilidad y Tecnología</a></li>
+              <li><a routerLink="/cannabismedicinalencolombia" fragment="legislacion">Legislación</a></li>
+              <li><a routerLink="/cannabismedicinalencolombia" fragment="trazabilidad">Trazabilidad y Tecnología</a></li>
             </ul>
           </div>
         </li>
 
-        <!-- Médicos — próximamente -->
+        <!-- Médicos -->
         <li class="nav-item">
-          <div class="nav-link nav-disabled">
-            <span>Médicos especialistas en cannabis</span>
-            <span class="badge-soon">Próximamente</span>
-          </div>
+          <a routerLink="/medicoscannabiscolombia" class="nav-link">Médicos especialistas en cannabis</a>
         </li>
 
         <li class="nav-item">
-          <a href="#marketplace" class="nav-link">Selección informada — Marketplace</a>
+          <a routerLink="/rrd" class="nav-link">Reducción de Riesgos y Daños</a>
         </li>
 
         <li class="nav-item">
-          <a href="#rrd" class="nav-link">Reducción de Riesgos y Daños</a>
-        </li>
-
-        <li class="nav-item">
-          <a href="#faq" class="nav-link">Preguntas frecuentes</a>
+          <a routerLink="/faq" class="nav-link">Preguntas frecuentes</a>
         </li>
 
       </ul>
@@ -91,6 +84,54 @@
           alt="Zona Green"
           class="brand-logo logo-dark">
       </a>
+
+      <!-- Auth: no autenticado → botón con dropdown -->
+      @if (!isAuthenticated()) {
+        <div class="home-auth-wrap" [class.open]="authDropOpen()">
+          <button
+            class="home-auth-btn"
+            (click)="toggleAuthDrop()"
+            [attr.aria-expanded]="authDropOpen()"
+            aria-haspopup="true">
+            Regístrate o Ingresa
+            <svg class="home-auth-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          @if (authDropOpen()) {
+            <div class="home-auth-drop" role="menu">
+              <a routerLink="/auth/register" class="home-auth-option" role="menuitem" (click)="closeAuthDrop()">
+                <div class="home-auth-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <line x1="19" y1="8" x2="19" y2="14"/>
+                    <line x1="22" y1="11" x2="16" y2="11"/>
+                  </svg>
+                </div>
+                <div class="home-auth-label">
+                  <strong>Regístrate</strong>
+                  <span>Crea tu cuenta gratis</span>
+                </div>
+              </a>
+              <a routerLink="/auth/login" class="home-auth-option" role="menuitem" (click)="closeAuthDrop()">
+                <div class="home-auth-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                    <line x1="15" y1="12" x2="3" y2="12"/>
+                  </svg>
+                </div>
+                <div class="home-auth-label">
+                  <strong>Ingresar</strong>
+                  <span>Ya tengo una cuenta</span>
+                </div>
+              </a>
+            </div>
+          }
+        </div>
+      }
 
       <label for="zg-dark" class="dark-toggle" title="Cambiar tema" aria-label="Cambiar tema">
         <!-- Sun -->

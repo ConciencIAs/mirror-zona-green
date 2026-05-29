@@ -1,12 +1,11 @@
 import { Routes } from "@angular/router";
 import { authGuard } from '@src/app/core/guards/auth-guard';
-import { roleGuard } from '@src/app/core/guards/role-guard';
 
 export const marketplaceRoutes: Routes = [
   {
     path: 'marketplace',
-    canActivateChild: [roleGuard, authGuard],
-    canActivate: [authGuard, roleGuard],
+    canActivateChild: [authGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',

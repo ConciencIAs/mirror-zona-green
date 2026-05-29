@@ -1,72 +1,153 @@
-<div class="card">
-  <p-menubar [model]="items">
-    <ng-template #start>
-      <svg width="31" height="33" viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg"
-        class="block mx-auto">
-        <path
-          d="M15.1934 0V0V0L0.0391235 5.38288L2.35052 25.3417L15.1934 32.427V32.427V32.427L28.0364 25.3417L30.3478 5.38288L15.1934 0Z"
-          fill="var(--p-primary-color)" />
-        <mask id="mask0_1_52" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="31" height="33">
-          <path
-            d="M15.1934 0V0V0L0.0391235 5.38288L2.35052 25.3417L15.1934 32.427V32.427V32.427L28.0364 25.3417L30.3478 5.38288L15.1934 0Z"
-            fill="var(--ground-background)" />
-        </mask>
-        <g mask="url(#mask0_1_52)">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M15.1935 0V3.5994V3.58318V20.0075V20.0075V32.427V32.427L28.0364 25.3417L30.3478 5.38288L15.1935 0Z"
-            fill="var(--p-primary-color)" />
-        </g>
-        <path
-          d="M19.6399 15.3776L18.1861 15.0547L19.3169 16.6695V21.6755L23.1938 18.4458V12.9554L21.4169 13.6013L19.6399 15.3776Z"
-          fill="var(--ground-background)" />
-        <path
-          d="M10.5936 15.3776L12.0474 15.0547L10.9166 16.6695V21.6755L7.03966 18.4458V12.9554L8.81661 13.6013L10.5936 15.3776Z"
-          fill="var(--ground-background)" />
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M11.3853 16.9726L12.6739 15.0309L13.4793 15.5163H16.7008L17.5061 15.0309L18.7947 16.9726V24.254L17.8283 25.7103L16.7008 26.843H13.4793L12.3518 25.7103L11.3853 24.254V16.9726Z"
-          fill="var(--ground-background)" />
-        <path d="M19.3168 24.7437L21.4168 22.6444V20.5451L19.3168 22.3214V24.7437Z" fill="var(--ground-background)" />
-        <path d="M10.9166 24.7437L8.81662 22.6444V20.5451L10.9166 22.3214V24.7437Z" fill="var(--ground-background)" />
-        <path fill-rule="evenodd" clip-rule="evenodd"
-          d="M13.0167 5.68861L11.7244 8.7568L13.8244 14.8932H14.7936V5.68861H13.0167ZM15.4397 5.68861V14.8932H16.5706L18.5091 8.7568L17.2167 5.68861H15.4397Z"
-          fill="var(--ground-background)" />
-        <path d="M13.8244 14.8932L6.87813 12.3094L5.90888 8.27235L11.8859 8.7568L13.9859 14.8932H13.8244Z"
-          fill="var(--ground-background)" />
-        <path d="M16.5706 14.8932L23.5169 12.3094L24.4861 8.27235L18.3476 8.7568L16.4091 14.8932H16.5706Z"
-          fill="var(--ground-background)" />
-        <path d="M18.8321 8.27235L22.2245 7.94938L19.9629 5.68861H17.7013L18.8321 8.27235Z"
-          fill="var(--ground-background)" />
-        <path d="M11.4013 8.27235L8.00893 7.94938L10.2705 5.68861H12.5321L11.4013 8.27235Z"
-          fill="var(--ground-background)" />
-      </svg>
-    </ng-template>
-    <ng-template #item let-item let-root="root">
-      <a pRipple class="flex items-center px-4 py-3 cursor-pointer gap-2">
-        <span>{{ item.label }}</span>
-        @if (item.badge) {
-        <p-badge [ngClass]="{ 'ms-auto': !root }" [value]="item.badge" />
-        }
-        @if (item.shortcut) {
-        <span class="ms-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut
-          }}</span>
-        }
-        @if (item.items) {
-        <i [ngClass]="['ms-auto pi', root ? 'pi-angle-down' : 'pi-angle-right']"></i>
-        }
-      </a>
-    </ng-template>
-    <ng-template #end>
-      <div class="flex items-center gap-4">
-        @if (isAuthenticated) {
-        <input type="text" pInputText placeholder="Search" class="w-36" />
-        <app-profile-menu />
-        <p-overlayBadge [value]="totalCartItems">
-          <i class="pi-cart-minus pi" style="font-size: 2rem;"></i>
-        </p-overlayBadge>
-        } @else {
-        <p-button routerLink="/auth/login" label="Login" size="small" />
+@if (visible()) {
+
+<!-- ── Overlay del sidebar ── -->
+@if (sidebarOpen()) {
+  <div class="nav-overlay" (click)="closeSidebar()" aria-hidden="true"></div>
+}
+
+<!-- ── Sidebar ── -->
+<aside class="nav-sidebar" [class.open]="sidebarOpen()" aria-label="Menú de navegación">
+  <div class="nav-sidebar-head">
+    <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="nav-sidebar-logo">
+    <button class="nav-sidebar-close" (click)="closeSidebar()" aria-label="Cerrar menú">
+      <span class="x-bar"></span>
+      <span class="x-bar"></span>
+    </button>
+  </div>
+
+  <nav class="nav-sidebar-nav">
+    <ul class="nav-sidebar-list">
+      <li class="nav-sidebar-item">
+        <a routerLink="/customer/home" class="nav-sidebar-link" (click)="closeSidebar()">Inicio</a>
+      </li>
+      <li class="nav-sidebar-item">
+        <a routerLink="/cannabismedicinalencolombia" class="nav-sidebar-link" (click)="closeSidebar()">Cannabis medicinal en Colombia</a>
+      </li>
+      <li class="nav-sidebar-item">
+        <a routerLink="/medicoscannabiscolombia" class="nav-sidebar-link" (click)="closeSidebar()">Médicos especialistas</a>
+      </li>
+      <li class="nav-sidebar-item">
+        <a routerLink="/rrd" class="nav-sidebar-link" (click)="closeSidebar()">Reducción de Riesgos y Daños</a>
+      </li>
+      <li class="nav-sidebar-item">
+        <a routerLink="/faq" class="nav-sidebar-link" (click)="closeSidebar()">Preguntas frecuentes</a>
+      </li>
+      @if (isAuthenticated()) {
+        <li class="nav-sidebar-item">
+          <a routerLink="/marketplace" class="nav-sidebar-link" (click)="closeSidebar()">Marketplace</a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="nav-sidebar-footer">
+    @if (!isAuthenticated()) {
+      <a routerLink="/auth/register" class="nav-sidebar-cta" (click)="closeSidebar()">Regístrate gratis</a>
+      <a routerLink="/auth/login" class="nav-sidebar-login" (click)="closeSidebar()">Ya tengo cuenta → Ingresar</a>
+    }
+  </div>
+</aside>
+
+<!-- ── Navbar ── -->
+<header class="zg-navbar" [class.dark]="isDark()">
+  <div class="nav-wrap">
+
+    <!-- Logo -->
+    <a routerLink="/customer/home" class="nav-brand" aria-label="Zona Green — Inicio">
+      <img src="/images/logo-zona-green.svg"        alt="Zona Green" class="nav-logo nav-logo-light">
+      <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="nav-logo nav-logo-dark">
+    </a>
+
+    <div class="nav-spacer"></div>
+
+    <!-- Auth: no autenticado → botón con dropdown -->
+    @if (!isAuthenticated()) {
+      <div class="nav-auth-wrap" [class.open]="authDropOpen()">
+        <button
+          class="nav-auth-btn"
+          (click)="toggleAuthDrop()"
+          [attr.aria-expanded]="authDropOpen()"
+          aria-haspopup="true">
+          <span class="nav-btn-short">Ingresar</span>
+          <span class="nav-btn-full">Regístrate o Ingresa</span>
+          <svg class="nav-auth-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+
+        @if (authDropOpen()) {
+          <div class="nav-auth-drop" role="menu">
+            <a routerLink="/auth/register" class="nav-auth-option" role="menuitem" (click)="closeAuthDrop()">
+              <div class="nav-auth-option-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <line x1="19" y1="8" x2="19" y2="14"/>
+                  <line x1="22" y1="11" x2="16" y2="11"/>
+                </svg>
+              </div>
+              <div class="nav-auth-option-label">
+                <strong>Regístrate</strong>
+                <span>Crea tu cuenta gratis</span>
+              </div>
+            </a>
+            <a routerLink="/auth/login" class="nav-auth-option" role="menuitem" (click)="closeAuthDrop()">
+              <div class="nav-auth-option-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                  <polyline points="10 17 15 12 10 7"/>
+                  <line x1="15" y1="12" x2="3" y2="12"/>
+                </svg>
+              </div>
+              <div class="nav-auth-option-label">
+                <strong>Ingresar</strong>
+                <span>Ya tengo una cuenta</span>
+              </div>
+            </a>
+          </div>
         }
       </div>
-    </ng-template>
-  </p-menubar>
-</div>
+    }
+
+    <!-- Auth: autenticado → menú de perfil -->
+    @if (isAuthenticated()) {
+      <div class="nav-profile-wrap">
+        <app-profile-menu />
+      </div>
+    }
+
+    <!-- Dark / Light toggle -->
+    <button
+      class="nav-dark-toggle"
+      (click)="toggleDark()"
+      [attr.aria-label]="isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+      <svg class="nav-toggle-icon nav-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1"  x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22"   x2="5.64"  y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1"  y1="12" x2="3"  y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
+        <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
+      </svg>
+      <span class="nav-toggle-track" [class.active]="isDark()">
+        <span class="nav-toggle-thumb"></span>
+      </span>
+      <svg class="nav-toggle-icon nav-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+
+    <!-- Hamburguesa -->
+    <button class="nav-hamburger" (click)="openSidebar()" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </div>
+</header>
+
+}

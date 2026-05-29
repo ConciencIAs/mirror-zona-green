@@ -1,74 +1,74 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AvatarModule } from 'primeng/avatar';
-import { BadgeModule } from 'primeng/badge';
-import { MenubarModule } from 'primeng/menubar';
-import { InputTextModule } from 'primeng/inputtext';
-import { RippleModule } from 'primeng/ripple';
-import { MenuItem } from 'primeng/api';
-import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
+import { Component, inject, signal, HostListener } from '@angular/core';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
-import { ButtonModule } from 'primeng/button';
-import { OverlayBadgeModule } from 'primeng/overlaybadge';
-import { CartService } from '@src/app/core/services/cart.service';
+import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
+
+const ROUTES_WITH_OWN_NAV = ['/customer/home', '/auth/'];
+const LS_KEY = 'zg-dark';
 
 @Component({
   selector: 'app-navbar',
-  imports: [ProfileMenu, RouterModule, CommonModule, AvatarModule, BadgeModule, MenubarModule, InputTextModule, RippleModule, ButtonModule, OverlayBadgeModule],
+  imports: [RouterLink, ProfileMenu],
   templateUrl: './navbar.html',
-  styles: [],
+  styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit {
-  private readonly supabaseAuthService = inject(SupabaseAuthService);
-  private readonly cartService = inject(CartService);
+export class Navbar {
+  private readonly authService = inject(SupabaseAuthService);
+  private readonly router = inject(Router);
 
-  items: MenuItem[] | undefined;
+  protected isAuthenticated = this.authService.isAuthenticated;
+  protected authDropOpen  = signal(false);
+  protected sidebarOpen   = signal(false);
+  protected visible       = signal(this.shouldShow(this.router.url));
+  protected isDark        = signal(false);
 
-  isAuthenticated = this.supabaseAuthService.isAuthenticated()
-  totalCartItems = this.cartService.totalItems()
+  constructor() {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved === 'true') {
+      this.applyDark(true);
+      this.isDark.set(true);
+    }
 
-  ngOnInit(): void {
-    this.loadNavigationItems();
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(e => {
+        this.visible.set(this.shouldShow((e as NavigationEnd).urlAfterRedirects));
+        this.authDropOpen.set(false);
+        this.sidebarOpen.set(false);
+      });
   }
 
-  loadNavigationItems(): void {
-    this.items = [
-      {
-        label: 'Home',
-        icon: 'pi pi-home'
-      },
-      {
-        label: 'Projects',
-        icon: 'pi pi-search',
-        badge: '3',
-        items: [
-          {
-            label: 'Core',
-            icon: 'pi pi-bolt',
-            shortcut: '⌘+S'
-          },
-          {
-            label: 'Blocks',
-            icon: 'pi pi-server',
-            shortcut: '⌘+B'
-          },
-          {
-            separator: true
-          },
-          {
-            label: 'UI Kit',
-            icon: 'pi pi-pencil',
-            shortcut: '⌘+U'
-          }
-        ]
-      }
-    ];
+  private shouldShow(url: string): boolean {
+    return !ROUTES_WITH_OWN_NAV.some(r => url.startsWith(r));
   }
 
-  toggleDarkMode(): void {
-    document.documentElement.classList.toggle('dark');
+  private applyDark(on: boolean): void {
+    document.documentElement.classList.toggle('dark', on);
   }
 
+  toggleDark(): void {
+    const next = !this.isDark();
+    this.isDark.set(next);
+    this.applyDark(next);
+    localStorage.setItem(LS_KEY, String(next));
+  }
 
+  toggleAuthDrop(): void  { this.authDropOpen.update(v => !v); }
+  closeAuthDrop(): void   { this.authDropOpen.set(false); }
+  openSidebar(): void     { this.sidebarOpen.set(true); }
+  closeSidebar(): void    { this.sidebarOpen.set(false); }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!(event.target as HTMLElement).closest('.nav-auth-wrap')) {
+      this.authDropOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.authDropOpen.set(false);
+    this.sidebarOpen.set(false);
+  }
 }
