@@ -56,6 +56,9 @@ Tabla optimizada para flujos de pre-validación del cliente antes del login por 
 *   `id` (uuid, PK)
 *   `admin_uid` (uuid): ID del administrador que realizó el último cambio.
 *   `banners` (jsonb[]): Lista de banners estructurados. Esquema: `[{"url": "str", "banner": "str_url_img", "title": "str", "description": "str"}]`.
+*   `banners` (jsonb[]): Lista de banners estructurados. Esquema: `[{"url": "str", "banner": "str_url_img", "title": "str", "description": "str"}]`.
+*   `component_type` (text): Tipo de componente.
+*   `content` (jsonb): Contenido del componente. seria un json libre segun el component
 
 #### Tabla: `page_config`
 *   `id` (uuid, PK)

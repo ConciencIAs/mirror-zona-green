@@ -3,9 +3,9 @@ import { form, validateStandardSchema } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
-import { ToastService } from '@src/app/core/services/toast.service';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { ConfirmationModalService } from '@src/app/core/services/confirmation.service';
+import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import { userSchemaLogin } from '@src/app/core/models/schemas/auth.schema';
 

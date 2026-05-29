@@ -1,11 +1,12 @@
-import { Component, inject, signal, HostListener } from '@angular/core';
+import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
 
 const ROUTES_WITH_OWN_NAV = ['/customer/home', '/auth/'];
 const LS_KEY = 'zg-dark';
+import { ButtonModule } from 'primeng/button';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { CartStore } from '@src/app/core/state/card/card.state';
 
 @Component({
   selector: 'app-navbar',
@@ -13,15 +14,12 @@ const LS_KEY = 'zg-dark';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
-  private readonly authService = inject(SupabaseAuthService);
-  private readonly router = inject(Router);
+export class Navbar implements OnInit {
+  private readonly cartStore = inject(CartStore);
 
-  protected isAuthenticated = this.authService.isAuthenticated;
-  protected authDropOpen  = signal(false);
-  protected sidebarOpen   = signal(false);
-  protected visible       = signal(this.shouldShow(this.router.url));
-  protected isDark        = signal(false);
+  protected authDropOpen = signal(false);
+  protected sidebarOpen = signal(false);
+  protected isDark = signal(false);
 
   constructor() {
     const saved = localStorage.getItem(LS_KEY);
@@ -29,14 +27,6 @@ export class Navbar {
       this.applyDark(true);
       this.isDark.set(true);
     }
-
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(e => {
-        this.visible.set(this.shouldShow((e as NavigationEnd).urlAfterRedirects));
-        this.authDropOpen.set(false);
-        this.sidebarOpen.set(false);
-      });
   }
 
   private shouldShow(url: string): boolean {
@@ -54,10 +44,10 @@ export class Navbar {
     localStorage.setItem(LS_KEY, String(next));
   }
 
-  toggleAuthDrop(): void  { this.authDropOpen.update(v => !v); }
-  closeAuthDrop(): void   { this.authDropOpen.set(false); }
-  openSidebar(): void     { this.sidebarOpen.set(true); }
-  closeSidebar(): void    { this.sidebarOpen.set(false); }
+  toggleAuthDrop(): void { this.authDropOpen.update(v => !v); }
+  closeAuthDrop(): void { this.authDropOpen.set(false); }
+  openSidebar(): void { this.sidebarOpen.set(true); }
+  closeSidebar(): void { this.sidebarOpen.set(false); }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
