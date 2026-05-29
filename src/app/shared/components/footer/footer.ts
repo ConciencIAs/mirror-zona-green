@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
 
 @Component({
   selector: 'app-footer',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './footer.html',
-  styles: ``,
 })
-export class Footer {}
+export class Footer {
+  private readonly userStore = inject(UserStore);
+
+  protected isAuthenticated = this.userStore.isAuthenticated;
+}
