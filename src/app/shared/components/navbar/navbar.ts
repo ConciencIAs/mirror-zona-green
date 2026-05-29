@@ -1,19 +1,18 @@
 import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
-import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
 
-const ROUTES_WITH_OWN_NAV = ['/customer/home', '/auth/'];
-const LS_KEY = 'zg-dark';
 import { ButtonModule } from 'primeng/button';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 
+const LS_KEY = 'zg-dark';
+
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, ProfileMenu],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
 })
 export class Navbar implements OnInit {
   private readonly cartStore = inject(CartStore);
@@ -29,10 +28,6 @@ export class Navbar implements OnInit {
       this.applyDark(true);
       this.isDark.set(true);
     }
-  }
-
-  private shouldShow(url: string): boolean {
-    return !ROUTES_WITH_OWN_NAV.some(r => url.startsWith(r));
   }
 
   private applyDark(on: boolean): void {

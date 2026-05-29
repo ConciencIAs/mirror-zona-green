@@ -9,6 +9,7 @@ import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-au
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { LocalStorageStateService } from '@src/app/core/services//local-storage-state.service';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,12 @@ export class App implements OnInit {
   private readonly LocalStorageStateService = inject(LocalStorageStateService);
   private readonly UserStore = inject(UserStore);
 
+  private readonly confirmationModalService = inject(ConfirmationModalService);
+
+  private readonly USER_SAY_TO_BE_LEGAL_AGE_KEY = 'zg_user_say_to_be_legal_age';
+
+  isLegalAge = signal(false);
+
   ngOnInit(): void {
     this.supabaseAuthService.onAuthStateChange();
     this.supabaseAuthService.currentUserEvent.pipe(
@@ -32,6 +39,31 @@ export class App implements OnInit {
       if (!error) this.UserStore.setPerfil(data);
     });
     this.getRoles();
+    this.isLegalAge.set(this.userSaysToBeLegalAge);
+    this.verifyCurrentAge();
+  }
+
+  get userSaysToBeLegalAge(): boolean {
+    return this.LocalStorageStateService.getState(
+      this.USER_SAY_TO_BE_LEGAL_AGE_KEY,
+      false,
+    );
+  }
+
+  verifyCurrentAge(): void {
+    if (!this.userSaysToBeLegalAge) {
+      this.confirmationModalService.confirm({
+        header: '!ATENCION¡',
+        message: 'Debes ser mayor de edad para acceder a zonagree.co',
+        reject: () => this.isLegalAge.set(false),
+        acceptLabel: 'Sí, soy mayor de edad',
+        rejectLabel: 'No, no soy mayor de edad',
+        accept: () => {
+          this.isLegalAge.set(true);
+          this.LocalStorageStateService.setState(this.USER_SAY_TO_BE_LEGAL_AGE_KEY, true);
+        },
+      });
+    }
   }
 
   async getRoles() {
