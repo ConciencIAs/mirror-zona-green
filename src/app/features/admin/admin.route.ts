@@ -7,46 +7,75 @@ export const adminRoutes: Routes = [
     path: 'admin',
     canActivate: [authGuard, roleGuard],
     canActivateChild: [roleGuard, authGuard],
+    data: { zone: 'admin' },
     children: [
       {
         path: '',
         loadComponent: () => import('./customer/customer').then(m => m.Customer),
         pathMatch: 'full',
+        data: { zone: 'admin' },
         title: 'Customer'
       },
       {
         path: 'customer',
         loadComponent: () => import('./customer/customer').then(m => m.Customer),
+        data: { zone: 'admin' },
         title: 'Customer'
       },
       {
         path: 'marketplace',
         title: 'Marketplace',
+        data: { zone: 'admin' },
         children: [
           {
             path: '',
             loadComponent: () => import('./marketplace/history/history').then(m => m.History),
+            data: { zone: 'admin' },
             pathMatch: 'full',
             title: 'History'
           },
           {
             path: 'history',
             loadComponent: () => import('./marketplace/history/history').then(m => m.History),
+            data: { zone: 'admin' },
             title: 'History'
           },
           {
             path: 'products',
-            loadComponent: () => import('./marketplace/products/products').then(m => m.Products),
-            title: 'Products'
+            loadComponent: () => import('./marketplace/products/products-layout').then(m => m.ProductsLayout),
+            data: { zone: 'admin' },
+            children: [
+              {
+                path: '',
+                pathMatch: 'full',
+                loadComponent: () => import('./marketplace/products/products-list').then(m => m.ProductsList),
+                data: { zone: 'admin' },
+                title: 'Productos'
+              },
+              {
+                path: 'new',
+                loadComponent: () => import('./marketplace/products/products-editor').then(m => m.ProductsEditor),
+                data: { zone: 'admin' },
+                title: 'Nuevo producto'
+              },
+              {
+                path: ':id',
+                loadComponent: () => import('./marketplace/products/products-editor').then(m => m.ProductsEditor),
+                data: { zone: 'admin' },
+                title: 'Editar producto'
+              }
+            ]
           },
           {
             path: 'custom',
             loadComponent: () => import('./marketplace/custom/custom-search/custom-search').then(m => m.CustomSearch),
+            data: { zone: 'admin' },
             title: 'Custom Search'
           },
           {
             path: 'orders',
             loadComponent: () => import('./marketplace/ordenes/ordenes').then(m => m.Ordenes),
+            data: { zone: 'admin' },
             title: 'Ordenes'
           }
         ]

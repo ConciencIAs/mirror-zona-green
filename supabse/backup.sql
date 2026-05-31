@@ -269,7 +269,16 @@ CREATE OR REPLACE FUNCTION public.proteger_rol_usuario()
 RETURNS TRIGGER AS $$
 BEGIN
     IF (TG_OP = 'UPDATE') THEN
-        IF (public.auth_user_role() != 'admin' AND OLD.rol IS DISTINCT FROM NEW.rol) THEN
+        -- Permitir la edición solo si:
+        -- 1. El usuario autenticado en la app NO es admin
+        -- 2. Y NO se está usando el service_role (Panel de Supabase / Backend)
+        -- 3. Y la petición sí viene de un usuario autenticado de la app (auth.uid() no es nulo)
+        IF (
+            public.auth_user_role() != 'admin' 
+            AND auth.role() != 'service_role' 
+            AND auth.uid() IS NOT NULL 
+            AND OLD.rol IS DISTINCT FROM NEW.rol
+        ) THEN
             NEW.rol = OLD.rol;
         END IF;
     END IF;

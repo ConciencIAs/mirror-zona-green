@@ -9,13 +9,15 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const localStorageStateService = inject(LocalStorageStateService);
   const userStore = inject(UserStore);
 
-  const userRole = localStorageStateService.getState('user_role', [{ nombre: roleEnum.ANONYMOUS, urls_permitidas: ['home'] }])
-  const currentPath = route.url[0].path
+  const userRole = localStorageStateService.getState('app_roles', [{ nombre: roleEnum.ANONYMOUS, urls_permitidas: ['home'] }])
+  const zone = route.routeConfig?.data?.['zone'] as string || '';
   const customerRole = userStore.perfil().rol
 
-  if (!userRole.find((role) => role.nombre === customerRole)?.urls_permitidas.includes(currentPath)) {
-    return router.parseUrl('/home');
+  const findUserRole = userRole.find((role) => role.nombre === customerRole);
+
+  if (findUserRole?.urls_permitidas.includes(zone)) {
+    return true;
   }
 
-  return true;
+  return router.parseUrl('/home');
 };
