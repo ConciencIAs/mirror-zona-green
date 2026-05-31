@@ -20,41 +20,19 @@
 
   <nav class="py-2 flex-1">
     <ul class="list-none m-0 p-0">
-      <li class="border-b border-white/7">
-        <a routerLink="/customer/home"
-          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
-          (click)="closeSidebar()">Inicio</a>
-      </li>
-      <li class="border-b border-white/7">
-        <a routerLink="/cannabismedicinalencolombia"
-          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
-          (click)="closeSidebar()">Cannabis medicinal en Colombia</a>
-      </li>
-
-      <li class="border-b border-white/7">
-        <div
-          class="flex items-center justify-between py-[15px] px-5 text-white/65 cursor-default opacity-65 flex-wrap gap-2 text-[14px]">
-          <span>Médicos especialistas en cannabis</span>
-          <span
-            class="inline-block py-[3px] px-2.5 bg-[#20a038]/15 border border-solid border-[#20a038]/30 rounded-[20px] text-[10px] font-semibold text-[#20a038] tracking-[0.3px] uppercase">Próximamente</span>
+      @for (section of visibleNavSections; track section.title) {
+      <li class="border-b border-white/7 bg-[#102614]">
+        <div class="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8ea77e]">
+          {{ section.title }}
         </div>
       </li>
+      @for (item of section.items; track item.path) {
       <li class="border-b border-white/7">
-        <a routerLink="/rrd"
+        <a [routerLink]="item.path"
           class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
-          (click)="closeSidebar()">Reducción de Riesgos y Daños</a>
+          (click)="closeSidebar()">{{ item.label }}</a>
       </li>
-      <li class="border-b border-white/7">
-        <a routerLink="/faq"
-          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
-          (click)="closeSidebar()">Preguntas frecuentes</a>
-      </li>
-      @if (isAuthenticated()) {
-      <li class="border-b border-white/7">
-        <a routerLink="/marketplace"
-          class="block py-[15px] px-5 text-[#e0ead4] no-underline text-[14px] font-medium transition-all duration-200 hover:bg-white/7 hover:text-white"
-          (click)="closeSidebar()">Marketplace</a>
-      </li>
+      }
       }
     </ul>
   </nav>

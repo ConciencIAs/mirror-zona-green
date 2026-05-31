@@ -14,7 +14,7 @@ export class SupabaseDbService {
     return this.from(table).select(columns);
   }
 
-  insert(table: TableName, values: Record<string, unknown>) {
+  insert(table: TableName, values: Record<string, unknown> | Record<string, unknown>[]) {
     return this.from(table).insert(values);
   }
 

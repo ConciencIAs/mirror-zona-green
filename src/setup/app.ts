@@ -1,6 +1,6 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged, filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -33,7 +33,8 @@ export class App implements OnInit {
   ngOnInit(): void {
     this.supabaseAuthService.onAuthStateChange();
     this.supabaseAuthService.currentUserEvent.pipe(
-      distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event)
+      distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event),
+      filter(event => event.event !== 'INITIAL_SESSION'),
     ).subscribe(async (event) => {
       const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.PERFILES).select('*').eq('id', event.session?.user.id).single();
       if (!error) this.UserStore.setPerfil(data);

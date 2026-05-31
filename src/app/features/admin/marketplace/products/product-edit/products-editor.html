@@ -1,0 +1,375 @@
+<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  <div>
+    <h1 class="text-3xl font-semibold text-slate-900">@if (editingProductId()) { Editar producto } @else { Nuevo producto }</h1>
+    <p class="mt-1 text-sm text-slate-500">Configura el producto y sus variantes con imágenes independientes.</p>
+  </div>
+  <button
+    type="button"
+    class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+    (click)="cancelEdit()"
+  >
+    Volver al listado
+  </button>
+</div>
+
+<section class="rounded-3xl bg-white p-6 shadow-sm">
+  @if (loading()) {
+  <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+    Cargando datos...
+  </div>
+  } @else {
+  <form (submit)="saveProduct($event)" class="space-y-4">
+    <app-form-input [control]="productForm.nombre" label="Nombre" placeholder="Nombre del producto" />
+    <app-form-input [control]="productForm.sku" label="SKU" placeholder="Código único del producto" />
+    <app-form-select [control]="productForm.tipo_producto" label="Tipo de producto" [options]="productTypeOptions" placeholder="Selecciona tipo" />
+    <app-form-input [control]="productForm.descripcion" label="Descripción" placeholder="Breve descripción" />
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <app-form-input [control]="productForm.precio" label="Precio" type="number" placeholder="0.00" />
+      <app-form-input [control]="productForm.costo" label="Costo" type="number" placeholder="0.00" />
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <app-form-select [control]="productForm.categoria_id" label="Categoría" [options]="categoryOptions()" placeholder="Selecciona una categoría" />
+      <app-form-select [control]="productForm.status" label="Estado" [options]="statusOptions" placeholder="Selecciona estado" />
+    </div>
+
+    <app-form-input [control]="productForm.stock_total" label="Stock total" type="number" placeholder="Cantidad disponible" />
+
+    @if (productModel().tipo_producto === 'variantes') {
+    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+      <div class="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <p class="text-sm font-semibold text-slate-900">Variantes del producto</p>
+          <p class="text-sm text-slate-500">Cada variante puede tener sus propias imágenes y precios.</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">Nombre variante</label>
+          <input
+            type="text"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            placeholder="Ej: 5g"
+            [value]="newVariant().nombre"
+            (input)="setNewVariantField('nombre', $event.target.value)"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">Precio variante</label>
+          <input
+            type="number"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            placeholder="0.00"
+            [value]="newVariant().precio"
+            (input)="setNewVariantField('precio', $event.target.value)"
+          />
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">Stock variante</label>
+          <input
+            type="number"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            placeholder="Cantidad"
+            [value]="newVariant().stock"
+            (input)="setNewVariantField('stock', $event.target.value)"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">Gramos disponibles</label>
+          <input
+            type="number"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            placeholder="Cantidad en g"
+            [value]="newVariant().gramos_disponibles"
+            (input)="setNewVariantField('gramos_disponibles', $event.target.value)"
+          />
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">Cantidad mínima</label>
+          <input
+            type="number"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            placeholder="1"
+            [value]="newVariant().cantidad_minima_venta"
+            (input)="setNewVariantField('cantidad_minima_venta', $event.target.value)"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium text-slate-700">Precio mínimo</label>
+          <input
+            type="number"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            placeholder="0.00"
+            [value]="newVariant().precio_minimo_venta"
+            (input)="setNewVariantField('precio_minimo_venta', $event.target.value)"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="mb-2 block text-sm font-medium text-slate-700">Opciones de venta</label>
+        <input
+          type="text"
+          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+          placeholder="Ej: 5,10,20,40,0"
+          [value]="newVariant().opciones_venta"
+          (input)="setNewVariantField('opciones_venta', $event.target.value)"
+        />
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-4">
+        <label class="mb-2 block text-sm font-medium text-slate-700">Imágenes de variante</label>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none"
+          (change)="onVariantImageFilesSelected($event)"
+        />
+
+        @if (pendingVariantImages().length > 0) {
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          @for (item of pendingVariantImages(); track item.preview) {
+          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            <img src="{{ item.preview }}" alt="Preview imagen variante" class="h-40 w-full object-cover" />
+            <button
+              type="button"
+              class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
+              (click)="removePendingVariantImage(pendingVariantImages().indexOf(item))"
+            >
+              ×
+            </button>
+          </div>
+          }
+        </div>
+        }
+
+        @if (newVariant().urls_imagenes.length > 0) {
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          @for (imageUrl of newVariant().urls_imagenes; track imageUrl) {
+          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            <img src="{{ imageUrl }}" alt="Imagen variante" class="h-40 w-full object-cover" />
+            <button
+              type="button"
+              class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
+              (click)="removeVariantImage(imageUrl)"
+            >
+              ×
+            </button>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="flex flex-wrap gap-3 justify-end">
+        @if (editingVariantIndex() !== null) {
+        <button
+          type="button"
+          class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          (click)="resetVariantForm()"
+        >
+          Cancelar edición
+        </button>
+        }
+        <button
+          type="button"
+          class="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+          (click)="addVariant()"
+        >
+          @if (editingVariantIndex() === null) { Agregar variante }
+          @else { Actualizar variante }
+        </button>
+      </div>
+
+      @if (productVariants().length > 0) {
+      <div class="mt-4 space-y-3">
+        @for (variant of productVariants(); track variant.id ?? variant.nombre) {
+        <div class="rounded-2xl border border-slate-200 bg-white p-4">
+          <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p class="font-semibold text-slate-900">{{ variant.nombre }}</p>
+              <p class="text-sm text-slate-500">Precio: ${{ variant.precio }} · Stock: {{ variant.stock }} · Gramos: {{ variant.gramos_disponibles }}</p>
+              <p class="text-sm text-slate-500">Opciones: {{ variant.opciones_venta }}</p>
+            </div>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                (click)="startEditVariant(productVariants().indexOf(variant))"
+              >
+                Editar
+              </button>
+              <button
+                type="button"
+                class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+                (click)="removeVariant(productVariants().indexOf(variant))"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+          @if (variant.urls_imagenes.length > 0) {
+          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            @for (imageUrl of variant.urls_imagenes; track imageUrl) {
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white">
+              <img src="{{ imageUrl }}" alt="Imagen variante" class="h-40 w-full object-cover" />
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <label class="mb-2 block text-sm font-medium text-slate-700">Etiquetas</label>
+      @if (tags().length > 0) {
+      <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        @for (tag of tags(); track tag.id) {
+        <button
+          type="button"
+          class="rounded-full border px-4 py-2 text-sm transition"
+          [class.border-emerald-600]="selectedTagNames().includes(tag.nombre)"
+          [class.bg-emerald-600]="selectedTagNames().includes(tag.nombre)"
+          [class.text-white]="selectedTagNames().includes(tag.nombre)"
+          [class.bg-white]="!selectedTagNames().includes(tag.nombre)"
+          [class.text-slate-700]="!selectedTagNames().includes(tag.nombre)"
+          (click)="toggleTag(tag.nombre)"
+        >
+          {{ tag.nombre }}
+        </button>
+        }
+      </div>
+      } @else {
+      <p class="text-sm text-slate-500">No hay etiquetas configuradas en la base de datos.</p>
+      }
+    </div>
+
+    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <label class="mb-2 block text-sm font-medium text-slate-700">Imágenes del producto</label>
+      <p class="text-xs text-slate-500 mb-3">Solo se permiten imágenes cuadradas. Verifica la vista previa antes de guardar.</p>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none"
+        (change)="onImageFilesSelected($event)"
+      />
+
+      @if (pendingImages().length > 0) {
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        @for (item of pendingImages(); track item.preview) {
+        <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
+          <img src="{{ item.preview }}" alt="Preview imagen" class="h-40 w-full object-cover" />
+          <button
+            type="button"
+            class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
+            (click)="removePendingImage(pendingImages().indexOf(item))"
+          >
+            ×
+          </button>
+        </div>
+        }
+      </div>
+      }
+
+      @if (productImages().length > 0) {
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        @for (imageUrl of productImages(); track imageUrl) {
+        <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
+          <img src="{{ imageUrl }}" alt="Imagen del producto" class="h-40 w-full object-cover" />
+          <button
+            type="button"
+            class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
+            (click)="removeImage(imageUrl)"
+          >
+            ×
+          </button>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    @if (generalError()) {
+    <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ generalError() }}
+    </div>
+    }
+
+    @if (showVariantErrorsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6">
+      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+        <h3 class="text-xl font-semibold mb-3">Errores en la variante</h3>
+        <ul class="list-disc pl-5 space-y-2 max-h-48 overflow-auto text-sm text-slate-700">
+          @for (errorEntry of variantErrorEntries(); track errorEntry[0]) {
+          <li>{{ errorEntry[1] }}</li>
+          }
+        </ul>
+        <div class="mt-6 flex justify-end">
+          <button
+            type="button"
+            class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-700 hover:bg-slate-200"
+            (click)="closeVariantErrorsModal()"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (showErrorsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6">
+      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+        <h3 class="text-xl font-semibold mb-3">Errores en el formulario</h3>
+        <ul class="list-disc pl-5 space-y-2 max-h-48 overflow-auto text-sm text-slate-700">
+          @for (errorEntry of errorEntries(); track errorEntry[0]) {
+          <li>{{ errorEntry[1] }}</li>
+          }
+        </ul>
+        <div class="mt-6 flex justify-end">
+          <button
+            type="button"
+            class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-700 hover:bg-slate-200"
+            (click)="closeErrorsModal()"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+      <button
+        type="button"
+        class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        (click)="cancelEdit()"
+      >
+        Volver al listado
+      </button>
+      <button
+        type="submit"
+        class="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+        [disabled]="saving()"
+      >
+        @if (!saving()) { Guardar producto }
+        @if (saving()) { Guardando... }
+      </button>
+    </div>
+  </form>
+  }
+</section>

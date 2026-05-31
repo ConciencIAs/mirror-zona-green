@@ -7,7 +7,7 @@ export enum TableName {
   PAGE_CONFIG = 'page_config',
   PAGE_HOME = 'page_home',
   PERFILES = 'perfiles',
-  PRODUCTOS_VARIANTES = 'productos_variantes',
+  PRODUCTOS_VARIANTES = 'producto_variantes',
   PRODUCTOS = 'productos',
   ROLES = 'roles',
   TAGS = 'tags',

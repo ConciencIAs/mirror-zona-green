@@ -9,6 +9,17 @@ import { UserStore } from '@src/app/core/state/customer/customer.state';
 
 const LS_KEY = 'zg-dark';
 
+type NavItem = {
+  path: string;
+  label: string;
+};
+
+type NavSection = {
+  title: string;
+  items: NavItem[];
+  roles?: string[];
+};
+
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, ProfileMenu],
@@ -21,6 +32,56 @@ export class Navbar implements OnInit {
   protected authDropOpen = signal(false);
   protected sidebarOpen = signal(false);
   protected isDark = signal(false);
+
+  protected readonly navSections: NavSection[] = [
+    {
+      title: 'Navegación',
+      items: [
+        { path: '/customer/home', label: 'Inicio' },
+        { path: '/cannabismedicinalencolombia', label: 'Cannabis medicinal en Colombia' },
+        { path: '/medicoscannabiscolombia', label: 'Médicos especialistas en cannabis' },
+        { path: '/rrd', label: 'Reducción de Riesgos y Daños' },
+        { path: '/faq', label: 'Preguntas frecuentes' },
+        { path: '/terminos-y-condiciones', label: 'Términos y condiciones' },
+      ]
+    },
+    {
+      title: 'Cuenta',
+      roles: ['customer', 'admin', 'agente'],
+      items: [
+        { path: '/marketplace', label: 'Marketplace' },
+      ]
+    },
+    {
+      title: 'Administración',
+      roles: ['admin'],
+      items: [
+        { path: '/admin', label: 'Panel admin' },
+        { path: '/admin/marketplace', label: 'Marketplace admin' },
+        { path: '/admin/marketplace/products', label: 'Productos' },
+        { path: '/admin/marketplace/custom', label: 'Custom search' },
+        { path: '/admin/marketplace/orders', label: 'Órdenes admin' },
+        { path: '/admin/dynamic-content', label: 'Contenido dinámico' },
+      ]
+    },
+    {
+      title: 'Agente',
+      roles: ['agente'],
+      items: [
+        { path: '/admin', label: 'Panel agente' },
+        { path: '/admin/marketplace', label: 'Marketplace agente' },
+        { path: '/admin/marketplace/orders', label: 'Órdenes' },
+        { path: '/admin/marketplace/custom', label: 'Custom search' },
+      ]
+    }
+  ];
+
+
+  get visibleNavSections() {
+    return this.navSections.filter((section) =>
+      !section.roles || section.roles.includes(this.currentRole)
+    );
+  }
 
   ngOnInit() {
     const saved = localStorage.getItem(LS_KEY);

@@ -31,10 +31,12 @@ import { FormErrorDisplayComponent } from '../form-error-display/form-error-disp
   `,
 })
 export class FormInputComponent {
-  control = input.required<FieldTree<string, string>>();
+  control = input.required<FieldTree<string | number, string>>();
   label = input<string>('');
   type = input<string>('text');
   placeholder = input<string>('');
+
+  // para input tipo precio podemos usar la libreria prime ng el componente InputNumber
 
   getControl() {
     return this.control()
