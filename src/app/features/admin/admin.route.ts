@@ -42,25 +42,25 @@ export const adminRoutes: Routes = [
           },
           {
             path: 'products',
-            loadComponent: () => import('./marketplace/products/products-layout').then(m => m.ProductsLayout),
+            loadComponent: () => import('./marketplace/products/layout/products-layout').then(m => m.ProductsLayout),
             data: { zone: 'admin' },
             children: [
               {
                 path: '',
                 pathMatch: 'full',
-                loadComponent: () => import('./marketplace/products/products-list').then(m => m.ProductsList),
+                loadComponent: () => import('./marketplace/products/product-list/products-list').then(m => m.ProductsList),
                 data: { zone: 'admin' },
                 title: 'Productos'
               },
               {
                 path: 'new',
-                loadComponent: () => import('./marketplace/products/products-editor').then(m => m.ProductsEditor),
+                loadComponent: () => import('./marketplace/products/product-edit/products-editor').then(m => m.ProductsEditor),
                 data: { zone: 'admin' },
                 title: 'Nuevo producto'
               },
               {
                 path: ':id',
-                loadComponent: () => import('./marketplace/products/products-editor').then(m => m.ProductsEditor),
+                loadComponent: () => import('./marketplace/products/product-edit/products-editor').then(m => m.ProductsEditor),
                 data: { zone: 'admin' },
                 title: 'Editar producto'
               }

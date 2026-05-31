@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { form } from '@angular/forms/signals';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { SupabaseStorageService } from '@src/app/core/services/supabase/supabase-storage.service';
@@ -18,50 +19,54 @@ import {
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
 
-interface ProductFormModel {
+interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id' > {
   nombre: string;
   descripcion: string;
   sku: string;
-  precio: string;
-  costo: string;
-  stock_total: string;
+  precio: number;
+  costo: number;
+  stock_total: number;
   categoria_id: string;
   status: EstadoProducto;
   tipo_producto: 'simple' | 'variantes';
+  urls_imagenes: string[];
+  tags: string[];
 }
 
-interface ProductVariantFormModel {
+interface ProductVariantFormModel extends Omit<ProductoVariante, 'created_at' | 'deleted_at' | 'updated_at' | 'id' | 'producto_id' | 'opciones_venta'> {
   id?: string;
   nombre: string;
   descripcion: string;
-  precio: string;
-  stock: string;
-  gramos_disponibles: string;
-  cantidad_minima_venta: string;
-  precio_minimo_venta: string;
-  opciones_venta: string;
+  precio: number;
+  stock: number;
+  gramos_disponibles: number;
+  cantidad_minima_venta: number;
+  precio_minimo_venta: number;
+  opciones_venta: string[] | number[];
+  urls_imagenes: string[];
 }
 
 @Component({
-  selector: 'app-products',
+  selector: 'app-products-editor',
   standalone: true,
   imports: [CommonModule, FormInputComponent, FormSelectComponent],
-  templateUrl: './products.html',
+  templateUrl: './products-editor.html',
   styles: ``,
 })
-export class Products {
+export class ProductsEditor implements OnInit {
   private readonly dbService = inject(SupabaseDbService);
   private readonly storageService = inject(SupabaseStorageService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  static readonly IMAGE_BUCKET = 'public';
+  static readonly IMAGE_BUCKET = 'productos';
 
   readonly loading = signal(true);
   readonly saving = signal(false);
   readonly uploadLoading = signal(false);
   readonly generalError = signal<string | null>(null);
 
-  readonly products = signal<Producto[]>([]);
   readonly categories = signal<Categoria[]>([]);
   readonly tags = signal<Tag[]>([]);
 
@@ -69,15 +74,16 @@ export class Products {
     nombre: '',
     descripcion: '',
     sku: '',
-    precio: '',
-    costo: '',
-    stock_total: '',
+    precio: 0,
+    costo: 0,
+    stock_total: 0,
     categoria_id: '',
     status: 'activo',
     tipo_producto: 'simple',
+    tags: [],
+    urls_imagenes: [],
   });
 
-  readonly activeView = signal<'list' | 'form'>('list');
   readonly productForm = form(this.productModel);
   readonly selectedTagNames = signal<string[]>([]);
   readonly productImages = signal<string[]>([]);
@@ -88,13 +94,17 @@ export class Products {
   readonly newVariant = signal<ProductVariantFormModel>({
     nombre: '',
     descripcion: '',
-    precio: '',
-    stock: '',
-    gramos_disponibles: '',
-    cantidad_minima_venta: '1',
-    precio_minimo_venta: '0',
-    opciones_venta: '5,10,20,40,0',
+    precio: 0,
+    stock: 0,
+    gramos_disponibles: 0,
+    cantidad_minima_venta: 1,
+    precio_minimo_venta: 0,
+    opciones_venta: [5, 10, 20, 40, 0],
+    urls_imagenes: [],
+    fecha_llegada: '',
+    status: 'activo',
   });
+  readonly pendingVariantImages = signal<{ file: File; preview: string }[]>([]);
   readonly editingProductId = signal<string | null>(null);
 
   readonly categoryOptions = computed(() =>
@@ -114,52 +124,21 @@ export class Products {
     { value: 'variantes', label: 'Producto con variantes' },
   ];
 
-  constructor() {
+  ngOnInit() {
     this.loadInitialData();
-  }
-
-  openCreateForm() {
-    this.resetForm();
-    this.activeView.set('form');
-  }
-
-  backToList() {
-    this.activeView.set('list');
-  }
-
-  private getInitialProductState(): ProductFormModel {
-    return {
-      nombre: '',
-      descripcion: '',
-      sku: '',
-      precio: '',
-      costo: '',
-      stock_total: '',
-      categoria_id: '',
-      status: 'activo',
-      tipo_producto: 'simple',
-    };
   }
 
   private async loadInitialData() {
     this.loading.set(true);
-
-    const [productsRes, categoriesRes, tagsRes] = await Promise.all([
-      this.dbService.select(TableName.PRODUCTOS),
+    const [categoriesRes, tagsRes] = await Promise.all([
       this.dbService.select(TableName.CATEGORIAS),
       this.dbService.select(TableName.TAGS),
     ]);
 
-    if (productsRes.error) {
-      console.error('Error al cargar productos', productsRes.error);
-      this.toastService.error('No se pudo cargar la lista de productos.');
-    } else {
-      this.products.set((productsRes.data as unknown as Producto[]) ?? []);
-    }
-
     if (categoriesRes.error) {
       console.error('Error al cargar categorías', categoriesRes.error);
       this.toastService.error('No se pudo cargar las categorías.');
+      this.categories.set([]);
     } else {
       this.categories.set((categoriesRes.data as unknown as Categoria[]) ?? []);
     }
@@ -167,48 +146,49 @@ export class Products {
     if (tagsRes.error) {
       console.error('Error al cargar tags', tagsRes.error);
       this.toastService.error('No se pudo cargar las etiquetas.');
+      this.tags.set([]);
     } else {
       this.tags.set((tagsRes.data as unknown as Tag[]) ?? []);
+    }
+
+    const productId = this.route.snapshot.paramMap.get('id');
+    if (productId) {
+      await this.loadProduct(productId);
     }
 
     this.loading.set(false);
   }
 
-  resetForm() {
-    this.editingProductId.set(null);
-    this.productModel.set(this.getInitialProductState());
-    this.selectedTagNames.set([]);
-    this.productImages.set([]);
-    this.pendingImages.set([]);
-    this.productVariants.set([]);
-    this.editingVariantIndex.set(null);
-    this.deletedVariantIds.set([]);
-    this.newVariant.set({
-      nombre: '',
-      descripcion: '',
-      precio: '',
-      stock: '',
-      gramos_disponibles: '',
-      cantidad_minima_venta: '1',
-      precio_minimo_venta: '0',
-      opciones_venta: '5,10,20,40,0',
-    });
-    this.generalError.set(null);
-  }
+  private async loadProduct(productId: string) {
+    this.loading.set(true);
 
-  async editProduct(product: Producto) {
+    const productResult = await this.dbService
+      .from(TableName.PRODUCTOS)
+      .select('*')
+      .eq('id', productId)
+      .single();
+
+    if ((productResult as any).error || !(productResult as any).data) {
+      console.error('Error al cargar el producto', (productResult as any).error);
+      this.toastService.error('No se pudo cargar el producto.');
+      await this.router.navigate(['../'], { relativeTo: this.route });
+      return;
+    }
+
+    const product = (productResult).data as Producto;
     this.editingProductId.set(product.id);
-    this.activeView.set('form');
     this.productModel.set({
       nombre: product.nombre,
       descripcion: product.descripcion ?? '',
       sku: product.sku,
-      precio: String(product.precio ?? 0),
-      costo: String(product.costo ?? 0),
-      stock_total: String(product.stock_total ?? 0),
+      precio: product.precio ?? 0,
+      costo: product.costo ?? 0,
+      stock_total: product.stock_total ?? 0,
       categoria_id: product.categoria_id ?? '',
       status: product.status,
       tipo_producto: 'simple',
+      tags: product.tags ?? [],
+      urls_imagenes: product.urls_imagenes ?? [],
     });
     this.selectedTagNames.set(product.tags ?? []);
     this.productImages.set(product.urls_imagenes ?? []);
@@ -222,6 +202,7 @@ export class Products {
     }
 
     this.generalError.set(null);
+    this.loading.set(false);
   }
 
   async saveProduct(event: Event) {
@@ -258,35 +239,19 @@ export class Products {
     const uploadedUrls = await this.uploadPendingImages();
     const imageUrls = [...this.productImages(), ...uploadedUrls];
     payload.urls_imagenes = imageUrls;
-    payload.tags = this.selectedTagNames();
 
     this.saving.set(true);
-
     try {
       let productId = this.editingProductId();
       if (productId) {
-        const { error } = await this.dbService.update(
-          TableName.PRODUCTOS,
-          payload,
-          { id: productId },
-        );
-
-        if (error) {
-          throw error;
-        }
-
+        const { error } = await this.dbService.update(TableName.PRODUCTOS, payload, { id: productId });
+        if (error) throw error;
         this.toastService.success('Producto actualizado correctamente.');
       } else {
-        const result = await this.dbService.insert(TableName.PRODUCTOS, payload);
-        if ((result as any).error) {
-          throw (result as any).error;
-        }
-
-        const insertedProduct = ((result as any).data as Producto[] | null)?.[0];
-        if (!insertedProduct?.id) {
-          throw new Error('No se pudo obtener el ID del producto creado.');
-        }
-
+        const {data, error} = await this.dbService.insert(TableName.PRODUCTOS, payload).select('*').single();
+        if (error) throw error;
+        const insertedProduct = data as Producto;
+        if (!insertedProduct?.id) throw new Error('No se pudo obtener el ID del producto creado.');
         productId = insertedProduct.id;
         this.toastService.success('Producto creado correctamente.');
       }
@@ -295,8 +260,7 @@ export class Products {
         await this.saveProductVariants(productId);
       }
 
-      await this.loadInitialData();
-      this.resetForm();
+      await this.router.navigate(['../'], { relativeTo: this.route });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Error al guardar el producto.';
       console.error(message, error);
@@ -359,9 +323,9 @@ export class Products {
           gramos_disponibles: Number(variant.gramos_disponibles) || 0,
           cantidad_minima_venta: Number(variant.cantidad_minima_venta) || 1,
           precio_minimo_venta: Number(variant.precio_minimo_venta) || 0,
-          opciones_venta: this.parseVariantOptions(variant.opciones_venta),
-          status: 'activo' as EstadoProducto,
-          urls_imagenes: this.productImages(),
+          opciones_venta: this.parseVariantOptions(variant.opciones_venta.toString()),
+          status: variant.status || 'activo' as EstadoProducto,
+          urls_imagenes: variant.urls_imagenes,
         };
 
         if (variant.id) {
@@ -393,12 +357,15 @@ export class Products {
       id: variant.id,
       nombre: variant.nombre,
       descripcion: variant.descripcion ?? '',
-      precio: String(variant.precio ?? 0),
-      stock: String(variant.stock ?? 0),
-      gramos_disponibles: String(variant.gramos_disponibles ?? 0),
-      cantidad_minima_venta: String(variant.cantidad_minima_venta ?? 1),
-      precio_minimo_venta: String(variant.precio_minimo_venta ?? 0),
-      opciones_venta: variant.opciones_venta?.join(',') ?? '5,10,20,40,0',
+      precio: variant.precio ?? 0,
+      stock: variant.stock ?? 0,
+      gramos_disponibles: variant.gramos_disponibles ?? 0,
+      cantidad_minima_venta: variant.cantidad_minima_venta ?? 1,
+      precio_minimo_venta: variant.precio_minimo_venta ?? 0,
+      opciones_venta: variant.opciones_venta ?? [5,10,20,40,0],
+      urls_imagenes: variant.urls_imagenes ?? [],
+      fecha_llegada: variant.fecha_llegada ?? '',
+      status: variant.status,
     }));
   }
 
@@ -419,9 +386,10 @@ export class Products {
     const variant = this.productVariants()[index];
     this.editingVariantIndex.set(index);
     this.newVariant.set({ ...variant });
+    this.pendingVariantImages.set([]);
   }
 
-  addVariant() {
+  async addVariant() {
     const variant = this.newVariant();
     if (!variant.nombre.trim()) {
       this.toastService.warn('El nombre de la variante es obligatorio.');
@@ -436,36 +404,47 @@ export class Products {
       return;
     }
 
-    const parsedOptions = this.parseVariantOptions(variant.opciones_venta);
+    const parsedOptions = this.parseVariantOptions(variant.opciones_venta.toString());
     if (parsedOptions.length === 0) {
       this.toastService.warn('Agregar al menos una opción de venta para la variante.');
       return;
     }
 
-    const variantEntry = {
+    const uploadedUrls = await this.uploadPendingVariantImages();
+    const variantWithImages = {
       ...variant,
-      opciones_venta: parsedOptions.join(','),
+      opciones_venta: parsedOptions,
+      urls_imagenes: [...variant.urls_imagenes, ...uploadedUrls],
     };
 
     if (this.editingVariantIndex() !== null) {
       const updated = this.productVariants().map((item, idx) =>
-        idx === this.editingVariantIndex() ? variantEntry : item,
+        idx === this.editingVariantIndex() ? variantWithImages : item,
       );
       this.productVariants.set(updated);
       this.editingVariantIndex.set(null);
     } else {
-      this.productVariants.set([...this.productVariants(), variantEntry]);
+      this.productVariants.set([...this.productVariants(), variantWithImages]);
     }
 
+    this.resetVariantForm();
+  }
+
+  resetVariantForm() {
+    this.editingVariantIndex.set(null);
+    this.pendingVariantImages.set([]);
     this.newVariant.set({
       nombre: '',
       descripcion: '',
-      precio: '',
-      stock: '',
-      gramos_disponibles: '',
-      cantidad_minima_venta: '1',
-      precio_minimo_venta: '0',
-      opciones_venta: '5,10,20,40,0',
+      precio: 0,
+      stock: 0,
+      gramos_disponibles: 0,
+      cantidad_minima_venta: 1,
+      precio_minimo_venta: 1,
+      opciones_venta: [5,10,20,40,0],
+      urls_imagenes: [],
+      fecha_llegada: '',
+      status: 'activo',
     });
   }
 
@@ -476,17 +455,7 @@ export class Products {
     }
     this.productVariants.set(this.productVariants().filter((_, idx) => idx !== index));
     if (this.editingVariantIndex() === index) {
-      this.editingVariantIndex.set(null);
-      this.newVariant.set({
-        nombre: '',
-        descripcion: '',
-        precio: '',
-        stock: '',
-        gramos_disponibles: '',
-        cantidad_minima_venta: '1',
-        precio_minimo_venta: '0',
-        opciones_venta: '5,10,20,40,0',
-      });
+      this.resetVariantForm();
     }
   }
 
@@ -521,6 +490,37 @@ export class Products {
     this.uploadLoading.set(false);
   }
 
+  async onVariantImageFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    if (!files?.length) return;
+
+    await this.addPendingVariantImages(files);
+    input.value = '';
+  }
+
+  private async addPendingVariantImages(files: FileList) {
+    this.uploadLoading.set(true);
+    const pending = [...this.pendingVariantImages()];
+
+    for (let index = 0; index < files.length; index++) {
+      const file = files.item(index);
+      if (!file) continue;
+
+      const isSquare = await this.validateImageSquare(file);
+      if (!isSquare) {
+        this.toastService.warn(`La imagen ${file.name} debe ser cuadrada.`);
+        continue;
+      }
+
+      const preview = URL.createObjectURL(file);
+      pending.push({ file, preview });
+    }
+
+    this.pendingVariantImages.set(pending);
+    this.uploadLoading.set(false);
+  }
+
   private validateImageSquare(file: File) {
     return new Promise<boolean>((resolve) => {
       const objectUrl = URL.createObjectURL(file);
@@ -550,7 +550,7 @@ export class Products {
     for (const item of files) {
       const path = `productos/${Date.now()}-${item.file.name}`;
       const uploadResult = await this.storageService.upload(
-        Products.IMAGE_BUCKET,
+        ProductsEditor.IMAGE_BUCKET,
         path,
         item.file,
         { cacheControl: '3600', upsert: false },
@@ -563,7 +563,7 @@ export class Products {
       }
 
       const publicUrlResult = await this.storageService.getPublicUrl(
-        Products.IMAGE_BUCKET,
+        ProductsEditor.IMAGE_BUCKET,
         path,
       );
 
@@ -581,12 +581,53 @@ export class Products {
     return uploadedUrls;
   }
 
+  private async uploadPendingVariantImages() {
+    const files = this.pendingVariantImages();
+    if (files.length === 0) {
+      return [];
+    }
+
+    this.uploadLoading.set(true);
+    const uploadedUrls: string[] = [];
+
+    for (const item of files) {
+      const path = `productos/variantes/${Date.now()}-${item.file.name}`;
+      const uploadResult = await this.storageService.upload(
+        ProductsEditor.IMAGE_BUCKET,
+        path,
+        item.file,
+        { cacheControl: '3600', upsert: false },
+      );
+
+      if ((uploadResult as any).error) {
+        console.error('Error al subir imagen de variante', (uploadResult as any).error);
+        this.toastService.error(`No se pudo subir ${item.file.name}`);
+        continue;
+      }
+
+      const publicUrlResult = await this.storageService.getPublicUrl(
+        ProductsEditor.IMAGE_BUCKET,
+        path,
+      );
+
+      if ((publicUrlResult as any).error || !(publicUrlResult as any).data?.publicUrl) {
+        console.error('Error al obtener URL pública', publicUrlResult);
+        this.toastService.error(`No se pudo obtener la URL pública de ${item.file.name}`);
+        continue;
+      }
+
+      uploadedUrls.push((publicUrlResult as any).data.publicUrl);
+    }
+
+    this.pendingVariantImages.set([]);
+    this.uploadLoading.set(false);
+    return uploadedUrls;
+  }
+
   removePendingImage(index: number) {
     const pending = [...this.pendingImages()];
     const item = pending[index];
-    if (item) {
-      URL.revokeObjectURL(item.preview);
-    }
+    if (item) URL.revokeObjectURL(item.preview);
     pending.splice(index, 1);
     this.pendingImages.set(pending);
   }
@@ -595,7 +636,26 @@ export class Products {
     this.productImages.set(this.productImages().filter((url) => url !== imageUrl));
   }
 
+  removePendingVariantImage(index: number) {
+    const pending = [...this.pendingVariantImages()];
+    const item = pending[index];
+    if (item) URL.revokeObjectURL(item.preview);
+    pending.splice(index, 1);
+    this.pendingVariantImages.set(pending);
+  }
+
+  removeVariantImage(imageUrl: string) {
+    this.newVariant.update((current) => ({
+      ...current,
+      urls_imagenes: current.urls_imagenes.filter((url) => url !== imageUrl),
+    }));
+  }
+
   getCategoryName(categoryId: string | null) {
     return this.categories().find((category) => category.id === categoryId)?.nombre ?? '-';
+  }
+
+  cancelEdit() {
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 }

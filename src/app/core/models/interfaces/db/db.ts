@@ -117,7 +117,7 @@ export interface ProductoVariante {
     fecha_llegada: string | null;
     gramos_disponibles: number | null;
     nombre: string;
-    opciones_venta: number[] | null;
+    opciones_venta: number[] | string[] | null;
     precio: number;
     precio_minimo_venta: number | null;
     producto_id: string | null;
