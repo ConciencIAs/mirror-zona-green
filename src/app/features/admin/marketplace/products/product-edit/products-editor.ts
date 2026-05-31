@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { form } from '@angular/forms/signals';
+import { form, validateStandardSchema } from '@angular/forms/signals';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { SupabaseStorageService } from '@src/app/core/services/supabase/supabase-storage.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
@@ -13,6 +13,7 @@ import {
   ProductoVariante,
   Tag,
 } from '@src/app/core/models/interfaces/db/db';
+import { productSchema, productVariantSchema } from '@src/app/core/models/schemas/product.schema';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import {
   FormSelectComponent,
@@ -33,7 +34,7 @@ interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 
   tags: string[];
 }
 
-interface ProductVariantFormModel extends Omit<ProductoVariante, 'created_at' | 'deleted_at' | 'updated_at' | 'id' | 'producto_id' | 'opciones_venta'> {
+interface ProductVariantFormModel extends Omit<ProductoVariante, 'created_at' | 'deleted_at' | 'updated_at' | 'id' | 'producto_id' | 'opciones_venta' | 'fecha_llegada'> {
   id?: string;
   nombre: string;
   descripcion: string;
@@ -44,6 +45,7 @@ interface ProductVariantFormModel extends Omit<ProductoVariante, 'created_at' | 
   precio_minimo_venta: number;
   opciones_venta: string[] | number[];
   urls_imagenes: string[];
+  fecha_llegada?: string;
 }
 
 @Component({
@@ -82,9 +84,18 @@ export class ProductsEditor implements OnInit {
     tipo_producto: 'simple',
     tags: [],
     urls_imagenes: [],
+    has_product_variantes: false,
   });
 
-  readonly productForm = form(this.productModel);
+  readonly productForm = form(this.productModel, (schemaPath) => {
+    validateStandardSchema(schemaPath, productSchema);
+  });
+  readonly showErrorsModal = signal(false);
+  readonly errorEntries = computed(() => {
+    const errors = this.productForm().errors();
+    if (!errors) return [];
+    return Object.entries(errors);
+  });
   readonly selectedTagNames = signal<string[]>([]);
   readonly productImages = signal<string[]>([]);
   readonly pendingImages = signal<{ file: File; preview: string }[]>([]);
@@ -103,6 +114,15 @@ export class ProductsEditor implements OnInit {
     urls_imagenes: [],
     fecha_llegada: '',
     status: 'activo',
+  });
+  readonly newVariantForm = form(this.newVariant, (schemaPath) => {
+    validateStandardSchema(schemaPath, productVariantSchema);
+  });
+  readonly showVariantErrorsModal = signal(false);
+  readonly variantErrorEntries = computed(() => {
+    const errors = this.newVariantForm().errors();
+    if (!errors) return [];
+    return Object.entries(errors);
   });
   readonly pendingVariantImages = signal<{ file: File; preview: string }[]>([]);
   readonly editingProductId = signal<string | null>(null);
@@ -189,6 +209,7 @@ export class ProductsEditor implements OnInit {
       tipo_producto: 'simple',
       tags: product.tags ?? [],
       urls_imagenes: product.urls_imagenes ?? [],
+      has_product_variantes: product.has_product_variantes,
     });
     this.selectedTagNames.set(product.tags ?? []);
     this.productImages.set(product.urls_imagenes ?? []);
@@ -209,6 +230,13 @@ export class ProductsEditor implements OnInit {
     event.preventDefault();
     this.generalError.set(null);
 
+    if (this.productForm().invalid()) {
+      this.generalError.set('Revisa los campos del formulario.');
+      this.showErrorsModal.set(true);
+      this.toastService.warn('Revisa los datos del producto.');
+      return;
+    }
+
     const model = this.productModel();
     const payload = {
       nombre: model.nombre.trim(),
@@ -221,14 +249,8 @@ export class ProductsEditor implements OnInit {
       status: model.status,
       tags: this.selectedTagNames(),
       urls_imagenes: this.productImages(),
+      has_product_variantes: model.tipo_producto === 'variantes',
     };
-
-    const validationError = this.validatePayload(payload);
-    if (validationError) {
-      this.generalError.set(validationError);
-      this.toastService.warn(validationError);
-      return;
-    }
 
     if (model.tipo_producto === 'variantes' && this.productVariants().length === 0) {
       this.generalError.set('Agrega al menos una variante para productos con variantes.');
@@ -269,23 +291,6 @@ export class ProductsEditor implements OnInit {
     } finally {
       this.saving.set(false);
     }
-  }
-
-  private validatePayload(payload: {
-    nombre: string;
-    sku: string;
-    categoria_id: string;
-    precio: number;
-    costo: number;
-    status: string;
-  }) {
-    if (!payload.nombre) return 'El nombre del producto es obligatorio.';
-    if (!payload.sku) return 'El SKU es obligatorio.';
-    if (!payload.categoria_id) return 'Selecciona una categoría.';
-    if (payload.precio < 0) return 'El precio no puede ser negativo.';
-    if (payload.costo < 0) return 'El costo no puede ser negativo.';
-    if (!payload.status) return 'Selecciona el estado del producto.';
-    return null;
   }
 
   private parseVariantOptions(value: string) {
@@ -391,10 +396,12 @@ export class ProductsEditor implements OnInit {
 
   async addVariant() {
     const variant = this.newVariant();
-    if (!variant.nombre.trim()) {
-      this.toastService.warn('El nombre de la variante es obligatorio.');
+    if (this.newVariantForm().invalid()) {
+      this.showVariantErrorsModal.set(true);
+      this.toastService.warn('Revisa los datos de la variante.');
       return;
     }
+
     if (Number(variant.precio) <= 0) {
       this.toastService.warn('El precio de la variante debe ser mayor a 0.');
       return;
@@ -653,6 +660,14 @@ export class ProductsEditor implements OnInit {
 
   getCategoryName(categoryId: string | null) {
     return this.categories().find((category) => category.id === categoryId)?.nombre ?? '-';
+  }
+
+  closeErrorsModal() {
+    this.showErrorsModal.set(false);
+  }
+
+  closeVariantErrorsModal() {
+    this.showVariantErrorsModal.set(false);
   }
 
   cancelEdit() {

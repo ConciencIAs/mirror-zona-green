@@ -309,6 +309,50 @@
     </div>
     }
 
+    @if (showVariantErrorsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6">
+      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+        <h3 class="text-xl font-semibold mb-3">Errores en la variante</h3>
+        <ul class="list-disc pl-5 space-y-2 max-h-48 overflow-auto text-sm text-slate-700">
+          @for (errorEntry of variantErrorEntries(); track errorEntry[0]) {
+          <li>{{ errorEntry[1] }}</li>
+          }
+        </ul>
+        <div class="mt-6 flex justify-end">
+          <button
+            type="button"
+            class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-700 hover:bg-slate-200"
+            (click)="closeVariantErrorsModal()"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    @if (showErrorsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6">
+      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+        <h3 class="text-xl font-semibold mb-3">Errores en el formulario</h3>
+        <ul class="list-disc pl-5 space-y-2 max-h-48 overflow-auto text-sm text-slate-700">
+          @for (errorEntry of errorEntries(); track errorEntry[0]) {
+          <li>{{ errorEntry[1] }}</li>
+          }
+        </ul>
+        <div class="mt-6 flex justify-end">
+          <button
+            type="button"
+            class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-700 hover:bg-slate-200"
+            (click)="closeErrorsModal()"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
       <button
         type="button"

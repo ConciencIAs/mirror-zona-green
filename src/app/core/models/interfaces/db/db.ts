@@ -142,6 +142,7 @@ export interface Producto {
     tags: string[] | null;
     updated_at: string | null;
     urls_imagenes: string[] | null;
+    has_product_variantes: boolean;
 }
 
 export interface Rol {

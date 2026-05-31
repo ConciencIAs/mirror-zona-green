@@ -36,6 +36,8 @@ export class FormInputComponent {
   type = input<string>('text');
   placeholder = input<string>('');
 
+  // para input tipo precio podemos usar la libreria prime ng el componente InputNumber
+
   getControl() {
     return this.control()
   }
