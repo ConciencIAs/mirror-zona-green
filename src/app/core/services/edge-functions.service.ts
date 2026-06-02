@@ -8,13 +8,12 @@ export type EdgeAuthMode = 'user' | 'anon' | 'service';
 export class EdgeFunctionsService {
   private readonly supabaseClient = inject(SupabaseClientService);
 
-  async createOrder(carrito: Carrito) {
+  async createOrder(carrito: Carrito[]) {
     return await this.supabaseClient.supabase.functions.invoke(
       'create-order',
       {
         body: JSON.stringify(carrito),
       }
     );
-
   }
 }

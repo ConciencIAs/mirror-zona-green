@@ -1,9 +1,149 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
+import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
+import { EstadoOrden, Json, Orden } from '@src/app/core/models/interfaces/db/db';
 
 @Component({
   selector: 'app-ordenes',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './ordenes.html',
   styles: ``,
 })
-export class Ordenes {}
+export class Ordenes {
+  private readonly dbService = inject(SupabaseDbService);
+
+  protected readonly loading = signal(true);
+  protected readonly saving = signal(false);
+  protected readonly error = signal('');
+  protected readonly orders = signal<Orden[]>([]);
+  protected readonly orderComments = signal<Record<string, string>>({});
+  protected readonly orderStatuses = signal<Record<string, EstadoOrden>>({});
+
+  protected readonly statusOptions: EstadoOrden[] = [
+    'pendiente',
+    'pagado',
+    'en_proceso',
+    'enviado',
+    'entregado',
+    'cancelado',
+  ];
+
+  protected readonly hasOrders = computed(() => this.orders().length > 0);
+
+  protected ngOnInit(): void {
+    void this.loadOrders();
+  }
+
+  private async loadOrders(): Promise<void> {
+    this.loading.set(true);
+    this.error.set('');
+
+    try {
+      const response = await this.dbService
+        .from(TableName.ORDENES)
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      const orders = (response.data as Orden[]) || [];
+      this.orders.set(orders);
+      this.orderComments.set(
+        Object.fromEntries(orders.map((order) => [order.id, order.comentarios_agente || '']))
+      );
+      this.orderStatuses.set(
+        Object.fromEntries(orders.map((order) => [order.id, order.status])) as Record<string, EstadoOrden>
+      );
+    } catch (error) {
+      console.error(error);
+      this.error.set('No se pudo cargar las órdenes. Intenta nuevamente.');
+      this.orders.set([]);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  protected updateComment(orderId: string, value: string): void {
+    this.orderComments.update((comments) => ({
+      ...comments,
+      [orderId]: value,
+    }));
+  }
+
+  protected updateStatus(orderId: string, value: string): void {
+    this.orderStatuses.update((statuses) => ({
+      ...statuses,
+      [orderId]: value as EstadoOrden,
+    }));
+  }
+
+  protected async saveOrder(order: Orden): Promise<void> {
+    this.saving.set(true);
+    this.error.set('');
+
+    try {
+      const updates = {
+        status: this.orderStatuses()[order.id],
+        comentarios_agente: this.orderComments()[order.id],
+      };
+
+      const response = await this.dbService.update(TableName.ORDENES, updates, { id: order.id });
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      await this.loadOrders();
+    } catch (error) {
+      console.error(error);
+      this.error.set('No se pudo actualizar la orden. Intenta nuevamente.');
+    } finally {
+      this.saving.set(false);
+    }
+  }
+
+  protected formatDate(value: string | null): string {
+    if (!value) {
+      return '-';
+    }
+
+    const date = new Date(value);
+    return date.toLocaleString('es-CO', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  protected formatPrice(value: number): string {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  protected parseOrderItems(list: Json): Json[] {
+    if (!list) {
+      return [];
+    }
+
+    let parsed: unknown = list;
+
+    if (typeof list === 'string') {
+      try {
+        parsed = JSON.parse(list);
+      } catch {
+        return [];
+      }
+    }
+
+    return Array.isArray(parsed) ? (parsed as Json[]) : [];
+  }
+}
