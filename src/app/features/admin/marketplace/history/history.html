@@ -1,1 +1,48 @@
-<p>Pagina donde se visualizaran el historial de ordenes del marketplace desde el lado del admin y los agentes</p>
+<div class="space-y-6 p-4">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-[#1d341c]">Historial de órdenes</h1>
+      <p class="mt-2 text-sm text-[#4b5b44]">Revisa todas las órdenes del marketplace en una sola vista.</p>
+    </div>
+    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">Total: {{ orders().length }} orden(es)</span>
+  </div>
+
+  @if (loading()) {
+    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando el historial de órdenes...</div>
+  } @else {
+    @if (error()) {
+      <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
+    }
+
+    @if (orders().length === 0) {
+      <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
+        No hay órdenes registradas en el marketplace.
+      </div>
+    } @else {
+      <div class="space-y-6">
+        @for (order of orders(); track order.id) {
+          <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="text-sm text-[#55644d]">Orden ID: <span class="font-semibold text-[#1d341c]">{{ order.id }}</span></p>
+                <p class="text-sm text-[#55644d]">Usuario: <span class="font-semibold text-[#1d341c]">{{ order.usuario_id }}</span></p>
+              </div>
+              <span class="inline-flex items-center rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">{{ order.status }}</span>
+            </div>
+            <div class="mt-4 grid gap-4 md:grid-cols-[1fr_1fr] text-sm text-[#55644d]">
+              <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
+                <p><strong>Total:</strong> {{ formatPrice(order.precio_total) }}</p>
+                <p><strong>Tipo entrega:</strong> {{ order.tipo_entrega || 'No especificado' }}</p>
+                <p><strong>Fecha creación:</strong> {{ formatDate(order.created_at) }}</p>
+              </div>
+              <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
+                <p class="font-semibold text-[#1f6c2f]">Comentario agente</p>
+                <p>{{ order.comentarios_agente || 'Sin comentario' }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

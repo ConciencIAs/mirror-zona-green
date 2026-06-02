@@ -1,1 +1,86 @@
-<p>buscar los productos visualizar agregar al carrito filtrar por categoria y por otros campos</p>
+<div class="space-y-6 p-4">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-[#1d341c]">Marketplace</h1>
+      <p class="mt-2 text-sm text-[#4b5b44]">Busca productos recientes por nombre, categoría o tag.</p>
+    </div>
+    <a routerLink="/marketplace/carrito" class="inline-flex items-center rounded-full bg-[#1f6c2f] px-4 py-2 text-sm font-semibold text-white hover:bg-[#185023]">Ver carrito</a>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-[1fr_320px]">
+    <div class="space-y-4">
+      <div class="grid gap-3 sm:grid-cols-[1fr_220px]">
+        <input
+          type="search"
+          [value]="searchTerm()"
+          (input)="onSearchInput($event)"
+          placeholder="Buscar por nombre, tag o descripción"
+          class="w-full rounded-3xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#122011] shadow-sm focus:border-[#1f6c2f] focus:outline-none"
+        />
+        <select
+          class="w-full rounded-3xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#122011] shadow-sm focus:border-[#1f6c2f] focus:outline-none"
+          [value]="selectedCategory()"
+          (change)="onCategoryChange($event)"
+        >
+          <option value="">Todas las categorías</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="rounded-3xl border border-[#d7dfc7] bg-[#f8faf2] p-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-[#34492c]">Tags</h2>
+          <button type="button" (click)="clearFilters()" class="text-sm text-[#2e5a23] underline">Limpiar</button>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          @if (availableTags().length) {
+            @for (tag of availableTags(); track tag) {
+              <button
+                type="button"
+                (click)="toggleTag(tag)"
+                [class]="selectedTags().includes(tag)
+                  ? 'rounded-full border bg-[#d7f1c6] px-3 py-1 text-sm font-semibold text-[#1f6c2f]'
+                  : 'rounded-full border border-[#d7dfc7] bg-white px-3 py-1 text-sm text-[#425137] hover:bg-[#eef6df]'"
+                class="transition"
+              >
+                {{ tag }}
+              </button>
+            }
+          } @else {
+            <p class="text-sm text-[#55644d]">No hay tags disponibles.</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-4 shadow-sm">
+      <p class="text-sm text-[#4b5b44]">Productos recientes</p>
+      <p class="mt-2 text-3xl font-bold text-[#1f6c2f]">{{ filteredProducts().length }}</p>
+      <p class="text-sm text-[#6b7c5e]">Mostrando los productos más recientes según filtros.</p>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    @if (loading()) {
+      <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando productos...</div>
+    } @else {
+      @if (error()) {
+        <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
+      } @else {
+        @if (filteredProducts().length === 0) {
+          <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
+            No encontramos productos con los filtros seleccionados.
+          </div>
+        } @else {
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            @for (product of filteredProducts(); track product.id) {
+              <app-product-card [product]="product" (addToCart)="addProductToCart(product)"></app-product-card>
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

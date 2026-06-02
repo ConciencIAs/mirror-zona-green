@@ -15,7 +15,7 @@ export const marketplaceRoutes: Routes = [
       },
       {
         path: 'carrito',
-        loadComponent: () => import('./carrito/carrito').then(m => m.Carrito),
+        loadComponent: () => import('./carrito/carrito').then(m => m.CarritoComponent),
         title: 'Carrito'
       },
       {

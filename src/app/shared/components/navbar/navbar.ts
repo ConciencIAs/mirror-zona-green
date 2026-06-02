@@ -61,6 +61,7 @@ export class Navbar implements OnInit {
         { path: '/admin/marketplace/products', label: 'Productos' },
         { path: '/admin/marketplace/custom', label: 'Custom search' },
         { path: '/admin/marketplace/orders', label: 'Órdenes admin' },
+        { path: '/admin/marketplace/history', label: 'Historial' },
         { path: '/admin/dynamic-content', label: 'Contenido dinámico' },
       ]
     },

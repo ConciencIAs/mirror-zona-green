@@ -20,33 +20,7 @@ import {
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
 
-interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id' > {
-  nombre: string;
-  descripcion: string;
-  sku: string;
-  precio: number;
-  costo: number;
-  stock_total: number;
-  categoria_id: string;
-  status: EstadoProducto;
-  tipo_producto: 'simple' | 'variantes';
-  urls_imagenes: string[];
-  tags: string[];
-}
-
-interface ProductVariantFormModel extends Omit<ProductoVariante, 'created_at' | 'deleted_at' | 'updated_at' | 'id' | 'producto_id' | 'opciones_venta' | 'fecha_llegada'> {
-  id?: string;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  stock: number;
-  gramos_disponibles: number;
-  cantidad_minima_venta: number;
-  precio_minimo_venta: number;
-  opciones_venta: string[] | number[];
-  urls_imagenes: string[];
-  fecha_llegada?: string;
-}
+import {ProductFormModel, ProductVariantFormModel} from '@src/app/core/models/interfaces/productos/marketplace.interface';  
 
 @Component({
   selector: 'app-products-editor',
@@ -206,7 +180,7 @@ export class ProductsEditor implements OnInit {
       stock_total: product.stock_total ?? 0,
       categoria_id: product.categoria_id ?? '',
       status: product.status,
-      tipo_producto: 'simple',
+      tipo_producto: product.has_product_variantes ? 'variantes' : 'simple',
       tags: product.tags ?? [],
       urls_imagenes: product.urls_imagenes ?? [],
       has_product_variantes: product.has_product_variantes,

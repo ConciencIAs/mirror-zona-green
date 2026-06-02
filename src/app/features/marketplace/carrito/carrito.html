@@ -1,1 +1,60 @@
-<p>Pagina donde se visualizara el carrito de compras del usuario</p>
+<div class="space-y-6 p-4">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-[#1d341c]">Carrito de compras</h1>
+      <p class="mt-2 text-sm text-[#4b5b44]">Revisa los productos y avanza al checkout.</p>
+    </div>
+    <button type="button" (click)="goToCheckout()" [disabled]="cartDetails().length === 0" class="rounded-full bg-[#1f6c2f] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]">Ir a checkout</button>
+  </div>
+
+  @if (loading()) {
+    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando carrito...</div>
+  } @else {
+    @if (error()) {
+      <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
+    } @else {
+      @if (cartDetails().length === 0) {
+        <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
+          Tu carrito está vacío. <a routerLink="/marketplace" class="font-semibold text-[#1f6c2f] underline">Volver al marketplace</a>.
+        </div>
+      } @else {
+        <div class="space-y-6">
+          <div class="overflow-hidden rounded-3xl border border-[#d7dfc7] bg-white shadow-sm">
+            <div class="grid gap-4 p-4 text-sm font-semibold text-[#4b5b44] md:grid-cols-[3fr_1fr_1fr_1fr]">
+              <span>Producto</span>
+              <span class="hidden md:block">Cantidad</span>
+              <span>Subtotal</span>
+              <span>Acción</span>
+            </div>
+            @for (item of cartDetails(); track item.cartLine.id) {
+              <div class="grid gap-4 border-t border-[#e4ebdd] p-4 text-sm text-[#2e391c] md:grid-cols-[3fr_1fr_1fr_1fr]">
+                <div class="space-y-2">
+                  <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }}</p>
+                  @if (item.variante) {
+                    <p class="text-xs text-[#5f6c4f]">Variante: {{ item.variante.nombre }}</p>
+                  }
+                  <p class="text-xs text-[#5f6c4f]">{{ formatPrice(item.unitPrice) }} c/u</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" (click)="decreaseQuantity(item.cartLine.id)" class="rounded-full border border-[#d7dfc7] px-2 py-1 text-sm">-</button>
+                  <span class="min-w-[24px] text-center">{{ item.cartLine.cantidad }}</span>
+                  <button type="button" (click)="increaseQuantity(item.cartLine.id)" class="rounded-full border border-[#d7dfc7] px-2 py-1 text-sm">+</button>
+                </div>
+                <div class="font-semibold text-[#1f6c2f]">{{ formatPrice(item.subtotal) }}</div>
+                <button type="button" (click)="removeItem(item.cartLine.id)" class="text-sm font-semibold text-[#a32f2f] underline">Eliminar</button>
+              </div>
+            }
+          </div>
+
+          <div class="flex flex-col gap-4 rounded-3xl border border-[#d7dfc7] bg-[#f8faf2] p-6 text-[#22332d] md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm">Total artículos: <span class="font-semibold">{{ cartDetails().length }}</span></p>
+              <p class="mt-1 text-3xl font-bold text-[#1f6c2f]">{{ formatPrice(total()) }}</p>
+            </div>
+            <button type="button" (click)="goToCheckout()" class="inline-flex items-center justify-center rounded-full bg-[#1f6c2f] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#185023]">Continuar a checkout</button>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
