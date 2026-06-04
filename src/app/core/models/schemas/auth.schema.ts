@@ -10,6 +10,10 @@ export const userSchemaRegister = z.object({
   fecha_nacimiento: z.string().refine((v) => !!v, 'La fecha de nacimiento es requerida'),
   tipo_documento: z.string().default('CC'),
   ubicacion: z.string().min(2, 'La ubicación provista es demasiado corta'),
+  acepta_terminos: z.boolean().refine((v) => v === true, 'Debes aceptar los términos y condiciones'),
+  acepta_politica_privacidad: z
+    .boolean()
+    .refine((v) => v === true, 'Debes aceptar la política de privacidad'),
 });
 
 export const userSchemaLogin = z.object({

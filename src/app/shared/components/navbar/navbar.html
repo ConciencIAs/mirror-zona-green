@@ -130,11 +130,6 @@
     }
 
     <!-- Auth: autenticado → menú de perfil -->
-    @if (isAuthenticated()) {
-    <div class="shrink-0">
-      <app-profile-menu />
-    </div>
-    }
 
     <!-- Dark / Light toggle -->
     <button
@@ -166,6 +161,24 @@
       </svg>
     </button>
 
+    @if (isAuthenticated()) {
+    <p-inputgroup>
+      <input pInputText placeholder="Keyword" />
+      <p-inputgroup-addon>
+        <p-button icon="pi pi-search" severity="secondary" variant="text" />
+      </p-inputgroup-addon>
+    </p-inputgroup>
+    <div class="shrink-0">
+      <app-profile-menu />
+    </div>
+    <p-overlaybadge severity="info" [value]="totalCartItems" badgeSize="small">
+      <a routerLink="/marketplace/carrito"
+        class="relative inline-flex items-center gap-1 py-1 px-3 bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg text-[11.5px] font-semibold transition-colors duration-200 no-underline">
+        <i class="pi pi-cart-minus" style="font-size: 1.5rem"></i>
+      </a>
+    </p-overlaybadge>
+    }
+
     <!-- Hamburguesa -->
     <button
       class="w-10 h-10 flex flex-col items-center justify-center gap-[5px] cursor-pointer rounded-lg bg-none border-none p-0 shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10"
@@ -174,6 +187,5 @@
       <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
       <span class="block w-[22px] h-[2px] rounded-[1px]" [class]="isDark() ? 'bg-[#e0ead4]' : 'bg-[#1d1d1b]'"></span>
     </button>
-
   </div>
 </header>

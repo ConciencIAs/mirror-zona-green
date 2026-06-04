@@ -6,4 +6,6 @@ export interface CustomerData {
   fecha_nacimiento: string;
   tipo_documento: 'CC' | 'CE' | 'NIT' | 'Pasaporte';
   ubicacion: string;
+  acepta_terminos: boolean;
+  acepta_politica_privacidad: boolean;
 }

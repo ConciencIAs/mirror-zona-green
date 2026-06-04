@@ -1,21 +1,28 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
-import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { ToastService } from '@src/app/core/services/ui/toast.service';
-import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
+import { form, validateStandardSchema } from '@angular/forms/signals';
+
+
 import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
 import { PENDING_DATA_KEY } from '@src/app/core/models/constans/localstate/storage';
-import { form, validateStandardSchema } from '@angular/forms/signals';
+
+import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
+import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
+
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import {
   FormSelectComponent,
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
+
+import { FormInputCheckboxComponent } from '@src/app/shared/components/form/form-input-checkbox/form-input-checkbox';
+
 import { userSchemaRegister } from '@src/app/core/models/schemas/auth.schema';
 
 @Component({
   selector: 'app-register',
-  imports: [FormInputComponent, FormSelectComponent],
+  imports: [FormInputComponent, FormSelectComponent, FormInputCheckboxComponent],
   templateUrl: './register.html',
   styles: ``,
 })
@@ -44,16 +51,12 @@ export class Register {
     fecha_nacimiento: '',
     tipo_documento: 'CC',
     ubicacion: '',
+    acepta_terminos: false,
+    acepta_politica_privacidad: false,
   });
 
   readonly registerForm = form(this.formModel, (schemaPath) => {
     validateStandardSchema(schemaPath, userSchemaRegister);
-  });
-
-  errorEntries = computed(() => {
-    const errors = this.registerForm().errors();
-    if (!errors) return [];
-    return Object.entries(errors);
   });
 
   async verificarSiExisteUsuario(correo: string): Promise<boolean> {
