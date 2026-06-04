@@ -168,7 +168,11 @@ export const CartStore = signalStore(
 
       clearCart() {
         patchState(store, { items: [] });
-      }
+      },
+
+      setCart(cartItems: Carrito[]) {
+        patchState(store, { items: cartItems });
+      } 
     };
   }),
 

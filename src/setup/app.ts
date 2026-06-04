@@ -1,19 +1,22 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { distinctUntilChanged, filter } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
+
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { LocalStorageStateService } from '@src/app/core/services//local-storage-state.service';
-import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
+
+import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { CartStore } from '@src/app/core/state/card/card.state';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastModule, ConfirmDialogModule, CommonModule, ButtonModule],
+  imports: [RouterOutlet, ToastModule, ConfirmDialogModule, ButtonModule],
   templateUrl: './app.html',
   styles: [],
 })
@@ -21,8 +24,9 @@ export class App implements OnInit {
 
   private readonly supabaseAuthService = inject(SupabaseAuthService);
   private readonly supabaseDbService = inject(SupabaseDbService);
-  private readonly LocalStorageStateService = inject(LocalStorageStateService);
-  private readonly UserStore = inject(UserStore);
+  private readonly localStorageStateService = inject(LocalStorageStateService);
+  private readonly userStore = inject(UserStore);
+  private readonly cartStore = inject(CartStore);
 
   private readonly confirmationModalService = inject(ConfirmationModalService);
 
@@ -37,7 +41,9 @@ export class App implements OnInit {
       filter(event => event.event !== 'INITIAL_SESSION'),
     ).subscribe(async (event) => {
       const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.PERFILES).select('*').eq('id', event.session?.user.id).single();
-      if (!error) this.UserStore.setPerfil(data);
+      const { error: cartError, data: cartData } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.CARRITO).select('*').eq('id', event.session?.user.id).single();
+      if (!error) this.userStore.setPerfil(data);
+      if (!cartError) this.cartStore.setCart(cartData);
     });
     this.getRoles();
     this.isLegalAge.set(this.userSaysToBeLegalAge);
@@ -45,7 +51,7 @@ export class App implements OnInit {
   }
 
   get userSaysToBeLegalAge(): boolean {
-    return this.LocalStorageStateService.getState(
+    return this.localStorageStateService.getState(
       this.USER_SAY_TO_BE_LEGAL_AGE_KEY,
       false,
     );
@@ -61,7 +67,7 @@ export class App implements OnInit {
         rejectLabel: 'No, no soy mayor de edad',
         accept: () => {
           this.isLegalAge.set(true);
-          this.LocalStorageStateService.setState(this.USER_SAY_TO_BE_LEGAL_AGE_KEY, true);
+          this.localStorageStateService.setState(this.USER_SAY_TO_BE_LEGAL_AGE_KEY, true);
         },
       });
     }
@@ -70,7 +76,7 @@ export class App implements OnInit {
   async getRoles() {
     const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.ROLES).select('*');
     if (!error) {
-      this.LocalStorageStateService.setState('app_roles', data);
+      this.localStorageStateService.setState('app_roles', data);
     }
   }
 

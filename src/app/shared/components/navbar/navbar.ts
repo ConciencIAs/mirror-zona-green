@@ -1,9 +1,13 @@
-import { Component, inject, signal, HostListener, OnInit } from '@angular/core';
+import { Component, inject, signal, HostListener, OnInit, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
 
 import { ButtonModule } from 'primeng/button';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputTextModule } from 'primeng/inputtext';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 
@@ -22,7 +26,7 @@ type NavSection = {
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, ProfileMenu],
+  imports: [RouterLink, ProfileMenu, OverlayBadgeModule, InputGroupModule, InputTextModule, ButtonModule, InputGroupAddonModule],
   templateUrl: './navbar.html',
 })
 export class Navbar implements OnInit {
@@ -32,6 +36,8 @@ export class Navbar implements OnInit {
   protected authDropOpen = signal(false);
   protected sidebarOpen = signal(false);
   protected isDark = signal(false);
+
+  totalCartItems = this.cartStore.totalItems();
 
   protected readonly navSections: NavSection[] = [
     {
