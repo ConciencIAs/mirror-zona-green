@@ -26,21 +26,31 @@ export class ProfileMenu implements OnInit {
 
   ngOnInit() {
     this.items = [
-        {
-          label: 'Mi perfil',
-          icon: 'pi pi-user',
-          routerLink: '/customer/perfil'
-        },
-        {
-          label: 'Cerrar sesión',
-          icon: 'pi pi-sign-out',
-          command: async () => {
-            await this.supabaseAuthService.signOut();
-            this.userState.clearPerfil();
-            this.cartState.clearCart();
-          }
+      {
+        label: 'Mi perfil',
+        icon: 'pi pi-user',
+        routerLink: '/customer/perfil'
+      },
+      {
+        label: 'Mis ordenes',
+        icon: 'pi pi-shopping-cart',
+        routerLink: '/customer/orders'
+      },
+      // {
+      //   label: 'Mis productos favoritos',
+      //   icon: 'pi pi-heart',
+      //   routerLink: '/customer/favorites'
+      // },
+      {
+        label: 'Cerrar sesión',
+        icon: 'pi pi-sign-out',
+        command: async () => {
+          await this.supabaseAuthService.signOut();
+          this.userState.clearPerfil();
+          this.cartState.clearCart();
         }
-      ]
+      }
+    ]
 
 
   }

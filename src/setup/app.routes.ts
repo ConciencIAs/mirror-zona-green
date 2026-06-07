@@ -4,6 +4,7 @@ import { marketplaceRoutes } from '@src/app/features/marketplace/marketplace.rou
 import { MainLayout } from '@src/app/shared/layout/main-layout/main-layout';
 import { adminRoutes } from '@src/app/features/admin/admin.route';
 import { roleGuard } from '@src/app/core/guards/role-guard';
+import { authGuard } from '@src/app/core/guards/auth-guard';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,20 @@ export const routes: Routes = [
         path: 'terminos-y-condiciones',
         title: 'Términos y condiciones',
         loadComponent: () => import('@src/app/features/documentos-informativos/terminos/terminos').then((m) => m.Terminos),
+      },
+      {
+        path: 'customer/perfil',
+        title: 'Perfil',
+        loadComponent: () => import('@src/app/features/customer/account/account').then((m) => m.Account),
+        canActivate: [authGuard],
+        data: { zone: 'customer' }
+      },
+      {
+        path: 'customer/orders',
+        title: 'Ordenes',
+        loadComponent: () => import('@src/app/features/marketplace/ordenes/ordenes').then((m) => m.Ordenes),
+        canActivate: [authGuard],
+        data: { zone: 'customer' }
       },
       ...routerAuthCustomer,
       ...marketplaceRoutes,

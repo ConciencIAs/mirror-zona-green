@@ -82,21 +82,25 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'dynamic-content',
+        data: { zone: 'admin' },
         children: [
           {
             path: '',
             pathMatch: 'full',
             loadComponent: () => import('./dynamic-content/home/home').then(m => m.Home),
+            data: { zone: 'admin' },
             title: 'Dynamic Content'
           },
           {
             path: 'home',
             loadComponent: () => import('./dynamic-content/home/home').then(m => m.Home),
+            data: { zone: 'admin' },
             title: 'Dynamic Content'
           },
           {
             path: 'app-config',
             title: 'App Config',
+            data: { zone: 'admin' },
             loadComponent: () => import('./dynamic-content/config-app/config-app').then(m => m.ConfigApp)
           }
         ]
