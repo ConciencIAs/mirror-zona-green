@@ -194,7 +194,6 @@ export class ProductsEditor implements OnInit {
     this.deletedVariantIds.set([]);
 
     const variants = await this.loadProductVariants(product.id);
-    console.log(variants)
     this.productVariants.set(variants);
     if (variants.length > 0) {
       this.productModel.update((current) => ({ ...current, tipo_producto: 'variantes' }));
@@ -334,7 +333,6 @@ export class ProductsEditor implements OnInit {
     }
 
     const variants = data as ProductoVariante[];
-    console.log(variants)
     return variants.map((variant) => ({
       id: variant.id,
       nombre: variant.nombre,

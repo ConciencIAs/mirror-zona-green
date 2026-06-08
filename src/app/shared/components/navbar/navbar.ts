@@ -1,5 +1,5 @@
 import { Component, inject, signal, HostListener, OnInit, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
 
 import { ButtonModule } from 'primeng/button';
@@ -10,6 +10,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { FormsModule } from '@angular/forms';
 
 const LS_KEY = 'zg-dark';
 
@@ -26,12 +27,15 @@ type NavSection = {
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, ProfileMenu, OverlayBadgeModule, InputGroupModule, InputTextModule, ButtonModule, InputGroupAddonModule],
+  imports: [RouterLink, ProfileMenu, OverlayBadgeModule, InputGroupModule, InputTextModule, ButtonModule, InputGroupAddonModule, FormsModule],
   templateUrl: './navbar.html',
 })
 export class Navbar implements OnInit {
   private readonly cartStore = inject(CartStore);
   private readonly userStore = inject(UserStore);
+  private readonly router = inject(Router);
+
+  searchQuery = signal<string>('');
 
   protected authDropOpen = signal(false);
   protected sidebarOpen = signal(false);
@@ -132,6 +136,18 @@ export class Navbar implements OnInit {
   get currentRole() {
     return this.userStore.currentRole();
   }
+
+  onSearch() {
+    const query = this.searchQuery();
+
+    if (!query.trim()) return;
+
+    this.router.navigate(['/marketplace'], {
+      queryParams: { q: query.trim() },
+    });
+  }
+
+
 
   toggleAuthDrop(): void { this.authDropOpen.update(v => !v); }
   closeAuthDrop(): void { this.authDropOpen.set(false); }

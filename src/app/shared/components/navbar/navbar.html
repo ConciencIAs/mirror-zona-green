@@ -163,7 +163,7 @@
 
     @if (isAuthenticated()) {
     <p-inputgroup>
-      <input pInputText placeholder="Keyword" />
+      <input pInputText [(ngModel)]="searchQuery" placeholder="Search" (keyup.enter)="onSearch()" />
       <p-inputgroup-addon>
         <p-button icon="pi pi-search" severity="secondary" variant="text" />
       </p-inputgroup-addon>
