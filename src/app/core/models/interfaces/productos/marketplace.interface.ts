@@ -4,7 +4,7 @@ import {
   ProductoVariante,
 } from '@src/app/core/models/interfaces/db/db';
 
-export interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id' > {
+export interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id'> {
   nombre: string;
   descripcion: string;
   sku: string;
@@ -27,7 +27,7 @@ export interface ProductVariantFormModel extends Omit<ProductoVariante, 'created
   gramos_disponibles: number;
   cantidad_minima_venta: number;
   precio_minimo_venta: number;
-  opciones_venta: string[] | number[];
+  opciones_venta: number[];
   urls_imagenes: string[];
-  fecha_llegada?: string;
+  fecha_llegada: Date;
 }

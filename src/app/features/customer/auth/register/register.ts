@@ -17,12 +17,13 @@ import {
 } from '@src/app/shared/components/form/form-select/form-select';
 
 import { FormInputCheckboxComponent } from '@src/app/shared/components/form/form-input-checkbox/form-input-checkbox';
+import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 
 import { userSchemaRegister } from '@src/app/core/models/schemas/auth.schema';
 
 @Component({
   selector: 'app-register',
-  imports: [FormInputComponent, FormSelectComponent, FormInputCheckboxComponent],
+  imports: [FormInputComponent, FormSelectComponent, FormInputCheckboxComponent, FormDatepickerComponent],
   templateUrl: './register.html',
   styles: ``,
 })
@@ -48,7 +49,7 @@ export class Register {
     correo: '',
     telefono: '',
     documento: '',
-    fecha_nacimiento: '',
+    fecha_nacimiento: new Date(),
     tipo_documento: 'CC',
     ubicacion: '',
     acepta_terminos: false,

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { form, validateStandardSchema } from '@angular/forms/signals';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -15,17 +15,19 @@ import {
 } from '@src/app/core/models/interfaces/db/db';
 import { productSchema, productVariantSchema } from '@src/app/core/models/schemas/product.schema';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
+import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
+import { FormChipsComponent } from '@src/app/shared/components/form/form-chips/form-chips';
 import {
   FormSelectComponent,
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
 
-import {ProductFormModel, ProductVariantFormModel} from '@src/app/core/models/interfaces/productos/marketplace.interface';  
+import { ProductFormModel, ProductVariantFormModel } from '@src/app/core/models/interfaces/productos/marketplace.interface';
 
 @Component({
   selector: 'app-products-editor',
   standalone: true,
-  imports: [CommonModule, FormInputComponent, FormSelectComponent],
+  imports: [CommonModule, FormInputComponent, FormSelectComponent, FormDatepickerComponent, FormChipsComponent],
   templateUrl: './products-editor.html',
   styles: ``,
 })
@@ -49,7 +51,7 @@ export class ProductsEditor implements OnInit {
   readonly productModel = signal<ProductFormModel>({
     nombre: '',
     descripcion: '',
-    sku: '',
+    sku: this.generateRandomSku(),
     precio: 0,
     costo: 0,
     stock_total: 0,
@@ -59,6 +61,7 @@ export class ProductsEditor implements OnInit {
     tags: [],
     urls_imagenes: [],
     has_product_variantes: false,
+    // id, timestamps, and other supabase-generated fields are omitted
   });
 
   readonly productForm = form(this.productModel, (schemaPath) => {
@@ -66,9 +69,9 @@ export class ProductsEditor implements OnInit {
   });
   readonly showErrorsModal = signal(false);
   readonly errorEntries = computed(() => {
-    const errors = this.productForm().errors();
+    const errors = this.productForm().errorSummary();
     if (!errors) return [];
-    return Object.entries(errors);
+    return errors;
   });
   readonly selectedTagNames = signal<string[]>([]);
   readonly productImages = signal<string[]>([]);
@@ -79,14 +82,14 @@ export class ProductsEditor implements OnInit {
   readonly newVariant = signal<ProductVariantFormModel>({
     nombre: '',
     descripcion: '',
-    precio: 0,
-    stock: 0,
-    gramos_disponibles: 0,
+    precio: 1,
+    stock: 1,
+    gramos_disponibles: 1,
     cantidad_minima_venta: 1,
-    precio_minimo_venta: 0,
+    precio_minimo_venta: 1,
     opciones_venta: [5, 10, 20, 40, 0],
     urls_imagenes: [],
-    fecha_llegada: '',
+    fecha_llegada: new Date(),
     status: 'activo',
   });
   readonly newVariantForm = form(this.newVariant, (schemaPath) => {
@@ -94,9 +97,9 @@ export class ProductsEditor implements OnInit {
   });
   readonly showVariantErrorsModal = signal(false);
   readonly variantErrorEntries = computed(() => {
-    const errors = this.newVariantForm().errors();
+    const errors = this.newVariantForm().errorSummary();
     if (!errors) return [];
-    return Object.entries(errors);
+    return errors;
   });
   readonly pendingVariantImages = signal<{ file: File; preview: string }[]>([]);
   readonly editingProductId = signal<string | null>(null);
@@ -191,6 +194,7 @@ export class ProductsEditor implements OnInit {
     this.deletedVariantIds.set([]);
 
     const variants = await this.loadProductVariants(product.id);
+    console.log(variants)
     this.productVariants.set(variants);
     if (variants.length > 0) {
       this.productModel.update((current) => ({ ...current, tipo_producto: 'variantes' }));
@@ -212,6 +216,9 @@ export class ProductsEditor implements OnInit {
     }
 
     const model = this.productModel();
+    if (!model.sku) {
+      model.sku = this.generateRandomSku();
+    }
     const payload = {
       nombre: model.nombre.trim(),
       descripcion: model.descripcion.trim(),
@@ -244,7 +251,7 @@ export class ProductsEditor implements OnInit {
         if (error) throw error;
         this.toastService.success('Producto actualizado correctamente.');
       } else {
-        const {data, error} = await this.dbService.insert(TableName.PRODUCTOS, payload).select('*').single();
+        const { data, error } = await this.dbService.insert(TableName.PRODUCTOS, payload).select('*').single();
         if (error) throw error;
         const insertedProduct = data as Producto;
         if (!insertedProduct?.id) throw new Error('No se pudo obtener el ID del producto creado.');
@@ -304,6 +311,7 @@ export class ProductsEditor implements OnInit {
           precio_minimo_venta: Number(variant.precio_minimo_venta) || 0,
           opciones_venta: this.parseVariantOptions(variant.opciones_venta.toString()),
           status: variant.status || 'activo' as EstadoProducto,
+          fecha_llegada: variant.fecha_llegada || null,
           urls_imagenes: variant.urls_imagenes,
         };
 
@@ -326,12 +334,14 @@ export class ProductsEditor implements OnInit {
       .select('*')
       .eq('producto_id', productId);
 
-    if ((result as any).error) {
-      console.error('Error al cargar variantes', (result as any).error);
+    if (result.error) {
+      console.error('Error al cargar variantes', result.error);
+      this.toastService.error('No se pudo cargar las variantes.');
       return [];
     }
 
-    const variants = (result as any).data as ProductoVariante[];
+    const variants = result.data as ProductoVariante[];
+    console.log(variants)
     return variants.map((variant) => ({
       id: variant.id,
       nombre: variant.nombre,
@@ -341,7 +351,7 @@ export class ProductsEditor implements OnInit {
       gramos_disponibles: variant.gramos_disponibles ?? 0,
       cantidad_minima_venta: variant.cantidad_minima_venta ?? 1,
       precio_minimo_venta: variant.precio_minimo_venta ?? 0,
-      opciones_venta: variant.opciones_venta ?? [5,10,20,40,0],
+      opciones_venta: variant.opciones_venta ?? [5, 10, 20, 40, 0],
       urls_imagenes: variant.urls_imagenes ?? [],
       fecha_llegada: variant.fecha_llegada ?? '',
       status: variant.status,
@@ -422,9 +432,9 @@ export class ProductsEditor implements OnInit {
       gramos_disponibles: 0,
       cantidad_minima_venta: 1,
       precio_minimo_venta: 1,
-      opciones_venta: [5,10,20,40,0],
+      opciones_venta: [5, 10, 20, 40, 0],
       urls_imagenes: [],
-      fecha_llegada: '',
+      fecha_llegada: new Date(),
       status: 'activo',
     });
   }
@@ -646,5 +656,9 @@ export class ProductsEditor implements OnInit {
 
   cancelEdit() {
     this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
+  private generateRandomSku(): string {
+    return crypto.randomUUID().toUpperCase();
   }
 }

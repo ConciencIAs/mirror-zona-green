@@ -111,37 +111,38 @@ export interface Perfil {
 export interface ProductoVariante {
     id: string;
     cantidad_minima_venta: number | null;
-    created_at: string | null;
-    deleted_at: string | null;
+
     descripcion: string | null;
-    fecha_llegada: string | null;
+    fecha_llegada: Date;
     gramos_disponibles: number | null;
     nombre: string;
-    opciones_venta: number[] | string[] | null;
+    opciones_venta: number[] | null;
     precio: number;
     precio_minimo_venta: number | null;
     producto_id: string | null;
     status: EstadoProducto;
     stock: number;
     updated_at: string | null;
+    created_at: string | null;
+    deleted_at: string | null;
     urls_imagenes: string[] | null;
 }
 
 export interface Producto {
     id: string;
     categoria_id: string | null;
-    costo: number;
-    created_at: string | null;
-    deleted_at: string | null;
-    descripcion: string | null;
     nombre: string;
+    descripcion: string | null;
+    urls_imagenes: string[] | null;
+    costo: number;
     precio: number;
     sku: string;
     status: EstadoProducto;
     stock_total: number;
     tags: string[] | null;
     updated_at: string | null;
-    urls_imagenes: string[] | null;
+    created_at: string | null;
+    deleted_at: string | null;
     has_product_variantes: boolean;
 }
 

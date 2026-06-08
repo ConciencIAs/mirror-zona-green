@@ -1,18 +1,22 @@
-import { Component, input, computed, OnInit } from '@angular/core';
-import { FieldTree, FormField } from '@angular/forms/signals';
+import { Component, input, computed } from '@angular/core';
+import { FieldState } from '@angular/forms/signals';
 import { FormErrorDisplayComponent } from '../form-error-display/form-error-display';
 import { CheckboxModule } from 'primeng/checkbox';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-form-input-checkbox',
   standalone: true,
-  imports: [FormField, FormErrorDisplayComponent, CheckboxModule],
+  imports: [FormErrorDisplayComponent, CheckboxModule, FormsModule],
   template: `
     <div class="mb-4 flex items-center gap-2">
       <p-checkbox [class.border-red-500]="isInvalid()" [inputId]="uid"
         [class.ring-2]="isInvalid()"
         [class.ring-red-500]="isInvalid()"
-        [class.border-gray-300]="!isInvalid()" [formField]="getControl()" [binary]="true"/>
+        [class.border-gray-300]="!isInvalid()" 
+        [ngModel]="getControl().value()" 
+        (ngModelChange)="getControl().value.set($event)"  
+        [binary]="true" />
       
       @if (label()) {
         <label class="block text-sm font-medium text-gray-700" [for]="uid">
@@ -23,23 +27,16 @@ import { CheckboxModule } from 'primeng/checkbox';
         
       <app-form-error-display
         [errors]="errorMessage()"
-        [touched]="getControl()().touched()"
+        [touched]="isInvalid()"
       />
     </div>
   `,
 })
-export class FormInputCheckboxComponent implements OnInit {
-  control = input.required<FieldTree<string | number | boolean, string>>();
+export class FormInputCheckboxComponent {
+  control = input.required<FieldState<string | number | boolean, string>>();
   label = input<string>('');
-  type = input<string>('text');
   placeholder = input<string>('');
-  uid = ''; // Genera un ID único para el checkbox
-
-  // para input tipo precio podemos usar la libreria prime ng el componente InputNumber
-
-  ngOnInit(): void {
-    this.uid = Math.random().toString(36).substring(2, 15);
-  }
+  uid = crypto.randomUUID(); // Genera un ID único para el checkbox
 
   getControl() {
     return this.control()
@@ -47,11 +44,11 @@ export class FormInputCheckboxComponent implements OnInit {
 
   isInvalid = computed(() => {
     const ctrl = this.getControl();
-    return ctrl().invalid() && ctrl().touched();
+    return ctrl.invalid();
   });
 
   errorMessage = computed(() => {
-    return this.getControl()().errors()
+    return this.getControl().errors()
   });
 }
 

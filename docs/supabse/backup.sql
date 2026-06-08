@@ -360,7 +360,12 @@ BEGIN
     NEW.id,
     'customer'::public.rol_usuario,
     NEW.email,
-    '{"acepta_politicas": false, "fecha_aceptacion": null}'::jsonb
+    jsonb_build_object(
+      'acepta_politicas', true,
+      'acepta_terminos', true,
+      'fecha_aceptacion', NOW(),
+      'fecha_registro', NOW() -- Genera la fecha y hora actual en formato ISO automáticamente
+    )
   );
   RETURN NEW;
 END;

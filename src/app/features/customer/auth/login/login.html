@@ -1,7 +1,6 @@
 <div class="max-w-md mx-auto my-10 p-6 bg-white rounded-3xl shadow-lg shadow-slate-200">
   <form (submit)="submit($event)" class="space-y-4">
-    <app-form-input [control]="loginForm.email" label="Correo electrónico" type="email"
-      placeholder="correo@ejemplo.com" />
+    <app-form-input [control]="loginForm.email()" label="Correo electrónico" placeholder="correo@ejemplo.com" />
     <div class="flex justify-between items-center text-sm text-slate-500">
       <span>¿No tienes cuenta?</span>
       <a class="text-blue-600 hover:underline" routerLink="/auth/register">Regístrate</a>

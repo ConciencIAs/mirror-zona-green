@@ -9,37 +9,38 @@
   <!-- FORM -->
   <form (submit)="submit($event)" class="space-y-4">
     <!-- NOMBRE -->
-    <app-form-input [control]="registerForm.full_name" label="Nombre completo" type="text" placeholder="Juan Pérez" />
+    <app-form-input [control]="registerForm.full_name()" label="Nombre completo" placeholder="Juan Pérez" />
 
     <!-- CORREO -->
-    <app-form-input [control]="registerForm.correo" label="Correo" type="email" placeholder="correo@ejemplo.com" />
+    <app-form-input [control]="registerForm.correo()" label="Correo" placeholder="correo@ejemplo.com" />
 
     <!-- GRID -->
     <div class="grid grid-cols-2 gap-4">
       <!-- TELEFONO -->
-      <app-form-input [control]="registerForm.telefono" label="Teléfono" type="text" placeholder="+573001234567" />
+      <app-form-input [control]="registerForm.telefono()" type="number" label="Teléfono" placeholder="+573001234567" />
 
       <!-- TIPO DOCUMENTO -->
-      <app-form-select [control]="registerForm.tipo_documento" label="Tipo documento" [options]="documentTypeOptions"
+      <app-form-select [control]="registerForm.tipo_documento()" label="Tipo documento" [options]="documentTypeOptions"
         placeholder="Selecciona" />
     </div>
 
     <!-- DOCUMENTO -->
-    <app-form-input [control]="registerForm.documento" label="Documento" type="text"
+    <app-form-input [control]="registerForm.documento()" type="number" label="Documento"
       placeholder="Número de documento" />
 
     <!-- FECHA -->
-    <app-form-input [control]="registerForm.fecha_nacimiento" label="Fecha de nacimiento" type="date" />
+    <app-form-datepicker [control]="registerForm.fecha_nacimiento()" label="Fecha de nacimiento" />
 
     <!-- UBICACION -->
-    <app-form-input [control]="registerForm.ubicacion" label="Ubicación" type="text"
+    <app-form-input [control]="registerForm.ubicacion()" label="Ubicación" type="text"
       placeholder="Ciudad, dirección..." />
 
     <!-- ACEPTA TERMINOS -->
-    <app-form-input-checkbox [control]="registerForm.acepta_terminos" label="Acepto los términos y condiciones" />
+    <app-form-input-checkbox [control]="registerForm.acepta_terminos()" label="Acepto los términos y condiciones" />
 
     <!-- ACEPTA POLITICA PRIVACIDAD -->
-    <app-form-input-checkbox [control]="registerForm.acepta_politica_privacidad" label="Acepto la política de privacidad" />
+    <app-form-input-checkbox [control]="registerForm.acepta_politica_privacidad()"
+      label="Acepto la política de privacidad" />
 
     <!-- ERROR GENERAL -->
     @if (generalError()) {
