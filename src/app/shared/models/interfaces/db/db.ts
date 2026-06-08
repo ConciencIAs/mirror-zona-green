@@ -20,6 +20,8 @@ export type EstadoOrden =
 
 export type EstadoProducto = 'activo' | 'inactivo';
 
+export type EstadoUsuario = 'activo' | 'inactivo' | 'bloqueado' | 'eliminado';
+
 export type RolUsuario = 'admin' | 'customer' | 'agente' | 'medico' | 'anonymous';
 
 export type TipoDoc = 'CC' | 'CE' | 'NIT' | 'Pasaporte';
@@ -106,6 +108,7 @@ export interface Perfil {
     tipo_documento: TipoDoc | null;
     ubicacion: string | null;
     updated_at: string | null;
+    status?: EstadoUsuario;
 }
 
 export interface ProductoVariante {

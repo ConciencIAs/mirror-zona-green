@@ -2,15 +2,14 @@ import { Component, input, computed, OnInit } from '@angular/core';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FormErrorDisplayComponent } from '@src/app/shared/components/form/form-error-display/form-error-display';
 import { FieldState } from '@angular/forms/signals';
-import { Fluid } from "primeng/fluid";
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-form-datepicker',
   standalone: true,
-  imports: [FormErrorDisplayComponent, DatePickerModule, Fluid, FormsModule],
+  imports: [FormErrorDisplayComponent, DatePickerModule, FormsModule],
   template: `
-    <p-fluid class="mb-4">
+    <div class="mb-4">
       @if (label()) {
         <label class="block text-sm font-medium text-gray-700 mb-2" [for]="uid">
           {{ label() }}
@@ -37,7 +36,7 @@ import { FormsModule } from '@angular/forms';
         [errors]="errorMessage()"
         [touched]="isInvalid()"
       />
-        </p-fluid>
+        </div>
   `,
 })
 export class FormDatepickerComponent implements OnInit {
