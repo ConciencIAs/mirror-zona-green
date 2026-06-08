@@ -3,8 +3,8 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { Categoria, Producto } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { Categoria, Producto } from '@src/app/shared/models/interfaces/db/db';
 
 @Component({
   selector: 'app-products-list',

@@ -2,8 +2,9 @@ import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { Carrito, Producto, ProductoVariante } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { Carrito, Producto, ProductoVariante } from '@src/app/shared/models/interfaces/db/db';
+import { MonedaPipe } from '@src/app/shared/pipes/moneda.pipe';
 
 type CartProduct = {
   cartLine: Carrito;
@@ -16,7 +17,7 @@ type CartProduct = {
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, MonedaPipe],
   templateUrl: './carrito.html',
   styles: ``,
 })
@@ -109,9 +110,5 @@ export class CarritoComponent {
 
   protected goToCheckout(): void {
     this.router.navigate(['/marketplace/checkout']);
-  }
-
-  protected formatPrice(value: number): string {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
   }
 }

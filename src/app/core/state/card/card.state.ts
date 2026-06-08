@@ -8,11 +8,11 @@ import {
   withHooks
 } from '@ngrx/signals';
 
-import { Carrito } from '@src/app/core/models/interfaces/db/db';
+import { Carrito } from '@src/app/shared/models/interfaces/db/db';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 
 type CartState = {
   items: Carrito[];
@@ -172,7 +172,7 @@ export const CartStore = signalStore(
 
       setCart(cartItems: Carrito[]) {
         patchState(store, { items: cartItems });
-      } 
+      }
     };
   }),
 

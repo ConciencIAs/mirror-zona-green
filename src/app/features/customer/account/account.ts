@@ -4,13 +4,13 @@ import { form, validateStandardSchema } from '@angular/forms/signals';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { TipoDoc } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { TipoDoc } from '@src/app/shared/models/interfaces/db/db';
 
 import {
   profileUpdateSchema,
   ProfileUpdateData,
-} from '@src/app/core/models/schemas/profile.schema';
+} from '@src/app/shared/models/schemas/profile.schema';
 
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import {

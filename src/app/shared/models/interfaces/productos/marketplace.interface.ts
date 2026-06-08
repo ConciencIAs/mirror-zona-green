@@ -2,7 +2,7 @@ import {
   EstadoProducto,
   Producto,
   ProductoVariante,
-} from '@src/app/core/models/interfaces/db/db';
+} from '@src/app/shared/models/interfaces/db/db';
 
 export interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id'> {
   nombre: string;

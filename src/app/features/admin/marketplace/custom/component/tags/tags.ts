@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 
 type Tag = {
@@ -28,16 +28,16 @@ export class Tags implements OnInit {
 
   tags = signal<Tag[]>([]);
   categories = signal<Categoria[]>([]);
-  
+
   newTagName = signal('');
   newCategoryName = signal('');
-  
+
   editingTagId = signal<string | null>(null);
   editingCategoryId = signal<string | null>(null);
-  
+
   editingTagName = signal('');
   editingCategoryName = signal('');
-  
+
   isLoading = signal(false);
   activeTab = signal<'tags' | 'categories'>('tags');
 
@@ -71,7 +71,7 @@ export class Tags implements OnInit {
     try {
       const { error } = await this.dbService.insert(TableName.TAGS, { nombre });
       if (error) throw error;
-      
+
       this.toastService.success('Tag creado exitosamente', 'success');
       this.newTagName.set('');
       await this.loadTags();
@@ -107,7 +107,7 @@ export class Tags implements OnInit {
         { id: tag.id }
       );
       if (error) throw error;
-      
+
       this.toastService.success('Tag actualizado exitosamente', 'success');
       this.editingTagId.set(null);
       await this.loadTags();
@@ -130,7 +130,7 @@ export class Tags implements OnInit {
         { id: tag.id }
       );
       if (error) throw error;
-      
+
       this.toastService.success('Tag eliminado exitosamente', 'success');
       await this.loadTags();
     } catch (err) {
@@ -165,7 +165,7 @@ export class Tags implements OnInit {
     try {
       const { error } = await this.dbService.insert(TableName.CATEGORIAS, { nombre });
       if (error) throw error;
-      
+
       this.toastService.success('Categoría creada exitosamente', 'success');
       this.newCategoryName.set('');
       await this.loadCategories();
@@ -201,7 +201,7 @@ export class Tags implements OnInit {
         { id: category.id }
       );
       if (error) throw error;
-      
+
       this.toastService.success('Categoría actualizada exitosamente', 'success');
       this.editingCategoryId.set(null);
       await this.loadCategories();
@@ -224,7 +224,7 @@ export class Tags implements OnInit {
         { id: category.id }
       );
       if (error) throw error;
-      
+
       this.toastService.success('Categoría eliminada exitosamente', 'success');
       await this.loadCategories();
     } catch (err) {

@@ -4,8 +4,9 @@ import { RouterModule } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { EdgeFunctionsService } from '@src/app/core/services/edge-functions.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { Carrito, Producto, ProductoVariante } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { Carrito, Producto, ProductoVariante } from '@src/app/shared/models/interfaces/db/db';
+import { MonedaPipe } from '@src/app/shared/pipes/moneda.pipe';
 
 type CartProduct = {
   cartLine: Carrito;
@@ -18,7 +19,7 @@ type CartProduct = {
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MonedaPipe],
   templateUrl: './checkout.html',
   styles: ``,
 })

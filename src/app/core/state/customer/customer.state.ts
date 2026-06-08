@@ -9,7 +9,7 @@ import {
 } from '@ngrx/signals';
 
 // Asegúrate de importar tus tipos desde tu archivo de modelos
-import { Perfil } from '@src/app/core/models/interfaces/db/db';
+import { Perfil } from '@src/app/shared/models/interfaces/db/db';
 
 type UserState = {
     perfil: Perfil;

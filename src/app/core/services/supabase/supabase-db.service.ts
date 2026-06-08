@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseDbService {

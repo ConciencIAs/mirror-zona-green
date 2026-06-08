@@ -5,15 +5,15 @@ import { form, validateStandardSchema } from '@angular/forms/signals';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { SupabaseStorageService } from '@src/app/core/services/supabase/supabase-storage.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import {
   Categoria,
   EstadoProducto,
   Producto,
   ProductoVariante,
   Tag,
-} from '@src/app/core/models/interfaces/db/db';
-import { productSchema, productVariantSchema } from '@src/app/core/models/schemas/product.schema';
+} from '@src/app/shared/models/interfaces/db/db';
+import { productSchema, productVariantSchema } from '@src/app/shared/models/schemas/product.schema';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 import { FormChipsComponent } from '@src/app/shared/components/form/form-chips/form-chips';
@@ -22,7 +22,7 @@ import {
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
 
-import { ProductFormModel, ProductVariantFormModel } from '@src/app/core/models/interfaces/productos/marketplace.interface';
+import { ProductFormModel, ProductVariantFormModel } from '@src/app/shared/models/interfaces/productos/marketplace.interface';
 
 @Component({
   selector: 'app-products-editor',
@@ -159,20 +159,20 @@ export class ProductsEditor implements OnInit {
   private async loadProduct(productId: string) {
     this.loading.set(true);
 
-    const productResult = await this.dbService
+    const { error, data } = await this.dbService
       .from(TableName.PRODUCTOS)
       .select('*')
       .eq('id', productId)
       .single();
 
-    if ((productResult as any).error || !(productResult as any).data) {
-      console.error('Error al cargar el producto', (productResult as any).error);
+    if (error || !data) {
+      console.error('Error al cargar el producto', error);
       this.toastService.error('No se pudo cargar el producto.');
       await this.router.navigate(['../'], { relativeTo: this.route });
       return;
     }
 
-    const product = (productResult).data as Producto;
+    const product = data as Producto;
     this.editingProductId.set(product.id);
     this.productModel.set({
       nombre: product.nombre,
@@ -274,13 +274,6 @@ export class ProductsEditor implements OnInit {
     }
   }
 
-  private parseVariantOptions(value: string) {
-    return value
-      .split(',')
-      .map((item) => Number(item.trim()))
-      .filter((item) => !Number.isNaN(item));
-  }
-
   private async saveProductVariants(productId: string) {
     if (this.productModel().tipo_producto !== 'variantes') {
       if (this.editingProductId()) {
@@ -309,7 +302,7 @@ export class ProductsEditor implements OnInit {
           gramos_disponibles: Number(variant.gramos_disponibles) || 0,
           cantidad_minima_venta: Number(variant.cantidad_minima_venta) || 1,
           precio_minimo_venta: Number(variant.precio_minimo_venta) || 0,
-          opciones_venta: this.parseVariantOptions(variant.opciones_venta.toString()),
+          opciones_venta: variant.opciones_venta,
           status: variant.status || 'activo' as EstadoProducto,
           fecha_llegada: variant.fecha_llegada || null,
           urls_imagenes: variant.urls_imagenes,
@@ -329,18 +322,18 @@ export class ProductsEditor implements OnInit {
   }
 
   private async loadProductVariants(productId: string) {
-    const result = await this.dbService
+    const { error, data } = await this.dbService
       .from(TableName.PRODUCTOS_VARIANTES)
       .select('*')
       .eq('producto_id', productId);
 
-    if (result.error) {
-      console.error('Error al cargar variantes', result.error);
+    if (error) {
+      console.error('Error al cargar variantes', error);
       this.toastService.error('No se pudo cargar las variantes.');
       return [];
     }
 
-    const variants = result.data as ProductoVariante[];
+    const variants = data as ProductoVariante[];
     console.log(variants)
     return variants.map((variant) => ({
       id: variant.id,
@@ -386,25 +379,9 @@ export class ProductsEditor implements OnInit {
       return;
     }
 
-    if (Number(variant.precio) <= 0) {
-      this.toastService.warn('El precio de la variante debe ser mayor a 0.');
-      return;
-    }
-    if (Number(variant.stock) < 0) {
-      this.toastService.warn('El stock de la variante no puede ser negativo.');
-      return;
-    }
-
-    const parsedOptions = this.parseVariantOptions(variant.opciones_venta.toString());
-    if (parsedOptions.length === 0) {
-      this.toastService.warn('Agregar al menos una opción de venta para la variante.');
-      return;
-    }
-
     const uploadedUrls = await this.uploadPendingVariantImages();
     const variantWithImages = {
       ...variant,
-      opciones_venta: parsedOptions,
       urls_imagenes: [...variant.urls_imagenes, ...uploadedUrls],
     };
 

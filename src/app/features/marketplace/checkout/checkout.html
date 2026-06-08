@@ -4,66 +4,65 @@
       <h1 class="text-3xl font-bold text-[#1d341c]">Checkout</h1>
       <p class="mt-2 text-sm text-[#4b5b44]">Confirma tu pedido y continúa por WhatsApp.</p>
     </div>
-    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">Total: {{ formatPrice(total()) }}</span>
+    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">Total: {{ total() | moneda
+      }}</span>
   </div>
 
   @if (loading()) {
-    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando resumen del pedido...</div>
+  <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando resumen del
+    pedido...</div>
   } @else {
-    @if (error()) {
-      <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
-    }
+  @if (error()) {
+  <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
+  }
 
-    @if (success()) {
-      <div class="rounded-3xl border border-green-200 bg-[#ecf9eb] p-8 text-center text-[#1f6c2f]">{{ success() }}</div>
-    }
+  @if (success()) {
+  <div class="rounded-3xl border border-green-200 bg-[#ecf9eb] p-8 text-center text-[#1f6c2f]">{{ success() }}</div>
+  }
 
-    @if (cartDetails().length === 0) {
-      <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
-        No hay artículos en el carrito. <a routerLink="/marketplace" class="font-semibold text-[#1f6c2f] underline">Volver al marketplace</a>.
-      </div>
-    } @else {
-      <div class="space-y-6">
-        <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
-          <h2 class="text-lg font-semibold text-[#1f6c2f]">Resumen del pedido</h2>
-          <ul class="mt-4 space-y-4 text-sm text-[#2e391c]">
-            @for (item of cartDetails(); track item.cartLine.id) {
-              <li class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }}</p>
-                    @if (item.variante) {
-                      <p class="text-xs text-[#5f6c4f]">Variante: {{ item.variante.nombre }}</p>
-                    }
-                  </div>
-                  <div class="text-sm text-[#55644d]">Cantidad: {{ item.cartLine.cantidad }}</div>
-                </div>
-                <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-[#55644d]">
-                  <span>Precio unitario: {{ formatPrice(item.unitPrice) }}</span>
-                  <span>Subtotal: {{ formatPrice(item.subtotal) }}</span>
-                </div>
-              </li>
-            }
-          </ul>
-        </div>
-
-        <div class="rounded-3xl border border-[#d7dfc7] bg-[#f8faf2] p-6 text-[#22332d]">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  @if (cartDetails().length === 0) {
+  <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
+    No hay artículos en el carrito. <a routerLink="/marketplace" class="font-semibold text-[#1f6c2f] underline">Volver
+      al marketplace</a>.
+  </div>
+  } @else {
+  <div class="space-y-6">
+    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-[#1f6c2f]">Resumen del pedido</h2>
+      <ul class="mt-4 space-y-4 text-sm text-[#2e391c]">
+        @for (item of cartDetails(); track item.cartLine.id) {
+        <li class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm text-[#4b5b44]">Total a pagar</p>
-              <p class="mt-1 text-3xl font-bold text-[#1f6c2f]">{{ formatPrice(total()) }}</p>
+              <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }}</p>
+              @if (item.variante) {
+              <p class="text-xs text-[#5f6c4f]">Variante: {{ item.variante.nombre }}</p>
+              }
             </div>
-            <button
-              type="button"
-              (click)="confirmOrder()"
-              [disabled]="submitting() || cartDetails().length === 0"
-              class="inline-flex items-center justify-center rounded-full bg-[#1f6c2f] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]"
-            >
-              {{ submitting() ? 'Creando orden...' : 'Confirmar crear orden' }}
-            </button>
+            <div class="text-sm text-[#55644d]">Cantidad: {{ item.cartLine.cantidad }}</div>
           </div>
+          <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-[#55644d]">
+            <span>Precio unitario: {{ item.unitPrice | moneda }}</span>
+            <span>Subtotal: {{ item.subtotal | moneda }}</span>
+          </div>
+        </li>
+        }
+      </ul>
+    </div>
+
+    <div class="rounded-3xl border border-[#d7dfc7] bg-[#f8faf2] p-6 text-[#22332d]">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-[#4b5b44]">Total a pagar</p>
+          <p class="mt-1 text-3xl font-bold text-[#1f6c2f]">{{ total() | moneda }}</p>
         </div>
+        <button type="button" (click)="confirmOrder()" [disabled]="submitting() || cartDetails().length === 0"
+          class="inline-flex items-center justify-center rounded-full bg-[#1f6c2f] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]">
+          {{ submitting() ? 'Creando orden...' : 'Confirmar crear orden' }}
+        </button>
       </div>
-    }
+    </div>
+  </div>
+  }
   }
 </div>

@@ -1,13 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { EstadoOrden, Json, Orden } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { EstadoOrden, Json, Orden } from '@src/app/shared/models/interfaces/db/db';
+import { MonedaPipe, FechaFormatoPipe } from '@src/app/shared/pipes/'
 
 @Component({
   selector: 'app-ordenes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FechaFormatoPipe, MonedaPipe],
   templateUrl: './ordenes.html',
   styles: ``,
 })
@@ -41,16 +42,16 @@ export class Ordenes {
     this.error.set('');
 
     try {
-      const response = await this.dbService
+      const { error, data } = await this.dbService
         .from(TableName.ORDENES)
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (response.error) {
-        throw response.error;
+      if (error) {
+        throw error;
       }
 
-      const orders = (response.data as Orden[]) || [];
+      const orders = (data as Orden[]) || [];
       this.orders.set(orders);
       this.orderComments.set(
         Object.fromEntries(orders.map((order) => [order.id, order.comentarios_agente || '']))
@@ -91,10 +92,10 @@ export class Ordenes {
         comentarios_agente: this.orderComments()[order.id],
       };
 
-      const response = await this.dbService.update(TableName.ORDENES, updates, { id: order.id });
+      const { error, data } = await this.dbService.update(TableName.ORDENES, updates, { id: order.id });
 
-      if (response.error) {
-        throw response.error;
+      if (error) {
+        throw error;
       }
 
       await this.loadOrders();
@@ -104,29 +105,6 @@ export class Ordenes {
     } finally {
       this.saving.set(false);
     }
-  }
-
-  protected formatDate(value: string | null): string {
-    if (!value) {
-      return '-';
-    }
-
-    const date = new Date(value);
-    return date.toLocaleString('es-CO', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
-
-  protected formatPrice(value: number): string {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      maximumFractionDigits: 0,
-    }).format(value);
   }
 
   protected parseOrderItems(list: Json): Json[] {

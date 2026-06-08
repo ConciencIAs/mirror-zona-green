@@ -4,61 +4,65 @@
       <h1 class="text-3xl font-bold text-[#1d341c]">Mis órdenes</h1>
       <p class="mt-2 text-sm text-[#4b5b44]">Revisa el historial de tus pedidos y su estado.</p>
     </div>
-    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">Total: {{ orders().length }} orden(es)</span>
+    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">Total: {{ orders().length }}
+      orden(es)</span>
   </div>
 
   @if (loading()) {
-    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando tus órdenes...</div>
+  <div class="rounded-3xl border border-[#d7dfc7] bg-white p-8 text-center text-[#4b5b44]">Cargando tus órdenes...</div>
   } @else {
-    @if (error()) {
-      <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
-    }
+  @if (error()) {
+  <div class="rounded-3xl border border-red-200 bg-[#fff1f1] p-8 text-center text-[#8d1c1c]">{{ error() }}</div>
+  }
 
-    @if (!hasOrders()) {
-      <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
-        No tienes órdenes todavía.
-        <a routerLink="/marketplace" class="font-semibold text-[#1f6c2f] underline">Explorar productos</a>.
+  @if (!hasOrders()) {
+  <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
+    No tienes órdenes todavía.
+    <a routerLink="/marketplace" class="font-semibold text-[#1f6c2f] underline">Explorar productos</a>.
+  </div>
+  } @else {
+  <div class="space-y-6">
+    @for (order of orders(); track order.id) {
+    <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-[#55644d]">Orden ID: <span class="font-semibold text-[#1d341c]">{{ order.id }}</span>
+          </p>
+          <p class="text-sm text-[#55644d]">Fecha: {{ order.created_at | fechaFormato }}</p>
+        </div>
+        <span
+          class="inline-flex items-center rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">{{
+          order.status }}</span>
       </div>
-    } @else {
-      <div class="space-y-6">
-        @for (order of orders(); track order.id) {
-          <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p class="text-sm text-[#55644d]">Orden ID: <span class="font-semibold text-[#1d341c]">{{ order.id }}</span></p>
-                <p class="text-sm text-[#55644d]">Fecha: {{ formatDate(order.created_at) }}</p>
-              </div>
-              <span class="inline-flex items-center rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">{{ order.status }}</span>
-            </div>
 
-            <div class="mt-6 grid gap-4 md:grid-cols-[1fr_1fr]">
-              <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
-                <h2 class="text-sm font-semibold text-[#1f6c2f]">Productos</h2>
-                <div class="mt-3 space-y-3 text-sm text-[#55644d]">
-                  @for (item of parseOrderItems(order.lista_productos); track item) {
-                    <div class="rounded-2xl border border-[#dfe8d6] bg-[#f7fbf1] p-3">
-                      <p class="font-semibold text-[#1d341c]">{{ $any(item).nombre || $any(item).producto || 'Artículo' }}</p>
-                      <p>Cantidad: {{ $any(item).cantidad || $any(item).qty || 1 }}</p>
-                      <p>Precio: {{ formatPrice($any(item).precio || $any(item).precio_unitario || 0) }}</p>
-                    </div>
-                  }
-                </div>
-              </div>
-              <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
-                <h2 class="text-sm font-semibold text-[#1f6c2f]">Resumen</h2>
-                <div class="mt-4 space-y-3 text-sm text-[#55644d]">
-                  <p>Total: <span class="font-semibold text-[#1d341c]">{{ formatPrice(order.precio_total) }}</span></p>
-                  <p>Tipo de entrega: {{ order.tipo_entrega || 'No especificado' }}</p>
-                  <p>Comentarios del agente:</p>
-                  <div class="rounded-2xl border border-[#d7dfc7] bg-[#f5f7ef] p-3 text-sm text-[#425137]">
-                    {{ order.comentarios_agente || 'Sin comentarios por el momento' }}
-                  </div>
-                </div>
-              </div>
+      <div class="mt-6 grid gap-4 md:grid-cols-[1fr_1fr]">
+        <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
+          <h2 class="text-sm font-semibold text-[#1f6c2f]">Productos</h2>
+          <div class="mt-3 space-y-3 text-sm text-[#55644d]">
+            @for (item of parseOrderItems(order.lista_productos); track item) {
+            <div class="rounded-2xl border border-[#dfe8d6] bg-[#f7fbf1] p-3">
+              <p class="font-semibold text-[#1d341c]">{{ $any(item).nombre || $any(item).producto || 'Artículo' }}</p>
+              <p>Cantidad: {{ $any(item).cantidad || $any(item).qty || 1 }}</p>
+              <p>Precio: {{ $any(item).precio || $any(item).precio_unitario || 0 | moneda }}</p>
+            </div>
+            }
+          </div>
+        </div>
+        <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
+          <h2 class="text-sm font-semibold text-[#1f6c2f]">Resumen</h2>
+          <div class="mt-4 space-y-3 text-sm text-[#55644d]">
+            <p>Total: <span class="font-semibold text-[#1d341c]">{{ order.precio_total | moneda }}</span></p>
+            <p>Tipo de entrega: {{ order.tipo_entrega || 'No especificado' }}</p>
+            <p>Comentarios del agente:</p>
+            <div class="rounded-2xl border border-[#d7dfc7] bg-[#f5f7ef] p-3 text-sm text-[#425137]">
+              {{ order.comentarios_agente || 'Sin comentarios por el momento' }}
             </div>
           </div>
-        }
+        </div>
       </div>
+    </div>
     }
+  </div>
+  }
   }
 </div>
