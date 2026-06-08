@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseClientService } from './supabase/supabase-client.service';
-import { Carrito } from '@src/app/core/models/interfaces/db/db';
+import { Carrito } from '@src/app/shared/models/interfaces/db/db';
 
 export type EdgeAuthMode = 'user' | 'anon' | 'service';
 

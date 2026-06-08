@@ -7,7 +7,7 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
-import { userSchemaLogin } from '@src/app/core/models/schemas/auth.schema';
+import { userSchemaLogin } from '@src/app/shared/models/schemas/auth.schema';
 import { environment } from '@src/environments/environment';
 
 @Component({

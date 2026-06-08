@@ -1,7 +1,7 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
-import { roleEnum } from '@src/app/core/models/constans/customer/roleEnum';
+import { roleEnum } from '@src/app/shared/models/constans/customer/roleEnum';
 import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
 
 export const roleGuard: CanActivateFn = (route, state) => {

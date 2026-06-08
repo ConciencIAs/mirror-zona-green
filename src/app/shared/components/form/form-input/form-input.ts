@@ -66,9 +66,10 @@ export class FormInputComponent {
     return this.control()
   }
 
+
   isInvalid = computed(() => {
     const ctrl = this.getControl();
-    return ctrl.invalid();
+    return ctrl.invalid()
   });
 
   errorMessage = computed(() => {

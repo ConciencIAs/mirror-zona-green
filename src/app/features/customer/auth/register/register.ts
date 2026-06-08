@@ -2,8 +2,8 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
 
 
-import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
-import { PENDING_DATA_KEY } from '@src/app/core/models/constans/localstate/storage';
+import { CustomerData } from '@src/app/shared/models/interfaces/customer/customer';
+import { PENDING_DATA_KEY } from '@src/app/shared/models/constans/localstate/storage';
 
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
@@ -19,7 +19,7 @@ import {
 import { FormInputCheckboxComponent } from '@src/app/shared/components/form/form-input-checkbox/form-input-checkbox';
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 
-import { userSchemaRegister } from '@src/app/core/models/schemas/auth.schema';
+import { userSchemaRegister } from '@src/app/shared/models/schemas/auth.schema';
 
 @Component({
   selector: 'app-register',

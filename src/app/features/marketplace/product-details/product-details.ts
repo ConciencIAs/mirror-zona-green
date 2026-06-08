@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { Producto, ProductoVariante } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { Producto, ProductoVariante } from '@src/app/shared/models/interfaces/db/db';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { MonedaPipe } from '@src/app/shared/pipes';
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MonedaPipe],
   templateUrl: './product-details.html',
   styles: ``,
 })
@@ -18,6 +20,7 @@ export class ProductDetails {
   private readonly cartStore = inject(CartStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   protected readonly loading = signal(true);
   protected readonly error = signal('');
@@ -66,17 +69,18 @@ export class ProductDetails {
     this.error.set('');
 
     try {
-      const response = await this.dbService
+      const { error, data } = await this.dbService
         .from(TableName.PRODUCTOS)
         .select('*')
         .eq('id', productId)
         .single();
 
-      if (response.error) {
-        throw response.error;
+      if (error || !data) {
+        this.toastService.error('No se pudo cargar el producto.');
+        return;
       }
 
-      const prod = response.data as Producto;
+      const prod = data as Producto;
       this.product.set(prod);
 
       if (prod.has_product_variantes) {
@@ -93,17 +97,18 @@ export class ProductDetails {
 
   private async loadVariants(productId: string): Promise<void> {
     try {
-      const response = await this.dbService
+      const { error, data } = await this.dbService
         .from(TableName.PRODUCTOS_VARIANTES)
         .select('*')
         .eq('producto_id', productId)
         .eq('status', 'activo');
 
-      if (response.error) {
-        throw response.error;
+      if (error || !data) {
+        this.toastService.error('No se pudo cargar las variantes.');
+        return;
       }
 
-      const vars = (response.data as ProductoVariante[]) || [];
+      const vars = (data as ProductoVariante[]) || [];
       this.variants.set(vars);
 
       if (vars.length > 0) {
@@ -131,7 +136,7 @@ export class ProductDetails {
 
       const variantId = this.hasVariants() ? this.selectedVariantId() : null;
       const variant = this.selectedVariant();
-      
+
       // Determinar si usar gramos o cantidad
       const useGrams: boolean = Boolean(variant?.gramos_disponibles && variant.gramos_disponibles > 0);
       const cantidad = useGrams ? this.selectedGrams() : this.quantity();
@@ -162,14 +167,6 @@ export class ProductDetails {
 
   protected updateQuantity(value: string): void {
     this.quantity.set(Math.max(0, parseInt(value, 10) || 0));
-  }
-
-  protected formatPrice(value: number): string {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      maximumFractionDigits: 0,
-    }).format(value);
   }
 
   protected get imageUrl(): string {

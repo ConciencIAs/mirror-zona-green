@@ -3,8 +3,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ProductCard } from '@src/app/shared/components/marketplace/product-card/product-card';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
-import { TableName } from '@src/app/core/models/constans/db/tableName.enum';
-import { Categoria, Producto } from '@src/app/core/models/interfaces/db/db';
+import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { Categoria, Producto } from '@src/app/shared/models/interfaces/db/db';
 
 @Component({
   selector: 'app-marketplace',

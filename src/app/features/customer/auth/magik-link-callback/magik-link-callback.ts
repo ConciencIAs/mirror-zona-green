@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CustomerData } from '@src/app/core/models/interfaces/customer/customer';
+import { CustomerData } from '@src/app/shared/models/interfaces/customer/customer';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
@@ -7,7 +7,7 @@ import { LocalStorageStateService } from '@src/app/core/services/local-storage-s
 import {
   PENDING_DATA_KEY,
   CURRENT_SESSION_KEY,
-} from '@src/app/core/models/constans/localstate/storage';
+} from '@src/app/shared/models/constans/localstate/storage';
 import { Router } from '@angular/router';
 
 @Component({
