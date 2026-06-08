@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { ProductCard } from '@src/app/features/marketplace/product-card/product-card';
+import { ProductCard } from '@src/app/shared/components/marketplace/product-card/product-card';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { TableName } from '@src/app/core/models/constans/db/tableName.enum';

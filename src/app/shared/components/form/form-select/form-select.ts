@@ -1,6 +1,8 @@
 import { Component, input, computed } from '@angular/core';
-import { FormField, FieldTree } from '@angular/forms/signals';
+import { FieldState } from '@angular/forms/signals';
+import { FormsModule } from '@angular/forms';
 import { FormErrorDisplayComponent } from '../form-error-display/form-error-display';
+import { SelectModule } from 'primeng/select';
 
 export interface SelectOption {
   label: string;
@@ -10,7 +12,7 @@ export interface SelectOption {
 @Component({
   selector: 'app-form-select',
   standalone: true,
-  imports: [FormField, FormErrorDisplayComponent],
+  imports: [FormErrorDisplayComponent, SelectModule, FormsModule],
   template: `
     <div class="mb-4">
       @if (label()) {
@@ -18,40 +20,38 @@ export interface SelectOption {
           {{ label() }}
         </label>
       }
-      <select
-        [formField]="control()"
-        class="w-full text-black px-4 py-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 bg-white"
+      <p-select 
+        class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" 
+        [options]="options()" 
+        optionLabel="label" 
+        optionValue="value"
+        [ngModel]="control().value()" 
+        (ngModelChange)="control().value.set($event)" 
         [class.border-red-500]="isInvalid()"
         [class.ring-2]="isInvalid()"
         [class.ring-red-500]="isInvalid()"
         [class.border-gray-300]="!isInvalid()"
-      >
-        @if (placeholder()) {
-          <option value="" disabled selected>{{ placeholder() }}</option>
-        }
-        @for (option of options(); track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
+        [placeholder]="placeholder()"
+      />
       <app-form-error-display
         [errors]="errorMessage()"
-        [touched]="control()().touched()"
+        [touched]="isInvalid()"
       />
     </div>
   `,
 })
 export class FormSelectComponent {
-  control = input.required<FieldTree<string, string>>();
+  control = input.required<FieldState<string, string>>();
   label = input<string>('');
   options = input.required<SelectOption[]>();
   placeholder = input<string>('Selecciona una opción');
 
   isInvalid = computed(() => {
     const ctrl = this.control();
-    return ctrl().invalid() && ctrl().touched();
+    return ctrl.invalid();
   });
 
   errorMessage = computed(() => {
-    return this.control()().errors();
+    return this.control().errors();
   });
 }

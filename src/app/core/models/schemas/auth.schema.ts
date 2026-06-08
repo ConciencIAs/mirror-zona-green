@@ -7,7 +7,7 @@ export const userSchemaRegister = z.object({
     .string()
     .regex(/^\+?\d{7,15}$/, 'Teléfono inválido (ingresa de 7 a 15 dígitos sin espacios)'),
   documento: z.string().min(4, 'Documento de identidad no válido (mín. 4 caracteres)'),
-  fecha_nacimiento: z.string().refine((v) => !!v, 'La fecha de nacimiento es requerida'),
+  fecha_nacimiento: z.date(),
   tipo_documento: z.string().default('CC'),
   ubicacion: z.string().min(2, 'La ubicación provista es demasiado corta'),
   acepta_terminos: z.boolean().refine((v) => v === true, 'Debes aceptar los términos y condiciones'),

@@ -8,6 +8,7 @@ import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.s
 import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import { userSchemaLogin } from '@src/app/core/models/schemas/auth.schema';
+import { environment } from '@src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -68,7 +69,7 @@ export class Login {
       const { error } = await this.authService.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/magik-link-callback`,
+          emailRedirectTo: `${environment.urlHost}/auth/magik-link-callback`,
         },
       });
 
