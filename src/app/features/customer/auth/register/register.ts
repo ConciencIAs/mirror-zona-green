@@ -47,8 +47,8 @@ export class Register {
   readonly formModel = signal<CustomerData>({
     full_name: '',
     correo: '',
-    telefono: '',
-    documento: '',
+    telefono: 0,
+    documento: 0,
     fecha_nacimiento: new Date(),
     tipo_documento: 'CC',
     ubicacion: '',
