@@ -52,6 +52,7 @@
               }
             ],
             "styles": [
+              "node_modules/grapesjs/dist/css/grapes.min.css",
               "src/styles.css"
             ],
             "prerender": false,
