@@ -1,1 +1,16 @@
-<p>home works!</p>
+<div class="flex flex-col h-screen bg-gray-50">
+    <div class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-10 shadow-sm">
+        <div>
+            <h1 class="text-lg font-bold text-gray-800">Diseñador de Páginas</h1>
+            <p class="text-xs text-gray-500">Arrastra bloques para construir tu landing</p>
+        </div>
+        <button (click)="exportarDiseno()"
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm">
+            Guardar Cambios
+        </button>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        <div #gjs class="w-full h-full"></div>
+    </div>
+</div>

@@ -12,4 +12,5 @@ export enum TableName {
   ROLES = 'roles',
   TAGS = 'tags',
   USUARIOS_PUBLICOS = 'usuarios_publicos',
+  DYNAMIC_CONTENT = 'dynamic_components'
 }
