@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
@@ -23,7 +23,8 @@ export interface ContentListItem {
   imports: [TableModule, ButtonModule, ConfirmDialogModule, TagModule, DatePipe],
   providers: [ConfirmationService],
   templateUrl: './pages.html',
-  styles: ``
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styles: ``,
 })
 export class DynamicContentList implements OnInit {
   private contentDbService = inject(ContentDbService);
@@ -81,7 +82,7 @@ export class DynamicContentList implements OnInit {
         return;
       }
       this.toastService.success('Página eliminada correctamente');
-      this.pages.update(pages => pages.filter(p => p.id !== id));
+      this.pages.update((pages) => pages.filter((p) => p.id !== id));
     } catch {
       this.toastService.error('Error inesperado al eliminar');
     }

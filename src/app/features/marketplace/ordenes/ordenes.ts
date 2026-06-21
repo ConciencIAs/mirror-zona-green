@@ -1,17 +1,18 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Json, Orden } from '@src/app/shared/models/interfaces/db/db';
-import { FechaFormatoPipe, MonedaPipe } from '@src/app/shared/pipes/index'
+import { FechaFormatoPipe, MonedaPipe } from '@src/app/shared/pipes/index';
 
 @Component({
   selector: 'app-ordenes',
   standalone: true,
   imports: [CommonModule, RouterModule, FechaFormatoPipe, MonedaPipe],
   templateUrl: './ordenes.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Ordenes {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CustomerData } from '@src/app/shared/models/interfaces/customer/customer';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
   selector: 'app-magik-link-callback',
   imports: [],
   templateUrl: './magik-link-callback.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class MagikLinkCallback implements OnInit {
@@ -29,7 +30,6 @@ export class MagikLinkCallback implements OnInit {
 
   private escucharCambiosDeSesion(): void {
     this.authService.auth.onAuthStateChange(async (event, session) => {
-
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
         await this.procesarOnboardingPendiente(session.user.id);
       } else {

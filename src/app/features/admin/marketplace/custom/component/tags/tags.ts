@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -20,6 +20,7 @@ type Categoria = {
   selector: 'app-tags',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './tags.html',
 })
 export class Tags implements OnInit {
@@ -52,7 +53,7 @@ export class Tags implements OnInit {
     try {
       const { data, error } = await this.dbService.select(TableName.TAGS);
       if (error) throw error;
-      this.tags.set(data as any as Tag[] || []);
+      this.tags.set((data as any as Tag[]) || []);
     } catch (err) {
       this.toastService.error('Error al cargar tags', 'error');
     } finally {
@@ -101,11 +102,7 @@ export class Tags implements OnInit {
 
     this.isLoading.set(true);
     try {
-      const { error } = await this.dbService.update(
-        TableName.TAGS,
-        { nombre },
-        { id: tag.id }
-      );
+      const { error } = await this.dbService.update(TableName.TAGS, { nombre }, { id: tag.id });
       if (error) throw error;
 
       this.toastService.success('Tag actualizado exitosamente', 'success');
@@ -125,10 +122,7 @@ export class Tags implements OnInit {
 
     this.isLoading.set(true);
     try {
-      const { error } = await this.dbService.delete(
-        TableName.TAGS,
-        { id: tag.id }
-      );
+      const { error } = await this.dbService.delete(TableName.TAGS, { id: tag.id });
       if (error) throw error;
 
       this.toastService.success('Tag eliminado exitosamente', 'success');
@@ -146,7 +140,7 @@ export class Tags implements OnInit {
     try {
       const { data, error } = await this.dbService.select(TableName.CATEGORIAS);
       if (error) throw error;
-      this.categories.set(data as any as Categoria[] || []);
+      this.categories.set((data as any as Categoria[]) || []);
     } catch (err) {
       this.toastService.error('Error al cargar categorías', 'error');
     } finally {
@@ -198,7 +192,7 @@ export class Tags implements OnInit {
       const { error } = await this.dbService.update(
         TableName.CATEGORIAS,
         { nombre },
-        { id: category.id }
+        { id: category.id },
       );
       if (error) throw error;
 
@@ -219,10 +213,7 @@ export class Tags implements OnInit {
 
     this.isLoading.set(true);
     try {
-      const { error } = await this.dbService.delete(
-        TableName.CATEGORIAS,
-        { id: category.id }
-      );
+      const { error } = await this.dbService.delete(TableName.CATEGORIAS, { id: category.id });
       if (error) throw error;
 
       this.toastService.success('Categoría eliminada exitosamente', 'success');

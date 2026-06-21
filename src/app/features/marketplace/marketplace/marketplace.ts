@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ProductCard } from '@src/app/shared/components/marketplace/product-card/product-card';
 import { CartStore } from '@src/app/core/state/card/card.state';
@@ -11,6 +11,7 @@ import { Categoria, Producto } from '@src/app/shared/models/interfaces/db/db';
   standalone: true,
   imports: [RouterModule, ProductCard],
   templateUrl: './marketplace.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Marketplace {
@@ -80,10 +81,7 @@ export class Marketplace {
           .from(TableName.PRODUCTOS)
           .select('*')
           .order('created_at', { ascending: false }),
-        this.dbService
-          .from(TableName.CATEGORIAS)
-          .select('*')
-          .order('nombre', { ascending: true }),
+        this.dbService.from(TableName.CATEGORIAS).select('*').order('nombre', { ascending: true }),
       ]);
 
       if (productsResult.error) {
@@ -149,4 +147,3 @@ export class Marketplace {
     });
   }
 }
-

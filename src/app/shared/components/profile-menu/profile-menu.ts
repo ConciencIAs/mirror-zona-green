@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { MenuItem, } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
@@ -14,6 +14,7 @@ import { CartStore } from '@src/app/core/state/card/card.state';
   selector: 'app-profile-menu',
   imports: [ButtonModule, MenuModule, AvatarModule],
   templateUrl: './profile-menu.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class ProfileMenu implements OnInit {
@@ -29,12 +30,12 @@ export class ProfileMenu implements OnInit {
       {
         label: 'Mi perfil',
         icon: 'pi pi-user',
-        routerLink: '/customer/perfil'
+        routerLink: '/customer/perfil',
       },
       {
         label: 'Mis ordenes',
         icon: 'pi pi-shopping-cart',
-        routerLink: '/customer/orders'
+        routerLink: '/customer/orders',
       },
       // {
       //   label: 'Mis productos favoritos',
@@ -48,10 +49,8 @@ export class ProfileMenu implements OnInit {
           await this.supabaseAuthService.signOut();
           this.userState.clearPerfil();
           this.cartState.clearCart();
-        }
-      }
-    ]
-
-
+        },
+      },
+    ];
   }
 }

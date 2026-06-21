@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { distinctUntilChanged, filter } from 'rxjs';
 
@@ -18,10 +18,10 @@ import { CartStore } from '@src/app/core/state/card/card.state';
   selector: 'app-root',
   imports: [RouterOutlet, ToastModule, ConfirmDialogModule, ButtonModule],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [],
 })
 export class App implements OnInit {
-
   private readonly supabaseAuthService = inject(SupabaseAuthService);
   private readonly supabaseDbService = inject(SupabaseDbService);
   private readonly localStorageStateService = inject(LocalStorageStateService);
@@ -36,25 +36,31 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     this.supabaseAuthService.onAuthStateChange();
-    this.supabaseAuthService.currentUserEvent.pipe(
-      distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event),
-      filter(event => event.event !== 'INITIAL_SESSION'),
-    ).subscribe(async (event) => {
-      const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.PERFILES).select('*').eq('id', event.session?.user.id).single();
-      const { error: cartError, data: cartData } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.CARRITO).select('*').eq('id', event.session?.user.id);
-      if (!error) this.userStore.setPerfil(data);
-      if (!cartError) this.cartStore.setCart(cartData);
-    });
+    this.supabaseAuthService.currentUserEvent
+      .pipe(
+        distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event),
+        filter((event) => event.event !== 'INITIAL_SESSION'),
+      )
+      .subscribe(async (event) => {
+        const { error, data } = await this.supabaseDbService
+          .from(this.supabaseDbService.tableNames.PERFILES)
+          .select('*')
+          .eq('id', event.session?.user.id)
+          .single();
+        const { error: cartError, data: cartData } = await this.supabaseDbService
+          .from(this.supabaseDbService.tableNames.CARRITO)
+          .select('*')
+          .eq('id', event.session?.user.id);
+        if (!error) this.userStore.setPerfil(data);
+        if (!cartError) this.cartStore.setCart(cartData);
+      });
     this.getRoles();
     this.isLegalAge.set(this.userSaysToBeLegalAge);
     this.verifyCurrentAge();
   }
 
   get userSaysToBeLegalAge(): boolean {
-    return this.localStorageStateService.getState(
-      this.USER_SAY_TO_BE_LEGAL_AGE_KEY,
-      false,
-    );
+    return this.localStorageStateService.getState(this.USER_SAY_TO_BE_LEGAL_AGE_KEY, false);
   }
 
   verifyCurrentAge(): void {
@@ -74,7 +80,9 @@ export class App implements OnInit {
   }
 
   async getRoles() {
-    const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.ROLES).select('*');
+    const { error, data } = await this.supabaseDbService
+      .from(this.supabaseDbService.tableNames.ROLES)
+      .select('*');
     if (!error) {
       this.localStorageStateService.setState('app_roles', data);
     }

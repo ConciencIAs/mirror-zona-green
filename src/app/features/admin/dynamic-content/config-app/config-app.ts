@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -18,13 +18,14 @@ import {
   NavbarConfig,
   FooterConfig,
   SettingsConfig,
-  AdvertisingBannerConfig
+  AdvertisingBannerConfig,
 } from '@src/app/shared/models/interfaces/page-config.interface';
 
 @Component({
   selector: 'app-config-app',
   standalone: true,
   imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TooltipModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './config-app.html',
 })
 export class ConfigApp implements OnInit {
@@ -53,7 +54,7 @@ export class ConfigApp implements OnInit {
   }
 
   /**
-   * Asegura que el store tenga la información actualizada y clona los datos 
+   * Asegura que el store tenga la información actualizada y clona los datos
    * al estado local del formulario para evitar mutaciones directas.
    */
   async loadConfig(): Promise<void> {
@@ -64,7 +65,7 @@ export class ConfigApp implements OnInit {
         this.configStore.ensureSettings(),
         this.configStore.ensureNavbar(),
         this.configStore.ensureFooter(),
-        this.configStore.ensureAdvertising()
+        this.configStore.ensureAdvertising(),
       ]);
 
       this.syncFormWithStore();
@@ -77,14 +78,17 @@ export class ConfigApp implements OnInit {
   }
 
   /**
-   * Realiza una copia profunda (Deep Copy) desde las señales computadas del Store 
+   * Realiza una copia profunda (Deep Copy) desde las señales computadas del Store
    * hacia el formulario local.
    */
   private syncFormWithStore(): void {
     const store = this.configStore;
 
     // Helper seguro de clonación compatible con navegadores modernos
-    const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+    const deepClone = <T>(obj: T): T =>
+      typeof structuredClone !== 'undefined'
+        ? structuredClone(obj)
+        : JSON.parse(JSON.stringify(obj));
 
     this.config.set({
       nombre: store.settingsConfig().nombre,
@@ -92,7 +96,7 @@ export class ConfigApp implements OnInit {
       telefono: store.settingsConfig().telefono,
       navbar: deepClone(store.navbarConfig()),
       footer: deepClone(store.footerConfig()),
-      advertising_banner: deepClone(store.advertisingConfig().items)
+      advertising_banner: deepClone(store.advertisingConfig().items),
     });
   }
 
@@ -112,7 +116,7 @@ export class ConfigApp implements OnInit {
           const settingsPayload: SettingsConfig = {
             nombre: currentForm.nombre,
             logo_url: currentForm.logo_url,
-            telefono: currentForm.telefono
+            telefono: currentForm.telefono,
           };
           const res = await this.pageConfigDbService.saveConfigByName('settings', settingsPayload);
           error = res.error;
@@ -137,9 +141,12 @@ export class ConfigApp implements OnInit {
 
         case 'publicidad': {
           const advertisingPayload: AdvertisingBannerConfig = {
-            items: currentForm.advertising_banner
+            items: currentForm.advertising_banner,
           };
-          const res = await this.pageConfigDbService.saveConfigByName('advertising_banner', advertisingPayload);
+          const res = await this.pageConfigDbService.saveConfigByName(
+            'advertising_banner',
+            advertisingPayload,
+          );
           error = res.error;
           if (!error) await this.configStore.ensureAdvertising(true);
           break;
@@ -154,7 +161,6 @@ export class ConfigApp implements OnInit {
       // Volvemos a sincronizar el formulario para asegurar coherencia visual completa
       this.syncFormWithStore();
       this.toastService.success('Sección actualizada correctamente');
-
     } catch (err) {
       console.error(err);
       this.toastService.error('Ocurrió un error inesperado al procesar el guardado');
@@ -166,55 +172,122 @@ export class ConfigApp implements OnInit {
   // --- MÉTODOS AUXILIARES DE LOGICA INTERNA (Se mantienen idénticos) ---
   addNavbarSection(): void {
     const title = this.newNavbarSectionTitle().trim();
-    if (!title) { this.toastService.warn('El título es obligatorio'); return; }
+    if (!title) {
+      this.toastService.warn('El título es obligatorio');
+      return;
+    }
     const rolesInput = this.newNavbarSectionRoles().trim();
-    const roles = rolesInput ? rolesInput.split(',').map((r) => r.trim()).filter((r) => r) : undefined;
-    this.config.update((c) => { c.navbar.sections.push({ title, items: [], roles }); return { ...c }; });
-    this.newNavbarSectionTitle.set(''); this.newNavbarSectionRoles.set('');
+    const roles = rolesInput
+      ? rolesInput
+          .split(',')
+          .map((r) => r.trim())
+          .filter((r) => r)
+      : undefined;
+    this.config.update((c) => {
+      c.navbar.sections.push({ title, items: [], roles });
+      return { ...c };
+    });
+    this.newNavbarSectionTitle.set('');
+    this.newNavbarSectionRoles.set('');
   }
 
-  removeNavbarSection(index: number): void { this.config.update((c) => { c.navbar.sections.splice(index, 1); return { ...c }; }); }
+  removeNavbarSection(index: number): void {
+    this.config.update((c) => {
+      c.navbar.sections.splice(index, 1);
+      return { ...c };
+    });
+  }
   getNewNavbarItem(sectionIdx: number): NavItem {
     if (!this.newNavbarItems[sectionIdx]) this.newNavbarItems[sectionIdx] = { label: '', path: '' };
     return this.newNavbarItems[sectionIdx];
   }
   addNavbarLink(sectionIdx: number): void {
     const item = this.getNewNavbarItem(sectionIdx);
-    if (!item.label.trim() || !item.path.trim()) { this.toastService.warn('Etiqueta y Ruta obligatorias'); return; }
-    this.config.update((c) => { c.navbar.sections[sectionIdx].items.push({ label: item.label.trim(), path: item.path.trim() }); return { ...c }; });
+    if (!item.label.trim() || !item.path.trim()) {
+      this.toastService.warn('Etiqueta y Ruta obligatorias');
+      return;
+    }
+    this.config.update((c) => {
+      c.navbar.sections[sectionIdx].items.push({
+        label: item.label.trim(),
+        path: item.path.trim(),
+      });
+      return { ...c };
+    });
     this.newNavbarItems[sectionIdx] = { label: '', path: '' };
   }
-  removeNavbarLink(sectionIdx: number, itemIdx: number): void { this.config.update((c) => { c.navbar.sections[sectionIdx].items.splice(itemIdx, 1); return { ...c }; }); }
+  removeNavbarLink(sectionIdx: number, itemIdx: number): void {
+    this.config.update((c) => {
+      c.navbar.sections[sectionIdx].items.splice(itemIdx, 1);
+      return { ...c };
+    });
+  }
 
   addFooterSection(): void {
     const title = this.newFooterSectionTitle().trim();
-    if (!title) { this.toastService.warn('El título es obligatorio'); return; }
-    this.config.update((c) => { c.footer.sections.push({ title, items: [] }); return { ...c }; });
+    if (!title) {
+      this.toastService.warn('El título es obligatorio');
+      return;
+    }
+    this.config.update((c) => {
+      c.footer.sections.push({ title, items: [] });
+      return { ...c };
+    });
     this.newFooterSectionTitle.set('');
   }
-  removeFooterSection(index: number): void { this.config.update((c) => { c.footer.sections.splice(index, 1); return { ...c }; }); }
+  removeFooterSection(index: number): void {
+    this.config.update((c) => {
+      c.footer.sections.splice(index, 1);
+      return { ...c };
+    });
+  }
   getNewFooterItem(sectionIdx: number): FooterItem {
     if (!this.newFooterItems[sectionIdx]) this.newFooterItems[sectionIdx] = { label: '', url: '' };
     return this.newFooterItems[sectionIdx];
   }
   addFooterLink(sectionIdx: number): void {
     const item = this.getNewFooterItem(sectionIdx);
-    if (!item.label.trim() || !item.url.trim()) { this.toastService.warn('Campos obligatorios'); return; }
-    this.config.update((c) => { c.footer.sections[sectionIdx].items.push({ label: item.label.trim(), url: item.url.trim() }); return { ...c }; });
+    if (!item.label.trim() || !item.url.trim()) {
+      this.toastService.warn('Campos obligatorios');
+      return;
+    }
+    this.config.update((c) => {
+      c.footer.sections[sectionIdx].items.push({ label: item.label.trim(), url: item.url.trim() });
+      return { ...c };
+    });
     this.newFooterItems[sectionIdx] = { label: '', url: '' };
   }
-  removeFooterLink(sectionIdx: number, itemIdx: number): void { this.config.update((c) => { c.footer.sections[sectionIdx].items.splice(itemIdx, 1); return { ...c }; }); }
+  removeFooterLink(sectionIdx: number, itemIdx: number): void {
+    this.config.update((c) => {
+      c.footer.sections[sectionIdx].items.splice(itemIdx, 1);
+      return { ...c };
+    });
+  }
 
   addAdvertisingItem(): void {
     const item = this.newAdvertisingItem();
-    if (!item.text.trim()) { this.toastService.warn('El texto es requerido'); return; }
+    if (!item.text.trim()) {
+      this.toastService.warn('El texto es requerido');
+      return;
+    }
     this.config.update((c) => {
       if (!c.advertising_banner) c.advertising_banner = [];
-      c.advertising_banner.push({ text: item.text.trim(), link: item.link.trim(), icon: item.icon.trim() || 'pi pi-megaphone' });
+      c.advertising_banner.push({
+        text: item.text.trim(),
+        link: item.link.trim(),
+        icon: item.icon.trim() || 'pi pi-megaphone',
+      });
       return { ...c };
     });
     this.newAdvertisingItem.set({ text: '', link: '', icon: 'pi pi-megaphone' });
   }
-  removeAdvertisingItem(index: number): void { this.config.update((c) => { c.advertising_banner.splice(index, 1); return { ...c }; }); }
-  setTab(tab: 'general' | 'navbar' | 'footer' | 'publicidad'): void { this.activeTab.set(tab); }
+  removeAdvertisingItem(index: number): void {
+    this.config.update((c) => {
+      c.advertising_banner.splice(index, 1);
+      return { ...c };
+    });
+  }
+  setTab(tab: 'general' | 'navbar' | 'footer' | 'publicidad'): void {
+    this.activeTab.set(tab);
+  }
 }

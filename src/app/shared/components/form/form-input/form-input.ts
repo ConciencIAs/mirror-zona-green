@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { FieldState } from '@angular/forms/signals';
 import { FormErrorDisplayComponent } from '../form-error-display/form-error-display';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-form-input',
   standalone: true,
   imports: [FormsModule, FormErrorDisplayComponent, InputTextModule, InputNumberModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="mb-4">
       @if (label()) {
@@ -18,38 +19,35 @@ import { FormsModule } from '@angular/forms';
       }
       @if (type() === 'number') {
         <p-inputNumber
-        (keydown.enter)="$event.preventDefault()"
-        [id]="uid"
-        [ngModel]="getControl().value()"
-        (ngModelChange)="getControl().controlValue.set($event)"
-        [placeholder]="placeholder()"
-        [useGrouping]="false" 
-        class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden"
-        [class.border-red-500]="isInvalid()"
-        [class.ring-2]="isInvalid()"
-        [class.ring-red-500]="isInvalid()"
-        [class.border-gray-300]="!isInvalid()"
-      />
+          (keydown.enter)="$event.preventDefault()"
+          [id]="uid"
+          [ngModel]="getControl().value()"
+          (ngModelChange)="getControl().controlValue.set($event)"
+          [placeholder]="placeholder()"
+          [useGrouping]="false"
+          class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden"
+          [class.border-red-500]="isInvalid()"
+          [class.ring-2]="isInvalid()"
+          [class.ring-red-500]="isInvalid()"
+          [class.border-gray-300]="!isInvalid()"
+        />
+      } @else {
+        <input
+          pInputText
+          (keydown.enter)="$event.preventDefault()"
+          [id]="uid"
+          [ngModel]="getControl().value()"
+          (ngModelChange)="getControl().controlValue.set($event)"
+          [placeholder]="placeholder()"
+          type="text"
+          class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden"
+          [class.border-red-500]="isInvalid()"
+          [class.ring-2]="isInvalid()"
+          [class.ring-red-500]="isInvalid()"
+          [class.border-gray-300]="!isInvalid()"
+        />
       }
-      @else {
-      <input pInputText
-        (keydown.enter)="$event.preventDefault()"
-        [id]="uid"
-        [ngModel]="getControl().value()"
-        (ngModelChange)="getControl().controlValue.set($event)"
-        [placeholder]="placeholder()"
-        type="text"
-        class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden"
-        [class.border-red-500]="isInvalid()"
-        [class.ring-2]="isInvalid()"
-        [class.ring-red-500]="isInvalid()"
-        [class.border-gray-300]="!isInvalid()"
-      />
-      }
-      <app-form-error-display
-        [errors]="errorMessage()"
-        [touched]="isInvalid()"
-      />
+      <app-form-error-display [errors]="errorMessage()" [touched]="isInvalid()" />
     </div>
   `,
 })
@@ -63,17 +61,15 @@ export class FormInputComponent {
   uid = crypto.randomUUID();
 
   getControl() {
-    return this.control()
+    return this.control();
   }
-
 
   isInvalid = computed(() => {
     const ctrl = this.getControl();
-    return ctrl.invalid()
+    return ctrl.invalid();
   });
 
   errorMessage = computed(() => {
-    return this.getControl().errors()
+    return this.getControl().errors();
   });
 }
-

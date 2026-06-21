@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Producto } from '@src/app/shared/models/interfaces/db/db';
 
@@ -8,6 +8,7 @@ import { Producto } from '@src/app/shared/models/interfaces/db/db';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './product-card.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class ProductCard {

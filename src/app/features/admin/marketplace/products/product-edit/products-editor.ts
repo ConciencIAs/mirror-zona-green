@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal, OnInit, effect } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  OnInit,
+  effect,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { form, validateStandardSchema } from '@angular/forms/signals';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -22,13 +30,23 @@ import {
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
 
-import { ProductFormModel, ProductVariantFormModel } from '@src/app/shared/models/interfaces/productos/marketplace.interface';
+import {
+  ProductFormModel,
+  ProductVariantFormModel,
+} from '@src/app/shared/models/interfaces/productos/marketplace.interface';
 
 @Component({
   selector: 'app-products-editor',
   standalone: true,
-  imports: [CommonModule, FormInputComponent, FormSelectComponent, FormDatepickerComponent, FormChipsComponent],
+  imports: [
+    CommonModule,
+    FormInputComponent,
+    FormSelectComponent,
+    FormDatepickerComponent,
+    FormChipsComponent,
+  ],
   templateUrl: './products-editor.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class ProductsEditor implements OnInit {
@@ -246,11 +264,16 @@ export class ProductsEditor implements OnInit {
     try {
       let productId = this.editingProductId();
       if (productId) {
-        const { error } = await this.dbService.update(TableName.PRODUCTOS, payload, { id: productId });
+        const { error } = await this.dbService.update(TableName.PRODUCTOS, payload, {
+          id: productId,
+        });
         if (error) throw error;
         this.toastService.success('Producto actualizado correctamente.');
       } else {
-        const { data, error } = await this.dbService.insert(TableName.PRODUCTOS, payload).select('*').single();
+        const { data, error } = await this.dbService
+          .insert(TableName.PRODUCTOS, payload)
+          .select('*')
+          .single();
         if (error) throw error;
         const insertedProduct = data as Producto;
         if (!insertedProduct?.id) throw new Error('No se pudo obtener el ID del producto creado.');
@@ -284,9 +307,7 @@ export class ProductsEditor implements OnInit {
     const deleteIds = this.deletedVariantIds();
     if (deleteIds.length > 0) {
       await Promise.all(
-        deleteIds.map((id) =>
-          this.dbService.delete(TableName.PRODUCTOS_VARIANTES, { id }),
-        ),
+        deleteIds.map((id) => this.dbService.delete(TableName.PRODUCTOS_VARIANTES, { id })),
       );
     }
 
@@ -302,7 +323,7 @@ export class ProductsEditor implements OnInit {
           cantidad_minima_venta: Number(variant.cantidad_minima_venta) || 1,
           precio_minimo_venta: Number(variant.precio_minimo_venta) || 0,
           opciones_venta: variant.opciones_venta,
-          status: variant.status || 'activo' as EstadoProducto,
+          status: variant.status || ('activo' as EstadoProducto),
           fecha_llegada: variant.fecha_llegada || null,
           urls_imagenes: variant.urls_imagenes,
         };

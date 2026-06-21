@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -21,6 +28,7 @@ type CartProduct = {
   standalone: true,
   imports: [CommonModule, RouterModule, MonedaPipe],
   templateUrl: './checkout.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Checkout {
@@ -35,7 +43,9 @@ export class Checkout {
   protected readonly cartDetails = signal<CartProduct[]>([]);
 
   protected readonly cartItems = computed(() => this.cartStore.items());
-  protected readonly total = computed(() => this.cartDetails().reduce((acc, item) => acc + item.subtotal, 0));
+  protected readonly total = computed(() =>
+    this.cartDetails().reduce((acc, item) => acc + item.subtotal, 0),
+  );
 
   constructor() {
     effect(() => {
@@ -56,7 +66,9 @@ export class Checkout {
       }
 
       const productIds = Array.from(new Set(cart.map((item) => item.producto_id)));
-      const variantIds = Array.from(new Set(cart.filter((item) => item.variante_id).map((item) => item.variante_id as string)));
+      const variantIds = Array.from(
+        new Set(cart.filter((item) => item.variante_id).map((item) => item.variante_id as string)),
+      );
 
       const [productsResult, variantsResult] = await Promise.all([
         this.dbService.from(TableName.PRODUCTOS).select('*').in('id', productIds),
@@ -120,7 +132,7 @@ export class Checkout {
       }
 
       this.success.set(
-        `Orden${orderId ? ` ${orderId}` : ''} creada correctamente. Abriendo WhatsApp para continuar con el pedido.`
+        `Orden${orderId ? ` ${orderId}` : ''} creada correctamente. Abriendo WhatsApp para continuar con el pedido.`,
       );
       window.open(this.buildWhatsAppUrl(orderId), '_blank');
     } catch (error) {
@@ -168,7 +180,10 @@ export class Checkout {
       lines.push(`OrdenId: ${orderId}`);
     }
 
-    lines.push('', 'Por favor, indíquenme los siguientes pasos para completar el pago y la entrega.');
+    lines.push(
+      '',
+      'Por favor, indíquenme los siguientes pasos para completar el pago y la entrega.',
+    );
 
     const text = encodeURIComponent(lines.join('\n'));
     return `https://wa.me/573134312139?text=${text}`;

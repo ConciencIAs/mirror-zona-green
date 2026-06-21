@@ -5,6 +5,7 @@ import {
   OnDestroy,
   HostListener,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -15,24 +16,27 @@ import { AdvertisingItem } from '@src/app/shared/models/interfaces/page-config.i
   standalone: true,
   imports: [CommonModule, ButtonModule],
   templateUrl: './advertising-banner.html',
-  styles: [`
-    @keyframes slide {
-      0% {
-        transform: translateX(100%);
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styles: [
+    `
+      @keyframes slide {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
       }
-      100% {
-        transform: translateX(-100%);
+
+      .ad-text {
+        animation: slide 30s linear infinite;
       }
-    }
 
-    .ad-text {
-      animation: slide 30s linear infinite;
-    }
-
-    .ad-text.paused {
-      animation-play-state: paused;
-    }
-  `],
+      .ad-text.paused {
+        animation-play-state: paused;
+      }
+    `,
+  ],
 })
 export class AdvertisingBannerComponent implements OnInit, OnDestroy {
   @Input() items: AdvertisingItem[] = [];
@@ -77,9 +81,7 @@ export class AdvertisingBannerComponent implements OnInit, OnDestroy {
 
   prev(): void {
     if (this.items.length === 0) return;
-    this.currentIndex.set(
-      (this.currentIndex() - 1 + this.items.length) % this.items.length
-    );
+    this.currentIndex.set((this.currentIndex() - 1 + this.items.length) % this.items.length);
   }
 
   @HostListener('mouseenter')
