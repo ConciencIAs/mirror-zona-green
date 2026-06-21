@@ -87,15 +87,27 @@ export const adminRoutes: Routes = [
           {
             path: '',
             pathMatch: 'full',
-            loadComponent: () => import('./dynamic-content/home/home').then(m => m.Home),
+            loadComponent: () => import('./dynamic-content/pages/pages').then(m => m.DynamicContentList),
             data: { zone: 'admin' },
             title: 'Dynamic Content'
           },
           {
-            path: 'home',
-            loadComponent: () => import('./dynamic-content/home/home').then(m => m.Home),
+            path: 'pages',
+            loadComponent: () => import('./dynamic-content/pages/pages').then(m => m.DynamicContentList),
             data: { zone: 'admin' },
             title: 'Dynamic Content'
+          },
+          {
+            path: 'new',
+            loadComponent: () => import('./dynamic-content/editor/editor').then(m => m.ContentEditor),
+            data: { zone: 'admin' },
+            title: 'Editor'
+          },
+          {
+            path: 'editor/:id',
+            loadComponent: () => import('./dynamic-content/editor/editor').then(m => m.ContentEditor),
+            data: { zone: 'admin' },
+            title: 'Editor'
           },
           {
             path: 'app-config',

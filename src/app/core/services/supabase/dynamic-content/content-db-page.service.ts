@@ -38,6 +38,23 @@ export class ContentDbService {
       .maybeSingle();
   }
 
+  // 🗑️ Eliminar un contenido dinámico por id
+  async deleteContent(id: string) {
+    return await this.supabase
+      .from(TableName.DYNAMIC_CONTENT)
+      .delete()
+      .eq('id', id);
+  }
+
+  // 🌐 Para el renderizador público por slug
+  async getContentBySlug(slug: string) {
+    return await this.supabase
+      .from(TableName.DYNAMIC_CONTENT)
+      .select('html_content, css_content')
+      .eq('slug', slug)
+      .maybeSingle();
+  }
+
   async getContentParaPublico() {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
@@ -45,11 +62,18 @@ export class ContentDbService {
       .maybeSingle();
   }
 
-  // 🛠️ Para el Editor (Admin): Solo se ejecuta cuando tú o tu cliente van a rediseñar.
-  async getContentParaEditor() {
+  // 🛠️ Para el Editor (Admin): Carga por id para editar una página específica
+  async getContentParaEditor(id: string) {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
-      .select('id, name, project_data') // 👈 Aquí sí traemos el project_data
+      .select('id, name, slug, project_data')
+      .eq('id', id)
       .maybeSingle();
+  }
+
+  async getListContent() {
+    return await this.supabase.from(TableName.DYNAMIC_CONTENT)
+      .select('id, name, slug, created_at')
+      .order('created_at', { ascending: false })
   }
 }

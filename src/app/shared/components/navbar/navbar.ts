@@ -12,28 +12,22 @@ import { CartStore } from '@src/app/core/state/card/card.state';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { FormsModule } from '@angular/forms';
 
+import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
+import { NavbarConfig, SettingsConfig, AdvertisingBannerConfig} from '@src/app/shared/models/interfaces/page-config.interface';
+import { AdvertisingBannerComponent } from '@src/app/shared/components/advertising-banner/advertising-banner';
+
 const LS_KEY = 'zg-dark';
-
-type NavItem = {
-  path: string;
-  label: string;
-};
-
-type NavSection = {
-  title: string;
-  items: NavItem[];
-  roles?: string[];
-};
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, ProfileMenu, OverlayBadgeModule, InputGroupModule, InputTextModule, ButtonModule, InputGroupAddonModule, FormsModule],
+  imports: [RouterLink, ProfileMenu, OverlayBadgeModule, InputGroupModule, InputTextModule, ButtonModule, InputGroupAddonModule, FormsModule, AdvertisingBannerComponent],
   templateUrl: './navbar.html',
 })
 export class Navbar implements OnInit {
   private readonly cartStore = inject(CartStore);
   private readonly userStore = inject(UserStore);
   private readonly router = inject(Router);
+  private readonly appConfigStore = inject(AppConfigStore);
 
   searchQuery = signal<string>('');
 
@@ -43,56 +37,16 @@ export class Navbar implements OnInit {
 
   totalCartItems = this.cartStore.totalItems();
 
-  protected readonly navSections: NavSection[] = [
-    {
-      title: 'Navegación',
-      items: [
-        { path: '/customer/home', label: 'Inicio' },
-        { path: '/cannabismedicinalencolombia', label: 'Cannabis medicinal en Colombia' },
-        { path: '/medicoscannabiscolombia', label: 'Médicos especialistas en cannabis' },
-        { path: '/rrd', label: 'Reducción de Riesgos y Daños' },
-        { path: '/faq', label: 'Preguntas frecuentes' },
-        { path: '/terminos-y-condiciones', label: 'Términos y condiciones' },
-      ]
-    },
-    {
-      title: 'Cuenta',
-      roles: ['customer', 'admin', 'agente'],
-      items: [
-        { path: '/marketplace', label: 'Marketplace' },
-      ]
-    },
-    {
-      title: 'Administración',
-      roles: ['admin'],
-      items: [
-        { path: '/admin', label: 'Panel admin' },
-        { path: '/admin/marketplace', label: 'Marketplace admin' },
-        { path: '/admin/marketplace/products', label: 'Productos' },
-        { path: '/admin/marketplace/custom', label: 'Custom search' },
-        { path: '/admin/marketplace/orders', label: 'Órdenes admin' },
-        { path: '/admin/marketplace/history', label: 'Historial' },
-        { path: '/admin/dynamic-content', label: 'Contenido dinámico' },
-      ]
-    },
-    {
-      title: 'Agente',
-      roles: ['agente'],
-      items: [
-        { path: '/admin', label: 'Panel agente' },
-        { path: '/admin/marketplace', label: 'Marketplace agente' },
-        { path: '/admin/marketplace/orders', label: 'Órdenes' },
-        { path: '/admin/marketplace/custom', label: 'Custom search' },
-      ]
-    }
-  ];
+  // Reactive state for configuration
+  protected readonly settingsConfig = signal<SettingsConfig | null>(null);
+  protected readonly navBarConfig = signal<NavbarConfig | null>(null);
+  protected readonly advertisingBannerConfig = signal<AdvertisingBannerConfig>({ items: [] });
 
-
-  get visibleNavSections() {
-    return this.navSections.filter((section) =>
+  visibleNavSections = computed(() => {
+    return this.navBarConfig()?.sections.filter((section) =>
       !section.roles || section.roles.includes(this.currentRole)
-    );
-  }
+    ) || [];
+  })
 
   ngOnInit() {
     const saved = localStorage.getItem(LS_KEY);
@@ -100,10 +54,26 @@ export class Navbar implements OnInit {
       this.applyDark(true);
       this.isDark.set(true);
     }
+    this.loadAppConfig();
+  }
+
+  async loadAppConfig() {
+    try {
+      let navbarConfig = this.appConfigStore.navbarConfig();
+      let settingsConfig = this.appConfigStore.settingsConfig();
+      let advertisingBannerConfig = this.appConfigStore.advertisingConfig();
+      this.navBarConfig.set(navbarConfig);
+      this.settingsConfig.set(settingsConfig);
+      this.advertisingBannerConfig.set(advertisingBannerConfig);
+
+    } catch (err) {
+      console.error('Error loading navbar config:', err);
+    }
   }
 
   private applyDark(on: boolean): void {
     document.documentElement.classList.toggle('dark', on);
+    document.documentElement.classList.toggle('p-dark', on);
   }
 
   toggleDark(): void {

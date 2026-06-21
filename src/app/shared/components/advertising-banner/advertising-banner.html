@@ -1,0 +1,22 @@
+@if (items && items.length > 0) {
+
+<div
+    class="bg-amber-500 text-white text-[11px] sm:text-xs font-semibold py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 select-none border-b border-amber-600/20">
+    @for (item of items; track $index) {
+    <div class="flex items-center gap-1.5">
+        <i [class]="item.icon"></i>
+        <span>{{ item.text }}</span>
+        @if (item.link) {
+        <a [href]="item.link" class="text-white underline hover:opacity-80 transition-opacity ml-1">Ver más</a>
+        }
+    </div>
+    }
+</div>
+
+} @else {
+<!-- Empty State -->
+<div
+    class="w-full bg-gradient-to-r from-green-900 to-green-800 text-white/70 px-4 py-3 text-center min-h-[50px] flex items-center justify-center">
+    <p class="text-sm">No hay anuncios configurados</p>
+</div>
+}

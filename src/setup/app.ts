@@ -41,7 +41,7 @@ export class App implements OnInit {
       filter(event => event.event !== 'INITIAL_SESSION'),
     ).subscribe(async (event) => {
       const { error, data } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.PERFILES).select('*').eq('id', event.session?.user.id).single();
-      const { error: cartError, data: cartData } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.CARRITO).select('*').eq('id', event.session?.user.id).single();
+      const { error: cartError, data: cartData } = await this.supabaseDbService.from(this.supabaseDbService.tableNames.CARRITO).select('*').eq('id', event.session?.user.id);
       if (!error) this.userStore.setPerfil(data);
       if (!cartError) this.cartStore.setCart(cartData);
     });
@@ -78,12 +78,5 @@ export class App implements OnInit {
     if (!error) {
       this.localStorageStateService.setState('app_roles', data);
     }
-  }
-
-  getDynamicContent() {
-    const appConfig = this.supabaseDbService.from(this.supabaseDbService.tableNames.PAGE_CONFIG).select('*');
-    const appHome = this.supabaseDbService.from(this.supabaseDbService.tableNames.PAGE_HOME).select('*');
-    const appDocumentos = this.supabaseDbService.from(this.supabaseDbService.tableNames.PAGE_DOCUMENTOS).select('*');
-    return { appConfig, appHome, appDocumentos };
   }
 }
