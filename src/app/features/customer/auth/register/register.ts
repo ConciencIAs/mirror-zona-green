@@ -1,6 +1,5 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
-
 
 import { CustomerData } from '@src/app/shared/models/interfaces/customer/customer';
 import { PENDING_DATA_KEY } from '@src/app/shared/models/constans/localstate/storage';
@@ -23,8 +22,14 @@ import { userSchemaRegister } from '@src/app/shared/models/schemas/auth.schema';
 
 @Component({
   selector: 'app-register',
-  imports: [FormInputComponent, FormSelectComponent, FormInputCheckboxComponent, FormDatepickerComponent],
+  imports: [
+    FormInputComponent,
+    FormSelectComponent,
+    FormInputCheckboxComponent,
+    FormDatepickerComponent,
+  ],
   templateUrl: './register.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Register {

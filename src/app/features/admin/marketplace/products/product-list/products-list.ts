@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
@@ -11,6 +11,7 @@ import { Categoria, Producto } from '@src/app/shared/models/interfaces/db/db';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './products-list.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class ProductsList {

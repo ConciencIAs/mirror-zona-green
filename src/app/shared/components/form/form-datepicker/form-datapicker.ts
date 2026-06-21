@@ -1,4 +1,4 @@
-import { Component, input, computed, OnInit } from '@angular/core';
+import { Component, input, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FormErrorDisplayComponent } from '@src/app/shared/components/form/form-error-display/form-error-display';
 import { FieldState } from '@angular/forms/signals';
@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-form-datepicker',
   standalone: true,
   imports: [FormErrorDisplayComponent, DatePickerModule, FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="mb-4">
       @if (label()) {
@@ -32,11 +33,8 @@ import { FormsModule } from '@angular/forms';
         [class.ring-red-500]="isInvalid()"
         [class.border-gray-300]="!isInvalid()"
       ></p-datepicker>
-      <app-form-error-display
-        [errors]="errorMessage()"
-        [touched]="isInvalid()"
-      />
-        </div>
+      <app-form-error-display [errors]="errorMessage()" [touched]="isInvalid()" />
+    </div>
   `,
 })
 export class FormDatepickerComponent implements OnInit {

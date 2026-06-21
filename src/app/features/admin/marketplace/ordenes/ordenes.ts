@@ -1,15 +1,16 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { EstadoOrden, Json, Orden } from '@src/app/shared/models/interfaces/db/db';
-import { MonedaPipe, FechaFormatoPipe } from '@src/app/shared/pipes/'
+import { MonedaPipe, FechaFormatoPipe } from '@src/app/shared/pipes/';
 
 @Component({
   selector: 'app-ordenes',
   standalone: true,
   imports: [CommonModule, FechaFormatoPipe, MonedaPipe],
   templateUrl: './ordenes.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Ordenes {
@@ -54,10 +55,13 @@ export class Ordenes {
       const orders = (data as Orden[]) || [];
       this.orders.set(orders);
       this.orderComments.set(
-        Object.fromEntries(orders.map((order) => [order.id, order.comentarios_agente || '']))
+        Object.fromEntries(orders.map((order) => [order.id, order.comentarios_agente || ''])),
       );
       this.orderStatuses.set(
-        Object.fromEntries(orders.map((order) => [order.id, order.status])) as Record<string, EstadoOrden>
+        Object.fromEntries(orders.map((order) => [order.id, order.status])) as Record<
+          string,
+          EstadoOrden
+        >,
       );
     } catch (error) {
       console.error(error);
@@ -92,7 +96,9 @@ export class Ordenes {
         comentarios_agente: this.orderComments()[order.id],
       };
 
-      const { error, data } = await this.dbService.update(TableName.ORDENES, updates, { id: order.id });
+      const { error, data } = await this.dbService.update(TableName.ORDENES, updates, {
+        id: order.id,
+      });
 
       if (error) {
         throw error;

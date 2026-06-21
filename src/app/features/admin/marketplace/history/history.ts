@@ -1,15 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Orden } from '@src/app/shared/models/interfaces/db/db';
-import { MonedaPipe, FechaFormatoPipe } from '@src/app/shared/pipes/'
+import { MonedaPipe, FechaFormatoPipe } from '@src/app/shared/pipes/';
 
 @Component({
   selector: 'app-history',
   standalone: true,
   imports: [CommonModule, MonedaPipe, FechaFormatoPipe],
   templateUrl: './history.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class History {
@@ -46,5 +47,4 @@ export class History {
       this.loading.set(false);
     }
   }
-
 }

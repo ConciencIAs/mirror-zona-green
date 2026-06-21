@@ -1,4 +1,11 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
 
 import { UserStore } from '@src/app/core/state/customer/customer.state';
@@ -23,6 +30,7 @@ import { FormDatepickerComponent } from '@src/app/shared/components/form/form-da
   selector: 'app-account',
   imports: [FormInputComponent, FormSelectComponent, FormDatepickerComponent],
   templateUrl: './account.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Account implements OnInit {
@@ -118,14 +126,12 @@ export class Account implements OnInit {
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await this.dbService.update(
-        TableName.PERFILES,
-        payload,
-        { id: userId }
-      );
+      const { error } = await this.dbService.update(TableName.PERFILES, payload, { id: userId });
 
       if (error) {
-        this.toastService.error('Error al actualizar el perfil: ' + (error as { message: string }).message);
+        this.toastService.error(
+          'Error al actualizar el perfil: ' + (error as { message: string }).message,
+        );
         return;
       }
 
@@ -141,7 +147,6 @@ export class Account implements OnInit {
       });
 
       this.toastService.success('¡Perfil actualizado exitosamente!');
-
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error inesperado al guardar';
       this.toastService.error(msg);

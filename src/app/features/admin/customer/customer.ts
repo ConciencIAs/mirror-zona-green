@@ -1,15 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
-import {
-  EstadoUsuario,
-  Perfil,
-  RolUsuario,
-} from '@src/app/shared/models/interfaces/db/db';
+import { EstadoUsuario, Perfil, RolUsuario } from '@src/app/shared/models/interfaces/db/db';
 import { SelectOption } from '@src/app/shared/components/form/form-select/form-select';
 
 @Component({
@@ -17,6 +13,7 @@ import { SelectOption } from '@src/app/shared/components/form/form-select/form-s
   standalone: true,
   imports: [CommonModule, FormsModule, SelectModule],
   templateUrl: './customer.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class Customer {

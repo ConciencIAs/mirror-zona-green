@@ -1,6 +1,13 @@
 import {
-  Component, ElementRef, ViewChild, AfterViewInit,
-  OnDestroy, signal, inject, OnInit
+  Component,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  signal,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +29,8 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
   selector: 'app-content-editor',
   imports: [ButtonModule, InputTextModule, DialogModule, FormsModule],
   templateUrl: './editor.html',
-  styles: ``
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styles: ``,
 })
 export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('gjs', { static: true }) gjsContainer!: ElementRef;
@@ -69,10 +77,10 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
 
       plugins: [gjsBlocksBasic, plugin, customCodePlugin, gjsParserPostcss],
       pluginsOpts: {
-        [plugin as any]: { autoBuild: true }
+        [plugin as any]: { autoBuild: true },
       },
 
-      canvas: { styles: [], scripts: [] }
+      canvas: { styles: [], scripts: [] },
     });
 
     this.gjsContainer.nativeElement.setAttribute('style', 'width: 100vw; height: 100vh;');
@@ -93,9 +101,9 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
               options: [
                 { value: 'both', name: '👥 Ambos (Público)' },
                 { value: 'anonymous', name: '🔒 Solo Anónimos' },
-                { value: 'logged-in', name: '🔑 Solo Logueados' }
-              ]
-            }
+                { value: 'logged-in', name: '🔑 Solo Logueados' },
+              ],
+            },
           ],
         },
         init() {
@@ -104,8 +112,8 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
         handleGlobalAccessChange() {
           const valorAccess = this.get('data-access');
           this.addAttributes({ 'data-access': valorAccess });
-        }
-      }
+        },
+      },
     });
 
     // Si es modo edición, cargamos el contenido

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
@@ -13,6 +13,7 @@ import { MonedaPipe } from '@src/app/shared/pipes';
   standalone: true,
   imports: [CommonModule, RouterModule, MonedaPipe],
   templateUrl: './product-details.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class ProductDetails {
@@ -138,7 +139,9 @@ export class ProductDetails {
       const variant = this.selectedVariant();
 
       // Determinar si usar gramos o cantidad
-      const useGrams: boolean = Boolean(variant?.gramos_disponibles && variant.gramos_disponibles > 0);
+      const useGrams: boolean = Boolean(
+        variant?.gramos_disponibles && variant.gramos_disponibles > 0,
+      );
       const cantidad = useGrams ? this.selectedGrams() : this.quantity();
 
       this.cartStore.addItem({

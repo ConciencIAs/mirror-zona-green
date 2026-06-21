@@ -1,4 +1,12 @@
-import { Component, inject, signal, HostListener, OnInit, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  HostListener,
+  OnInit,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ProfileMenu } from '@src/app/shared/components/profile-menu/profile-menu';
 
@@ -13,14 +21,29 @@ import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { FormsModule } from '@angular/forms';
 
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
-import { NavbarConfig, SettingsConfig, AdvertisingBannerConfig} from '@src/app/shared/models/interfaces/page-config.interface';
+import {
+  NavbarConfig,
+  SettingsConfig,
+  AdvertisingBannerConfig,
+} from '@src/app/shared/models/interfaces/page-config.interface';
 import { AdvertisingBannerComponent } from '@src/app/shared/components/advertising-banner/advertising-banner';
 
 const LS_KEY = 'zg-dark';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, ProfileMenu, OverlayBadgeModule, InputGroupModule, InputTextModule, ButtonModule, InputGroupAddonModule, FormsModule, AdvertisingBannerComponent],
+  imports: [
+    RouterLink,
+    ProfileMenu,
+    OverlayBadgeModule,
+    InputGroupModule,
+    InputTextModule,
+    ButtonModule,
+    InputGroupAddonModule,
+    FormsModule,
+    AdvertisingBannerComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './navbar.html',
 })
 export class Navbar implements OnInit {
@@ -43,10 +66,12 @@ export class Navbar implements OnInit {
   protected readonly advertisingBannerConfig = signal<AdvertisingBannerConfig>({ items: [] });
 
   visibleNavSections = computed(() => {
-    return this.navBarConfig()?.sections.filter((section) =>
-      !section.roles || section.roles.includes(this.currentRole)
-    ) || [];
-  })
+    return (
+      this.navBarConfig()?.sections.filter(
+        (section) => !section.roles || section.roles.includes(this.currentRole),
+      ) || []
+    );
+  });
 
   ngOnInit() {
     const saved = localStorage.getItem(LS_KEY);
@@ -65,7 +90,6 @@ export class Navbar implements OnInit {
       this.navBarConfig.set(navbarConfig);
       this.settingsConfig.set(settingsConfig);
       this.advertisingBannerConfig.set(advertisingBannerConfig);
-
     } catch (err) {
       console.error('Error loading navbar config:', err);
     }
@@ -117,13 +141,18 @@ export class Navbar implements OnInit {
     });
   }
 
-
-
-  toggleAuthDrop(): void { this.authDropOpen.update(v => !v); }
-  closeAuthDrop(): void { this.authDropOpen.set(false); }
-  openSidebar(): void { this.sidebarOpen.set(true); }
-  closeSidebar(): void { this.sidebarOpen.set(false); }
-
+  toggleAuthDrop(): void {
+    this.authDropOpen.update((v) => !v);
+  }
+  closeAuthDrop(): void {
+    this.authDropOpen.set(false);
+  }
+  openSidebar(): void {
+    this.sidebarOpen.set(true);
+  }
+  closeSidebar(): void {
+    this.sidebarOpen.set(false);
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {

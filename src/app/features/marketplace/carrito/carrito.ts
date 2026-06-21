@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -19,6 +26,7 @@ type CartProduct = {
   standalone: true,
   imports: [RouterModule, MonedaPipe],
   templateUrl: './carrito.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
 })
 export class CarritoComponent {
@@ -31,7 +39,9 @@ export class CarritoComponent {
   protected readonly cartDetails = signal<CartProduct[]>([]);
 
   protected readonly cartItems = computed(() => this.cartStore.items());
-  protected readonly total = computed(() => this.cartDetails().reduce((acc, item) => acc + item.subtotal, 0));
+  protected readonly total = computed(() =>
+    this.cartDetails().reduce((acc, item) => acc + item.subtotal, 0),
+  );
 
   constructor() {
     effect(() => {
@@ -51,7 +61,9 @@ export class CarritoComponent {
       }
 
       const productIds = Array.from(new Set(cart.map((item) => item.producto_id)));
-      const variantIds = Array.from(new Set(cart.filter((item) => item.variante_id).map((item) => item.variante_id as string)));
+      const variantIds = Array.from(
+        new Set(cart.filter((item) => item.variante_id).map((item) => item.variante_id as string)),
+      );
 
       const [productsResult, variantsResult] = await Promise.all([
         this.dbService.from(TableName.PRODUCTOS).select('*').in('id', productIds),

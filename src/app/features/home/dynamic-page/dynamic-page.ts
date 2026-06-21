@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
@@ -8,6 +8,7 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
 @Component({
   selector: 'app-dynamic-page',
   imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './dynamic-page.html',
 })
 export class DynamicPage implements OnInit {
@@ -46,7 +47,7 @@ export class DynamicPage implements OnInit {
       const { data, error } = await this.contentDbService.getContentBySlug(slug);
       if (error) {
         console.error('Error fetching dynamic page:', error);
-        this.toastService.error("Error al cargar el contenido");
+        this.toastService.error('Error al cargar el contenido');
         this.notFound.set(true);
         return;
       }

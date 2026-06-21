@@ -1,12 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
-import { SettingsConfig, FooterConfig } from '@src/app/shared/models/interfaces/page-config.interface';
+import {
+  SettingsConfig,
+  FooterConfig,
+} from '@src/app/shared/models/interfaces/page-config.interface';
 
 @Component({
   selector: 'app-footer',
   imports: [RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './footer.html',
 })
 export class Footer implements OnInit {
@@ -24,10 +28,9 @@ export class Footer implements OnInit {
   }
 
   async loadAppConfig() {
-      let footerConfig = this.appConfigStore.footerConfig();
-      let appConfig = this.appConfigStore.settingsConfig();
-      this.settingsConfig.set(footerConfig);
-      this.appSettingsConfig.set(appConfig);
+    let footerConfig = this.appConfigStore.footerConfig();
+    let appConfig = this.appConfigStore.settingsConfig();
+    this.settingsConfig.set(footerConfig);
+    this.appSettingsConfig.set(appConfig);
   }
 }
-
