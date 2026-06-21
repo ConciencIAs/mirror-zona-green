@@ -1,0 +1,105 @@
+<div class="flex flex-col w-full box-border">
+
+  <!-- Toolbar -->
+  <div class="flex items-center justify-between p-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 gap-4 flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <p-button
+        id="btn-back"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        pTooltip="Volver a la lista"
+        tooltipPosition="bottom"
+        (onClick)="goBack()"
+      />
+      <span class="text-base font-semibold flex items-center gap-1.5 text-slate-800 dark:text-slate-100">
+        <i class="pi pi-file-edit text-emerald-600"></i>
+        {{ isNewMode() ? 'Nueva Página' : 'Editar Página' }}
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      @if (isLoading()) {
+        <span class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+          <i class="pi pi-spin pi-spinner text-emerald-600"></i> Cargando contenido...
+        </span>
+      }
+      <p-button
+        id="btn-save"
+        [label]="isSaving() ? 'Guardando...' : (isNewMode() ? 'Crear y Guardar' : 'Guardar cambios')"
+        icon="pi pi-save"
+        [loading]="isSaving()"
+        (onClick)="guardarDiseno()"
+        styleClass="p-button-emerald"
+      />
+    </div>
+  </div>
+
+  <!-- Canvas de GrapesJS -->
+  <div #gjs class="w-full h-[calc(100vh-220px)] min-h-[650px] border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 overflow-hidden"></div>
+
+</div>
+
+<!-- Modal: Crear nueva página -->
+<p-dialog
+  id="modal-new-page"
+  [visible]="showNewModal()"
+  (visibleChange)="showNewModal.set($event)"
+  header="Nueva página dinámica"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '28rem' }"
+>
+  <div class="flex flex-col gap-5 py-2">
+    <p class="text-slate-500 dark:text-slate-400 m-0 text-sm">
+      Define el nombre y la URL de la nueva página antes de empezar a diseñarla.
+    </p>
+
+    <div class="flex flex-col gap-1.5">
+      <label for="input-page-name" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Nombre de la página</label>
+      <input
+        id="input-page-name"
+        pInputText
+        type="text"
+        placeholder="Ej: Acerca de nosotros"
+        [(ngModel)]="newPageName"
+        (ngModelChange)="generateSlug()"
+        class="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label for="input-page-slug" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Slug (URL)</label>
+      <div class="flex items-center border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden focus-within:border-emerald-500 transition-colors">
+        <span class="px-3 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono text-sm border-r border-slate-300 dark:border-slate-700 whitespace-nowrap">/content/</span>
+        <input
+          id="input-page-slug"
+          pInputText
+          type="text"
+          placeholder="acerca-de-nosotros"
+          [(ngModel)]="newPageSlug"
+          class="flex-1 border-none! shadow-none! rounded-none!"
+        />
+      </div>
+      <small class="text-slate-400 text-xs">Solo letras, números y guiones. Sin espacios.</small>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      id="btn-cancel-new"
+      label="Cancelar"
+      severity="secondary"
+      [text]="true"
+      (onClick)="cancelNewModal()"
+    />
+    <p-button
+      id="btn-confirm-new"
+      label="Continuar al editor"
+      icon="pi pi-arrow-right"
+      iconPos="right"
+      (onClick)="confirmNewPage()"
+      styleClass="p-button-emerald"
+    />
+  </ng-template>
+</p-dialog>

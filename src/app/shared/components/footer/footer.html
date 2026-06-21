@@ -1,4 +1,7 @@
-<footer class="bg-[#0f1e0f] text-[#9ab890] font-sans text-sm leading-normal">
+<footer 
+  class="text-[#9ab890] font-sans text-sm leading-normal transition-colors duration-350"
+  [style.background-color]="settingsConfig()?.background_color || '#0f1e0f'"
+>
 
   <!-- ── Área principal ── -->
   <div class="py-13 lg:py-16 border-b border-white/7">
@@ -7,75 +10,25 @@
 
       <!-- Logo -->
       <div class="flex items-start sm:col-span-2 lg:col-span-1">
-        <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[54px] w-auto object-contain">
+        <img [src]="appSettingsConfig()?.logo_url || '/images/logo-zona-green-blanco.svg'" alt="Zona Green" class="h-[54px] w-auto object-contain">
       </div>
 
-      <!-- NAVEGACIÓN -->
-      <nav aria-label="Navegación del sitio">
-        <h4 class="text-[11px] font-bold tracking-[1.3px] uppercase text-[#e0ead4] mb-4">NAVEGACIÓN</h4>
-        <ul class="list-none m-0 p-0 flex flex-col gap-2.5">
-          <li><a routerLink="/customer/home"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Inicio</a>
-          </li>
-          <li><a routerLink="/customer/home" fragment="como-funciona"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">¿Cómo
-              funciona?</a></li>
-          @if (!isAuthenticated()) {
-          <li><a routerLink="/auth/register"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Regístrate</a>
-          </li>
-          }
-          <li><a routerLink="/cannabismedicinalencolombia"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Cannabis
-              medicinal</a></li>
-          @if (isAuthenticated()) {
-          <li><a routerLink="/marketplace"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Marketplace</a>
-          </li>
-          }
-          <li><a routerLink="/faq"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Preguntas
-              frecuentes</a></li>
-        </ul>
-      </nav>
-
-      <!-- LEGAL -->
-      <div>
-        <h4 class="text-[11px] font-bold tracking-[1.3px] uppercase text-[#e0ead4] mb-4">LEGAL</h4>
-        <ul class="list-none m-0 p-0 flex flex-col gap-2.5">
-          <li><a routerLink="/terminos-y-condiciones"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Términos
-              y condiciones</a></li>
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Política
-              de privacidad</a></li>
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Tratamiento
-              de datos</a></li>
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Capítulo
-              legal</a></li>
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Aviso de
-              cookies</a></li>
-        </ul>
-      </div>
-
-      <!-- AYUDA -->
-      <div>
-        <h4 class="text-[11px] font-bold tracking-[1.3px] uppercase text-[#e0ead4] mb-4">AYUDA</h4>
-        <ul class="list-none m-0 p-0 flex flex-col gap-2.5">
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Centro
-              de ayuda</a></li>
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Contacto</a>
-          </li>
-          <li><a href="#"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">Trabaja
-              con nosotros</a></li>
-        </ul>
-      </div>
+      <!-- Dynamic Sections -->
+      @for (section of settingsConfig()?.sections || []; track section.title) {
+        <nav [aria-label]="section.title">
+          <h4 class="text-[11px] font-bold tracking-[1.3px] uppercase text-[#e0ead4] mb-4">{{ section.title }}</h4>
+          <ul class="list-none m-0 p-0 flex flex-col gap-2.5">
+            @for (item of section.items; track item.label) {
+              <li>
+                <a [routerLink]="item.url"
+                  class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">
+                  {{ item.label }}
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      }
 
       <!-- CONTACTO -->
       <div>
@@ -89,9 +42,11 @@
                   d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72c.12.81.28 1.61.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c1.2.42 2 .58 2.81.7A2 2 0 0 1 21.8 16" />
               </svg>
             </span>
-            <a href="https://wa.me/573001234567"
+            <a [href]="settingsConfig()?.contact?.whatsapp_link || 'https://wa.me/573001234567'"
               class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white"
-              target="_blank" rel="noopener">+57 300 123 4567</a>
+              target="_blank" rel="noopener">
+              {{ settingsConfig()?.contact?.whatsapp_phone || '+57 300 123 4567' }}
+            </a>
           </li>
           <li class="flex items-center gap-2.5">
             <span class="flex items-center justify-center w-[18px] h-[18px] shrink-0 text-[#20a038]">
@@ -101,8 +56,10 @@
                 <polyline points="22,6 12,13 2,6" />
               </svg>
             </span>
-            <a href="mailto:hola@zonagreen.co"
-              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">hola&#64;zonagreen.co</a>
+            <a [href]="'mailto:' + (settingsConfig()?.contact?.email || 'hola@zonagreen.co')"
+              class="text-[#7a9670] no-underline text-[13.5px] transition-colors duration-200 hover:text-white">
+              {{ settingsConfig()?.contact?.email || 'hola@zonagreen.co' }}
+            </a>
           </li>
           <li class="flex items-center gap-2.5">
             <span class="flex items-center justify-center w-[18px] h-[18px] shrink-0 text-[#20a038]">
@@ -112,47 +69,57 @@
                 <circle cx="12" cy="10" r="3" />
               </svg>
             </span>
-            <span class="text-[#7a9670] text-[13.5px]">Bogotá, Colombia</span>
+            <span class="text-[#7a9670] text-[13.5px]">
+              {{ settingsConfig()?.contact?.direccion || 'Bogotá, Colombia' }}
+            </span>
           </li>
         </ul>
 
         <!-- Redes sociales -->
         <div class="flex gap-2.5 flex-wrap">
-          <a href="#"
-            class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
-            aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-              stroke-linejoin="round" class="w-4 h-4">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-            </svg>
-          </a>
-          <a href="#"
-            class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
-            aria-label="Facebook">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-            </svg>
-          </a>
-          <a href="#"
-            class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
-            aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-              <rect x="2" y="9" width="4" height="12" />
-              <circle cx="4" cy="4" r="2" />
-            </svg>
-          </a>
-          <a href="#"
-            class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
-            aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-              <path
-                d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-              <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" />
-            </svg>
-          </a>
+          @if (settingsConfig()?.social?.instagram) {
+            <a [href]="settingsConfig()!.social.instagram" target="_blank" rel="noopener"
+              class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
+              aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" class="w-4 h-4">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+          }
+          @if (settingsConfig()?.social?.facebook) {
+            <a [href]="settingsConfig()!.social.facebook" target="_blank" rel="noopener"
+              class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
+              aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+              </svg>
+            </a>
+          }
+          @if (settingsConfig()?.social?.linkedin) {
+            <a [href]="settingsConfig()!.social.linkedin" target="_blank" rel="noopener"
+              class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
+              aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect x="2" y="9" width="4" height="12" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+          }
+          @if (settingsConfig()?.social?.youtube) {
+            <a [href]="settingsConfig()!.social.youtube" target="_blank" rel="noopener"
+              class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-[#e0ead4]/22 text-[#9ab890] no-underline shrink-0 transition-all duration-200 hover:bg-[#20a038]/18 hover:border-[#20a038]/45 hover:text-white"
+              aria-label="YouTube">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                <path
+                  d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white" />
+              </svg>
+            </a>
+          }
         </div>
       </div>
 
@@ -202,10 +169,12 @@
   </div>
 
   <!-- ── Barra inferior ── -->
-  <div class="bg-[#091409] py-4">
+  <div class="bg-black/20 py-4">
     <div
       class="w-full max-w-[1280px] mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2.5">
-      <span class="text-[12.5px] text-[#486644]">© 2025 Zona Green. Todos los derechos reservados.</span>
+      <span class="text-[12.5px] text-[#486644]">
+        {{ settingsConfig()?.texto_copyright || '© 2025 Zona Green. Todos los derechos reservados.' }}
+      </span>
       <nav class="flex flex-wrap items-center gap-x-2 gap-y-1.5" aria-label="Legal">
         <a routerLink="/terminos-y-condiciones"
           class="text-[12px] text-[#486644] no-underline whitespace-nowrap transition-colors duration-200 hover:text-[#9ab890]">Términos

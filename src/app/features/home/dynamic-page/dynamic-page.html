@@ -1,0 +1,19 @@
+<section class="min-h-[60vh] w-full">
+  @if (renderCss()) {
+    <style [innerHTML]="renderCss()"></style>
+  }
+  @if (renderHtml()) {
+    <div [innerHTML]="renderHtml()"></div>
+  } @else if (loading()) {
+    <div class="flex flex-col items-center justify-center py-20 px-8 text-center gap-4">
+      <i class="pi pi-spin pi-spinner text-3xl text-emerald-600"></i>
+      <p class="text-slate-500 dark:text-slate-400 text-sm">Cargando contenido...</p>
+    </div>
+  } @else if (notFound()) {
+    <div class="flex flex-col items-center justify-center py-20 px-8 text-center gap-4">
+      <i class="pi pi-exclamation-circle text-5xl text-slate-400 dark:text-slate-600"></i>
+      <h2 class="text-xl font-bold text-slate-800 dark:text-slate-200 m-0">Página no encontrada</h2>
+      <p class="text-slate-500 dark:text-slate-400 text-sm max-w-sm m-0">Lo sentimos, la página que buscas no existe o ha sido eliminada.</p>
+    </div>
+  }
+</section>

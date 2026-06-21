@@ -20,7 +20,7 @@
 
   <nav class="py-2 flex-1">
     <ul class="list-none m-0 p-0">
-      @for (section of visibleNavSections; track section.title) {
+      @for (section of visibleNavSections(); track $index) {
       <li class="border-b border-white/7 bg-[#102614]">
         <div class="px-5 py-3 text-[11px] uppercase tracking-[0.18em] text-[#8ea77e]">
           {{ section.title }}
@@ -50,17 +50,22 @@
 </aside>
 
 <!-- ── Navbar ── -->
-<header class="fixed top-0 left-0 right-0 z-40 font-sans transition-all duration-300 ease-in-out"
-  [class]="isDark() ? 'bg-[#0d1a0d] border-b border-[#1e301e] shadow-[0_1px_4px_rgba(0,0,0,0.3)]' : 'bg-white border-b border-[#e4e4d4] shadow-[0_1px_4px_rgba(0,0,0,0.06)]'">
+<header
+  class="fixed top-0 left-0 right-0 z-40 font-sans transition-all duration-300 ease-in-out flex flex-col bg-white border-b border-[#e4e4d4] shadow-[0_1px_4px_rgba(0,0,0,0.06)] dark:bg-[#0d1a0d] dark:border-[#1e301e] dark:shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
+  <!-- Franja de publicidad (Banner superior) -->
+  @if (advertisingBannerConfig().items && advertisingBannerConfig().items.length > 0) {
+    <app-advertising-banner [items]="advertisingBannerConfig().items"/>
+  }
+
   <div
-    class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 h-[60px] sm:h-[64px] lg:h-[68px] flex items-center gap-[10px]">
+    class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 w-full h-[60px] sm:h-[64px] lg:h-[68px] flex items-center gap-[10px]">
 
     <!-- Logo -->
     <a routerLink="/customer/home" class="flex items-center shrink-0 no-underline" aria-label="Zona Green — Inicio">
-      <img src="/images/logo-zona-green.svg" alt="Zona Green" class="h-[34px] sm:h-[38px] w-auto object-contain block"
-        [class.hidden]="isDark()" [class.block]="!isDark()">
-      <img src="/images/logo-zona-green-blanco.svg" alt="Zona Green" class="h-[34px] sm:h-[38px] w-auto object-contain"
-        [class.block]="isDark()" [class.hidden]="!isDark()">
+      <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green.svg'" alt="Zona Green"
+        class="h-[34px] sm:h-[38px] w-auto object-contain block" [class.hidden]="isDark()" [class.block]="!isDark()">
+      <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green-blanco.svg'" alt="Zona Green"
+        class="h-[34px] sm:h-[38px] w-auto object-contain" [class.block]="isDark()" [class.hidden]="!isDark()">
     </a>
 
     <div class="flex-grow"></div>

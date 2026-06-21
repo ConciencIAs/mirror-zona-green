@@ -65,6 +65,11 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { zone: 'customer' }
       },
+      {
+        path: 'content/:slug',
+        title: 'Contenido Dinámico',
+        loadComponent: () => import('@src/app/features/home/dynamic-page/dynamic-page').then((m) => m.DynamicPage),
+      },
       ...routerAuthCustomer,
       ...marketplaceRoutes,
       ...adminRoutes,

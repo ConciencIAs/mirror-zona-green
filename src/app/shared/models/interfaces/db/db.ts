@@ -71,28 +71,10 @@ export interface Orden {
 
 export interface PageConfig {
     id: string;
-    franja_promocional: string | null;
-    logo: string | null;
-    nombre: string;
-    telefono: string | null;
-    url_legislacion: string | null;
-    url_politica_datos: string | null;
-    url_terminos: string | null;
+    config_name: string;
+    content: Json;
 }
 
-export interface PageDocumentos {
-    id: string;
-    nombre: string;
-    url_pdf: string;
-}
-
-export interface PageHome {
-    id: string;
-    admin_uid: string | null;
-    banners: Json[];
-    component_type: string | null;
-    content: Json | null;
-}
 
 export interface Perfil {
     id: string;
