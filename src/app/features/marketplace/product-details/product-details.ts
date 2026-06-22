@@ -24,7 +24,6 @@ export class ProductDetails {
   private readonly toastService = inject(ToastService);
 
   protected readonly loading = signal(true);
-  protected readonly error = signal('');
   protected readonly product = signal<Producto | null>(null);
   protected readonly variants = signal<ProductoVariante[]>([]);
   protected readonly selectedVariantId = signal('');
@@ -67,7 +66,6 @@ export class ProductDetails {
 
   private async loadProduct(productId: string): Promise<void> {
     this.loading.set(true);
-    this.error.set('');
 
     try {
       const { error, data } = await this.dbService
@@ -89,7 +87,7 @@ export class ProductDetails {
       }
     } catch (error) {
       console.error(error);
-      this.error.set('No se pudo cargar el producto. Intenta nuevamente.');
+      this.toastService.error('No se pudo cargar el producto. Intenta nuevamente.');
       this.product.set(null);
     } finally {
       this.loading.set(false);
@@ -117,7 +115,7 @@ export class ProductDetails {
       }
     } catch (error) {
       console.error(error);
-      this.error.set('No se pudo cargar las variantes. Intenta nuevamente.');
+      this.toastService.error('No se pudo cargar las variantes. Intenta nuevamente.');
       this.variants.set([]);
     }
   }
@@ -158,7 +156,7 @@ export class ProductDetails {
       }, 3000);
     } catch (error) {
       console.error(error);
-      this.error.set('No se pudo agregar al carrito. Intenta nuevamente.');
+      this.toastService.error('No se pudo agregar al carrito. Intenta nuevamente.');
     } finally {
       this.adding.set(false);
     }

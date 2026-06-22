@@ -36,10 +36,6 @@ export const CartStore = signalStore(
     totalItems: computed(() =>
       store.items().reduce((acc, item) => acc + item.cantidad, 0)
     ),
-
-    // ⚠️ totalPrice fue removido. Deberás calcular el precio total cruzando 
-    // producto_id/variante_id con tu store o servicio de Productos.
-
     isEmpty: computed(() => store.items().length === 0)
   })),
 
@@ -48,14 +44,12 @@ export const CartStore = signalStore(
     const supabaseAuthService = inject(SupabaseAuthService);
     const toastService = inject(ToastService);
 
+    // --- FUNCIONES AUXILIARES DE BASE DE DATOS ---
+
     const persistCartItem = async (item: Carrito) => {
       try {
         const user = await supabaseAuthService.getUser();
-
-        if (!user?.id) {
-          toastService.warn('Inicia sesión para guardar el carrito en la base de datos.');
-          return;
-        }
+        if (!user?.id) return; // Si no hay usuario, el estado local ya hizo su trabajo
 
         const payload = {
           cantidad: item.cantidad,
@@ -72,31 +66,66 @@ export const CartStore = signalStore(
             usuario_id: user.id,
             producto_id: item.producto_id,
             variante_id: item.variante_id
-          }).select('cantidad').single();
+          })
+          .select('cantidad')
+          .maybeSingle();
 
         const updateData = updateResult.data as unknown;
+
+        // Si actualizó correctamente, terminamos.
         if (!updateResult.error && Array.isArray(updateData) && updateData.length > 0) {
-          toastService.success('Cantidad actualizada en Supabase correctamente.');
           return;
         }
 
+        // Si no existía, lo insertamos.
         const { error } = await supabaseDbService.insert(TableName.CARRITO, payload);
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
-        toastService.success('Producto guardado en Supabase correctamente.');
       } catch (error) {
-        console.error(error);
-        toastService.error('No se pudo guardar el carrito en la base de datos. Intenta de nuevo.');
+        console.error('Error sincronizando item del carrito:', error);
+        toastService.error('Error al sincronizar el carrito con la base de datos.');
       }
     };
 
+    const removeCartItemDB = async (item: Carrito) => {
+      try {
+        const user = await supabaseAuthService.getUser();
+        if (!user?.id) return;
+
+        const { error } = await supabaseDbService
+          .from(TableName.CARRITO)
+          .delete()
+          .match({
+            usuario_id: user.id,
+            producto_id: item.producto_id,
+            variante_id: item.variante_id
+          });
+
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error eliminando item de BD:', error);
+      }
+    };
+
+    const clearCartDB = async () => {
+      try {
+        const user = await supabaseAuthService.getUser();
+        if (!user?.id) return;
+
+        const { error } = await supabaseDbService
+          .from(TableName.CARRITO)
+          .delete()
+          .match({ usuario_id: user.id });
+
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error limpiando carrito en BD:', error);
+      }
+    };
+
+    // --- MÉTODOS DEL STORE ---
+
     return {
-      // Recibimos los datos básicos para agregar un producto al carrito.
-      // El ID puede ser opcional al agregar, por si el frontend genera uno temporal 
-      // antes de guardarlo definitivamente en Supabase.
-      // La cantidad es opcional y por defecto es 1.
       addItem(nuevoItem: Omit<Carrito, 'id'> & { id?: string; cantidad?: number }) {
         let updatedItem: Carrito | null = null;
 
@@ -109,65 +138,83 @@ export const CartStore = signalStore(
 
           if (existing) {
             updatedItem = { ...existing, cantidad: existing.cantidad + initialQuantity };
-
-            return {
-              items: state.items.map(item =>
-                item.id === existing.id
-                  ? updatedItem!
-                  : item
-              )
-            };
+            return { items: state.items.map(item => item.id === existing.id ? updatedItem! : item) };
           }
 
           updatedItem = {
             ...nuevoItem,
-            id: nuevoItem.id || crypto.randomUUID(), // Genera un ID temporal si no se provee
+            id: nuevoItem.id || crypto.randomUUID(),
             cantidad: initialQuantity
           } as Carrito;
 
-          return {
-            items: [
-              ...state.items,
-              updatedItem
-            ]
-          };
+          return { items: [...state.items, updatedItem] };
         });
+
+        if (updatedItem) {
+          persistCartItem(updatedItem);
+          toastService.success('Producto agregado al carrito.');
+        }
+      },
+
+      removeItem(id: string) {
+        const itemToDelete = store.items().find(i => i.id === id);
+
+        patchState(store, (state) => ({
+          items: state.items.filter(i => i.id !== id)
+        }));
+
+        if (itemToDelete) {
+          removeCartItemDB(itemToDelete);
+        }
+      },
+
+      increaseQuantity(id: string) {
+        let updatedItem: Carrito | null = null;
+
+        patchState(store, (state) => ({
+          items: state.items.map(item => {
+            if (item.id === id) {
+              updatedItem = { ...item, cantidad: item.cantidad + 1 };
+              return updatedItem;
+            }
+            return item;
+          })
+        }));
 
         if (updatedItem) {
           persistCartItem(updatedItem);
         }
       },
 
-      removeItem(id: string) {
-        patchState(store, (state) => ({
-          items: state.items.filter(i => i.id !== id)
-        }));
-      },
-
-      increaseQuantity(id: string) {
-        patchState(store, (state) => ({
-          items: state.items.map(item =>
-            item.id === id
-              ? { ...item, cantidad: item.cantidad + 1 }
-              : item
-          )
-        }));
-      },
-
       decreaseQuantity(id: string) {
+        let updatedItem: Carrito | null = null;
+        let itemToRemove: Carrito | null = null;
+
         patchState(store, (state) => ({
-          items: state.items
-            .map(item =>
-              item.id === id
-                ? { ...item, cantidad: item.cantidad - 1 }
-                : item
-            )
-            .filter(item => item.cantidad > 0) // Si llega a 0, se elimina del arreglo
+          items: state.items.map(item => {
+            if (item.id === id) {
+              if (item.cantidad > 1) {
+                updatedItem = { ...item, cantidad: item.cantidad - 1 };
+                return updatedItem;
+              } else {
+                itemToRemove = item;
+                return null; // Marcado para eliminar
+              }
+            }
+            return item;
+          }).filter(item => item !== null) as Carrito[]
         }));
+
+        if (updatedItem) {
+          persistCartItem(updatedItem);
+        } else if (itemToRemove) {
+          removeCartItemDB(itemToRemove);
+        }
       },
 
       clearCart() {
         patchState(store, { items: [] });
+        clearCartDB();
       },
 
       setCart(cartItems: Carrito[]) {
@@ -179,6 +226,7 @@ export const CartStore = signalStore(
   withHooks({
     onInit(store) {
       effect(() => {
+        // Mantiene localStorage sincronizado con cualquier cambio del estado en tiempo real
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(store.items()));
       });
     }

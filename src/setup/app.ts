@@ -50,7 +50,7 @@ export class App implements OnInit {
         const { error: cartError, data: cartData } = await this.supabaseDbService
           .from(this.supabaseDbService.tableNames.CARRITO)
           .select('*')
-          .eq('id', event.session?.user.id);
+          .eq('usuario_id', event.session?.user.id);
         if (!error) this.userStore.setPerfil(data);
         if (!cartError) this.cartStore.setCart(cartData);
       });
