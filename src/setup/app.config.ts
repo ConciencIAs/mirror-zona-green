@@ -5,10 +5,10 @@ import {
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
-import Lara from '@primeuix/themes/lara';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { routes } from './app.routes';
+import { themeConfig } from './theme.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     providePrimeNG({
       theme: {
-        preset: Lara,
+        preset: themeConfig,
         options: {
           darkModeSelector: '.dark',
         },

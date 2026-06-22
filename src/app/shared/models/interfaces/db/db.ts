@@ -34,9 +34,9 @@ export interface Carrito {
     id: string;
     cantidad: number;
     es_gramos: boolean;
-    producto_id: string;
+    producto_id: string | null | undefined;
     usuario_id: string;
-    variante_id: string | null;
+    variante_id: string | null | undefined;
 }
 
 export interface Categoria {
