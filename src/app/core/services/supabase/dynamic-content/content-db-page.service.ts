@@ -55,10 +55,11 @@ export class ContentDbService {
       .maybeSingle();
   }
 
-  async getContentParaPublico() {
+  async getContentHome() {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
-      .select('html_content, css_content') // 👈 EXCLUIMOS el JSONB pesado
+      .select('html_content, css_content')
+      .eq('slug', 'home')
       .maybeSingle();
   }
 
