@@ -23,7 +23,7 @@ export class CustomerHome {
   protected isAuthenticated = this.authService.isAuthenticated;
 
   async ngOnInit(): Promise<void> {
-    const { data, error } = await this.contentDbService.getContentParaPublico();
+    const { data, error } = await this.contentDbService.getContentHome();
     if (data) {
       const html = data.html_content;
 
