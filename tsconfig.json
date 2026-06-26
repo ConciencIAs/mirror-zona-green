@@ -16,7 +16,9 @@
     "module": "preserve",
     "rootDir": "./",
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": [
+        "src/*"
+      ]
     }
   },
   "angularCompilerOptions": {

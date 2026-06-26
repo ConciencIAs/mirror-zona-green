@@ -31,7 +31,7 @@ CREATE TABLE public.perfiles (
     tipo_documento public.tipo_doc,
     ubicacion text,
     fecha_nacimiento date,
-    datos_adicionales jsonb NOT NULL DEFAULT '{"acepta_politicas": false, "fecha_aceptacion": null}'::jsonb,
+    datos_adicionales jsonb NOT NULL DEFAULT '{"acepta_politicas": true, "fecha_aceptacion": null}'::jsonb,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now(),
     deleted_at timestamptz DEFAULT null
@@ -375,3 +375,75 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+
+-- 1. Eliminar dependencias de la tabla variantes en otras tablas
+ALTER TABLE public.carrito DROP COLUMN IF EXISTS variante_id;
+ALTER TABLE public.historial_inventario DROP COLUMN IF EXISTS variante_id;
+
+-- 2. ELIMINAR LA TABLA DE VARIANTES (Limpieza total)
+DROP TABLE IF EXISTS public.producto_variantes CASCADE;
+
+-- 3. Actualizar la tabla PRODUCTOS con la flag y el JSON de presentaciones
+ALTER TABLE public.productos
+ADD COLUMN IF NOT EXISTS es_por_gramos boolean NOT NULL DEFAULT false,
+ADD COLUMN IF NOT EXISTS presentaciones jsonb DEFAULT '[]'::jsonb;
+
+-- 4. Actualizar CARRITO con la nueva lógica
+ALTER TABLE public.carrito
+ADD COLUMN IF NOT EXISTS paquete_gramos numeric(10,2) DEFAULT NULL;
+
+-- 5. ACTUALIZAR TABLA DE ÓRDENES (Garantizar su estructura y agregar info de analítica)
+-- Si la tabla ya existe, le agregamos la columna del nombre del cliente. 
+-- (Si no existe, la crea completa)
+CREATE TABLE IF NOT EXISTS public.ordenes (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    usuario_id uuid NOT NULL REFERENCES public.perfiles(id) ON DELETE RESTRICT,
+    nombre_cliente text, -- NUEVO: Ideal para ver rápido quién compró en el dashboard
+    correo_cliente text, -- NUEVO: Respaldo analítico
+    lista_productos jsonb NOT NULL,
+    precio_total numeric(12,2) NOT NULL,
+    status public.estado_orden NOT NULL DEFAULT 'pendiente',
+    tipo_entrega text NOT NULL DEFAULT 'Envío',
+    comentarios_agente text,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
+);
+
+-- Asegurarnos de que las columnas analíticas existan si la tabla ya estaba creada
+ALTER TABLE public.ordenes 
+ADD COLUMN IF NOT EXISTS nombre_cliente text,
+ADD COLUMN IF NOT EXISTS correo_cliente text;
+
+-- 1. Asegurar que los items del carrito sean coherentes con la forma de venta
+-- (Si se envía a la DB por error un paquete_gramos en un producto de unidad, fallará)
+CREATE OR REPLACE FUNCTION check_coherencia_carrito()
+RETURNS TRIGGER AS $$
+DECLARE
+   v_forma_venta text;
+BEGIN
+   SELECT forma_venta INTO v_forma_venta FROM public.productos WHERE id = NEW.producto_id;
+   
+   IF v_forma_venta = 'unidad' AND NEW.paquete_gramos IS NOT NULL THEN
+      RAISE EXCEPTION 'Un producto de venta por unidad no puede tener paquete_gramos asignado.';
+   END IF;
+   
+   IF v_forma_venta = 'gramos' AND NEW.paquete_gramos IS NULL THEN
+      RAISE EXCEPTION 'Debes seleccionar una presentación (gramos) para este producto.';
+   END IF;
+
+   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_check_coherencia_carrito 
+BEFORE INSERT OR UPDATE ON public.carrito 
+FOR EACH ROW EXECUTE FUNCTION check_coherencia_carrito();
+
+-- 2. Asegurarse que el carrito no pueda ser interceptado o modificado por otro usuario
+DROP POLICY IF EXISTS "Carrito - Operación exclusiva del dueño" ON public.carrito;
+
+CREATE POLICY "Carrito - Selección" ON public.carrito FOR SELECT USING (auth.uid() = usuario_id);
+CREATE POLICY "Carrito - Inserción" ON public.carrito FOR INSERT WITH CHECK (auth.uid() = usuario_id);
+CREATE POLICY "Carrito - Actualización" ON public.carrito FOR UPDATE USING (auth.uid() = usuario_id);
+CREATE POLICY "Carrito - Eliminación" ON public.carrito FOR DELETE USING (auth.uid() = usuario_id);
