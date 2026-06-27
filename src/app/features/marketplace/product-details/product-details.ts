@@ -1,17 +1,19 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
-import { Producto, ProductoVariante } from '@src/app/shared/models/interfaces/db/db';
+import { Producto, PresentacionProducto } from '@src/app/shared/models/interfaces/db/db';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { MonedaPipe } from '@src/app/shared/pipes';
+import { CarouselModule } from 'primeng/carousel';
+import { ImageModule } from 'primeng/image';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, MonedaPipe],
+  imports: [RouterModule, MonedaPipe, CarouselModule, ImageModule, ButtonModule],
   templateUrl: './product-details.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
@@ -25,34 +27,47 @@ export class ProductDetails {
 
   protected readonly loading = signal(true);
   protected readonly product = signal<Producto | null>(null);
-  protected readonly variants = signal<ProductoVariante[]>([]);
-  protected readonly selectedVariantId = signal('');
-  protected readonly selectedGrams = signal(0);
+  protected readonly selectedGrams = signal<number | null>(null);
   protected readonly quantity = signal(1);
   protected readonly adding = signal(false);
   protected readonly added = signal(false);
 
-  protected readonly hasVariants = computed(() => this.product()?.has_product_variantes ?? false);
-  protected readonly selectedVariant = computed(() => {
-    const variantId = this.selectedVariantId();
-    return this.variants().find((v) => v.id === variantId) || null;
+  /** La presentación seleccionada actualmente (solo para productos por gramos) */
+  protected readonly selectedPresentation = computed<PresentacionProducto | null>(() => {
+    const prod = this.product();
+    const grams = this.selectedGrams();
+    if (!prod?.es_por_gramos || grams === null) return null;
+    return prod.presentaciones?.find(p => p.gramos === grams) ?? null;
   });
-  protected readonly canAdd = computed(() => {
-    if (this.hasVariants()) {
-      const variant = this.selectedVariant();
-      if (!variant) return false;
 
-      // Si la variante tiene gramos disponibles, debe haber gramos ingresados
-      if (variant.gramos_disponibles && variant.gramos_disponibles > 0) {
-        return this.selectedGrams() > 0;
-      }
-
-      // Si no tiene gramos, debe haber cantidad ingresada
-      return this.quantity() > 0;
+  /** Precio a mostrar: el de la presentación seleccionada o el precio base del producto */
+  protected readonly displayedPrice = computed(() => {
+    const prod = this.product();
+    if (!prod) return 0;
+    if (prod.es_por_gramos) {
+      return this.selectedPresentation()?.precio ?? 0;
     }
+    return prod.precio;
+  });
 
-    // Para productos simples, solo se necesita cantidad > 0
-    return this.quantity() > 0;
+  /** Stock a mostrar: el de la presentación seleccionada o el stock_total */
+  protected readonly displayedStock = computed(() => {
+    const prod = this.product();
+    if (!prod) return 0;
+    if (prod.es_por_gramos) {
+      return this.selectedPresentation()?.stock ?? 0;
+    }
+    return prod.stock_total;
+  });
+
+  protected readonly canAdd = computed(() => {
+    const prod = this.product();
+    if (!prod) return false;
+    const qty = this.quantity();
+    if (qty <= 0) return false;
+    if (qty > this.displayedStock()) return false;
+    if (prod.es_por_gramos && this.selectedGrams() === null) return false;
+    return true;
   });
 
   protected ngOnInit(): void {
@@ -82,9 +97,11 @@ export class ProductDetails {
       const prod = data as Producto;
       this.product.set(prod);
 
-      if (prod.has_product_variantes) {
-        await this.loadVariants(productId);
+      // Si es por gramos y tiene presentaciones, seleccionar la primera por defecto
+      if (prod.es_por_gramos && prod.presentaciones?.length > 0) {
+        this.selectedGrams.set(prod.presentaciones[0].gramos);
       }
+
     } catch (error) {
       console.error(error);
       this.toastService.error('No se pudo cargar el producto. Intenta nuevamente.');
@@ -94,30 +111,9 @@ export class ProductDetails {
     }
   }
 
-  private async loadVariants(productId: string): Promise<void> {
-    try {
-      const { error, data } = await this.dbService
-        .from(TableName.PRODUCTOS_VARIANTES)
-        .select('*')
-        .eq('producto_id', productId)
-        .eq('status', 'activo');
-
-      if (error || !data) {
-        this.toastService.error('No se pudo cargar las variantes.');
-        return;
-      }
-
-      const vars = (data as ProductoVariante[]) || [];
-      this.variants.set(vars);
-
-      if (vars.length > 0) {
-        this.selectedVariantId.set(vars[0].id);
-      }
-    } catch (error) {
-      console.error(error);
-      this.toastService.error('No se pudo cargar las variantes. Intenta nuevamente.');
-      this.variants.set([]);
-    }
+  protected selectGrams(gramos: number): void {
+    this.selectedGrams.set(gramos);
+    this.quantity.set(1); // Reset cantidad al cambiar de presentación
   }
 
   protected async addToCart(): Promise<void> {
@@ -127,27 +123,19 @@ export class ProductDetails {
 
     this.adding.set(true);
 
+    console.log(this.quantity())
+
     try {
       const prod = this.product();
       if (!prod) {
         throw new Error('Producto no encontrado');
       }
 
-      const variantId = this.hasVariants() ? this.selectedVariantId() : null;
-      const variant = this.selectedVariant();
-
-      // Determinar si usar gramos o cantidad
-      const useGrams: boolean = Boolean(
-        variant?.gramos_disponibles && variant.gramos_disponibles > 0,
-      );
-      const cantidad = useGrams ? this.selectedGrams() : this.quantity();
-
       this.cartStore.addItem({
         producto_id: prod.id,
-        variante_id: variantId,
-        es_gramos: useGrams,
+        paquete_gramos: prod.es_por_gramos ? this.selectedGrams() : null,
         usuario_id: '', // Se asigna en persistCartItem del cartStore
-        cantidad: cantidad,
+        cantidad: this.quantity(),
       });
 
       this.added.set(true);
@@ -162,25 +150,11 @@ export class ProductDetails {
     }
   }
 
-  protected updateGrams(value: string): void {
-    this.selectedGrams.set(parseInt(value, 10) || 0);
-  }
-
   protected updateQuantity(value: string): void {
-    this.quantity.set(Math.max(0, parseInt(value, 10) || 0));
+    this.quantity.set(Math.max(1, parseInt(value, 10) || 1));
   }
 
-  protected get imageUrl(): string {
-    const urls = this.product()?.urls_imagenes;
-    return urls && urls.length > 0 ? urls[0] : '/assets/images/placeholder.png';
-  }
-
-  protected get variantImageUrl(): string {
-    const variant = this.selectedVariant();
-    if (!variant) {
-      return this.imageUrl;
-    }
-    const urls = variant.urls_imagenes;
-    return urls && urls.length > 0 ? urls[0] : this.imageUrl;
+  protected get productImages(): string[] {
+    return this.product()?.urls_imagenes ?? [];
   }
 }

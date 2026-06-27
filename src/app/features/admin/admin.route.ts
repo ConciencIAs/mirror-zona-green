@@ -68,7 +68,7 @@ export const adminRoutes: Routes = [
           },
           {
             path: 'custom',
-            loadComponent: () => import('./marketplace/custom/custom-search/custom-search').then(m => m.CustomSearch),
+            loadComponent: () => import('./marketplace/custom/tags/tags').then(m => m.Tags),
             data: { zone: 'admin' },
             title: 'Custom Search'
           },

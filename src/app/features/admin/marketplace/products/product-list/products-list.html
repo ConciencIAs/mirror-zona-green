@@ -3,13 +3,9 @@
     <h1 class="text-3xl font-semibold text-slate-900">Productos</h1>
     <p class="mt-1 text-sm text-slate-500">Listado de productos del marketplace.</p>
   </div>
-  <button
-    type="button"
-    class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
-    (click)="openCreateForm()"
-  >
+  <p-button type="button" (click)="openCreateForm()">
     Nuevo producto
-  </button>
+  </p-button>
 </div>
 
 <section class="rounded-3xl bg-white p-6 shadow-sm">
@@ -29,7 +25,6 @@
         <tr>
           <th class="px-4 py-3">Nombre</th>
           <th class="px-4 py-3">SKU</th>
-          <th class="px-4 py-3">Categoría</th>
           <th class="px-4 py-3">Precio</th>
           <th class="px-4 py-3">Stock</th>
           <th class="px-4 py-3">Estado</th>
@@ -41,25 +36,19 @@
         <tr>
           <td class="px-4 py-4 font-medium text-slate-900">{{ product.nombre }}</td>
           <td class="px-4 py-4">{{ product.sku }}</td>
-          <td class="px-4 py-4">{{ getCategoryName(product.categoria_id) }}</td>
           <td class="px-4 py-4">${{ product.precio }}</td>
           <td class="px-4 py-4">{{ product.stock_total }}</td>
           <td class="px-4 py-4">
-            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold text-white"
-              [class.bg-emerald-600]="product.status === 'activo'"
-              [class.bg-slate-500]="product.status !== 'activo'"
-            >
-              {{ product.status }}
-            </span>
+            <p-button [label]="product.status" [rounded]="true"
+              [severity]="getProductSeverity(product.status)"></p-button>
           </td>
-          <td class="px-4 py-4">
-            <button
-              type="button"
-              class="rounded-xl bg-slate-100 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-200"
-              (click)="editProduct(product)"
-            >
+          <td class="px-4 py-4 flex gap-3">
+            <p-button type="button" (click)="editProduct(product)">
               Editar
-            </button>
+            </p-button>
+            <p-button type="button" severity="danger" (click)="confirmProductDelete(product)">
+              Eliminar
+            </p-button>
           </td>
         </tr>
         }

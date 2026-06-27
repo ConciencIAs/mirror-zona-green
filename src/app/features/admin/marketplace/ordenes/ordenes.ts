@@ -24,7 +24,6 @@ export class Ordenes {
   protected readonly orderStatuses = signal<Record<string, EstadoOrden>>({});
 
   protected readonly statusOptions: EstadoOrden[] = [
-    'pendiente',
     'pagado',
     'en_proceso',
     'enviado',
@@ -55,7 +54,7 @@ export class Ordenes {
       const orders = (data as Orden[]) || [];
       this.orders.set(orders);
       this.orderComments.set(
-        Object.fromEntries(orders.map((order) => [order.id, order.comentarios_agente || ''])),
+        Object.fromEntries(orders.map((order) => [order.id, order.comentarios_usuario || ''])),
       );
       this.orderStatuses.set(
         Object.fromEntries(orders.map((order) => [order.id, order.status])) as Record<
@@ -72,13 +71,6 @@ export class Ordenes {
     }
   }
 
-  protected updateComment(orderId: string, value: string): void {
-    this.orderComments.update((comments) => ({
-      ...comments,
-      [orderId]: value,
-    }));
-  }
-
   protected updateStatus(orderId: string, value: string): void {
     this.orderStatuses.update((statuses) => ({
       ...statuses,
@@ -93,7 +85,6 @@ export class Ordenes {
     try {
       const updates = {
         status: this.orderStatuses()[order.id],
-        comentarios_agente: this.orderComments()[order.id],
       };
 
       const { error, data } = await this.dbService.update(TableName.ORDENES, updates, {
@@ -107,27 +98,9 @@ export class Ordenes {
       await this.loadOrders();
     } catch (error) {
       console.error(error);
-      this.error.set('No se pudo actualizar la orden. Intenta nuevamente.');
+      this.error.set('No se pudo actualizar la orden. Intenta nuevamente')
     } finally {
       this.saving.set(false);
     }
-  }
-
-  protected parseOrderItems(list: Json): Json[] {
-    if (!list) {
-      return [];
-    }
-
-    let parsed: unknown = list;
-
-    if (typeof list === 'string') {
-      try {
-        parsed = JSON.parse(list);
-      } catch {
-        return [];
-      }
-    }
-
-    return Array.isArray(parsed) ? (parsed as Json[]) : [];
   }
 }

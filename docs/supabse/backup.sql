@@ -420,16 +420,19 @@ ADD COLUMN IF NOT EXISTS correo_cliente text;
 CREATE OR REPLACE FUNCTION check_coherencia_carrito()
 RETURNS TRIGGER AS $$
 DECLARE
-   v_forma_venta text;
+   v_es_por_gramos boolean;
 BEGIN
-   SELECT forma_venta INTO v_forma_venta FROM public.productos WHERE id = NEW.producto_id;
+   -- 1. Obtenemos la nueva flag booleana del producto
+   SELECT es_por_gramos INTO v_es_por_gramos FROM public.productos WHERE id = NEW.producto_id;
    
-   IF v_forma_venta = 'unidad' AND NEW.paquete_gramos IS NOT NULL THEN
-      RAISE EXCEPTION 'Un producto de venta por unidad no puede tener paquete_gramos asignado.';
+   -- 2. Validación A: Si es por UNIDAD (false), NO debe tener paquete_gramos
+   IF v_es_por_gramos = false AND NEW.paquete_gramos IS NOT NULL THEN
+      RAISE EXCEPTION 'Error de coherencia: Un producto de venta por unidad no puede tener paquete_gramos asignado.';
    END IF;
    
-   IF v_forma_venta = 'gramos' AND NEW.paquete_gramos IS NULL THEN
-      RAISE EXCEPTION 'Debes seleccionar una presentación (gramos) para este producto.';
+   -- 3. Validación B: Si es por GRAMOS (true), SÍ O SÍ debe tener paquete_gramos
+   IF v_es_por_gramos = true AND NEW.paquete_gramos IS NULL THEN
+      RAISE EXCEPTION 'Error de coherencia: Debes seleccionar una presentación (gramos) para este producto.';
    END IF;
 
    RETURN NEW;

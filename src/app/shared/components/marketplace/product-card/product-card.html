@@ -1,44 +1,59 @@
-<div class="rounded-3xl border border-[#d7dfc7] bg-white p-4 shadow-sm transition hover:shadow-lg">
-  <div class="h-48 overflow-hidden rounded-3xl bg-[#f5f6f0]">
-    <img [src]="imageUrl" [alt]="product().nombre" class="h-full w-full object-cover" />
+<div
+  class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#d7dfc7] bg-white shadow-sm transition-all hover:shadow-xl">
+  <div class="h-56 overflow-hidden bg-[#f5f6f0]">
+    @if (product().urls_imagenes && product().urls_imagenes.length > 0) {
+    <p-carousel [value]="product().urls_imagenes!" [numVisible]="1" [numScroll]="1" [circular]="true"
+      [showIndicators]="true" [showNavigators]="true">
+      <ng-template #item let-imgUrl>
+        <div class="flex items-center justify-center p-4 min-h-[320px]">
+          <p-image [src]="imgUrl" alt="Imagen del producto" width="100%" [preview]="true"
+            imageClass="w-full h-80 object-cover rounded-2xl" />
+        </div>
+      </ng-template>
+    </p-carousel>
+    } @else {
+    <p-image src="/assets/images/placeholder.svg" alt="Imagen del producto" width="100%" [preview]="true"
+      styleClass="w-full h-80 object-contain rounded-2xl" />
+    }
   </div>
 
-  <div class="mt-4 space-y-3">
-    <div class="flex items-start justify-between gap-3">
-      <div>
-        <h3 class="text-lg font-semibold text-[#122011]">{{ product().nombre }}</h3>
-      </div>
-      <span class="rounded-full bg-[#eef6df] px-3 py-1 text-xs font-semibold text-[#1f6c2f]">{{ product().status
-        }}</span>
+  <div class="flex flex-1 flex-col p-5">
+    <div class="mb-2 flex items-center justify-between">
+      <h3 class="text-xl font-bold text-[#122011]">{{ product().nombre }}</h3>
+      <span class="rounded-full bg-[#eef6df] px-3 py-0.5 text-[10px] uppercase tracking-wider font-bold text-[#1f6c2f]">
+        {{ product().status }}
+      </span>
     </div>
 
-    <p class="text-sm leading-6 text-[#55644d] line-clamp-3">
+    <p class="mb-4 text-sm leading-relaxed text-[#55644d] line-clamp-2">
       {{ product().descripcion || 'Sin descripción disponible' }}
     </p>
 
-    <div class="flex flex-wrap gap-2">
+    <div class="mb-5 flex flex-wrap gap-1.5">
       @for (tag of (product().tags ?? []).slice(0, 3); track tag) {
-      <span
-        class="rounded-full border border-[#d6e3c1] bg-[#f4f8ed] px-3 py-1 text-[11px] font-semibold text-[#3f5634]">{{
-        tag }}</span>
+      <span class="rounded-lg bg-[#f4f8ed] px-2.5 py-1 text-[10px] font-medium text-[#3f5634]">#{{ tag }}</span>
       }
     </div>
 
-    <div class="flex items-center justify-between gap-4 pt-3">
+    <div class="mt-auto flex items-end justify-between border-t border-[#f0f3ea] pt-4">
       <div>
-        <p class="text-sm text-[#6c7b57]">Stock Disponible: {{ product().stock_total }}</p>
+        <p class="text-[11px] font-semibold text-[#8a997a] uppercase tracking-wide">Stock: {{ product().stock_total }}
+        </p>
 
-        @if (!product().has_product_variantes) {
-        <p class="mt-1 text-xl font-bold text-[#1d2b16]">${{ product().precio | number:'1.0-0' }}</p>
+        @if (!product().es_por_gramos) {
+        <p class="text-2xl font-extrabold text-[#1d2b16]">${{ product().precio | number:'1.0-0' }}</p>
+        } @else {
+        <p class="text-sm font-medium text-[#55644d]">Venta por peso</p>
         }
       </div>
-      @if (product().has_product_variantes) {
+
+      @if (product().es_por_gramos) {
       <a [routerLink]="['/marketplace/product-details', product().id]"
-        class="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-600">
-        Ver variantes
+        class="rounded-full bg-[#f4f8ed] px-4 py-2 text-sm font-semibold text-[#1f6c2f] transition hover:bg-[#eef6df]">
+        Ver opciones
       </a>
       } @else {
-      <app-cart-button [productId]="product().id"></app-cart-button>
+      <app-cart-button [product]="product()"></app-cart-button>
       }
     </div>
   </div>

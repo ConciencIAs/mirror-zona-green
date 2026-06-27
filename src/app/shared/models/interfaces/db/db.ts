@@ -11,7 +11,6 @@ export type Json =
     | Json[];
 
 export type EstadoOrden =
-    | 'pendiente'
     | 'pagado'
     | 'en_proceso'
     | 'enviado'
@@ -22,19 +21,13 @@ export type EstadoProducto = 'activo' | 'inactivo';
 
 export type EstadoUsuario = 'activo' | 'inactivo' | 'bloqueado' | 'eliminado';
 
-export type RolUsuario = 'admin' | 'customer' | 'agente';
+export type RolUsuario = 'admin' | 'customer' | 'agente' | 'anonymous';
 
 export type TipoDoc = 'CC' | 'CE' | 'NIT' | 'Pasaporte';
 
 // ==========================================
 // INTERFACES (MODELOS DE BASE DE DATOS)
 // ==========================================
-
-export interface Categoria {
-    id: string;
-    nombre: string;
-    deleted_at: string | null;
-}
 
 export interface HistorialInventario {
     id: string;
@@ -109,7 +102,7 @@ export interface Producto {
     sku: string;
     nombre: string;
     descripcion: string | null;
-    urls_imagenes: string[] | null;
+    urls_imagenes: string[];
     costo: number;
     precio: number;
     status: 'activo' | 'inactivo';
@@ -134,7 +127,7 @@ export interface Orden {
     usuario_id: string;
     nombre_cliente: string | null; // <-- Para analítica
     correo_cliente: string | null; // <-- Para analítica
-    comentarios_agente: string | null;
+    comentarios_usuario: string | null;
     created_at: string | null;
     lista_productos: SnapshotAnalitica[]; // Array de SnapshotAnalitica
     precio_total: number;
