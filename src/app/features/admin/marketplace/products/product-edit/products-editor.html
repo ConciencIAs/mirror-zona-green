@@ -2,13 +2,12 @@
   <div>
     <h1 class="text-3xl font-semibold text-slate-900">@if (editingProductId()) { Editar producto } @else { Nuevo
       producto }</h1>
-    <p class="mt-1 text-sm text-slate-500">Configura el producto y sus variantes con imágenes independientes.</p>
+    <p class="mt-1 text-sm text-slate-500">Configura el producto y sus presentaciones por gramos o venta por unidades.
+    </p>
   </div>
-  <button type="button"
-    class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-    (click)="cancelEdit()">
+  <p-button type="button" (click)="cancelEdit()">
     Volver al listado
-  </button>
+  </p-button>
 </div>
 
 <section class="rounded-3xl bg-white p-6 shadow-sm">
@@ -20,153 +19,115 @@
   <form (submit)="saveProduct($event)" class="space-y-4">
     <app-form-input [control]="productForm.nombre()" label="Nombre" placeholder="Nombre del producto" />
     <app-form-input [control]="productForm.sku()" label="SKU" placeholder="Código único del producto" />
-    <app-form-select [control]="productForm.tipo_producto()" label="Tipo de producto" [options]="productTypeOptions"
-      placeholder="Selecciona tipo" />
     <app-form-input [control]="productForm.descripcion()" label="Descripción" placeholder="Breve descripción" />
 
-    <div class="grid gap-4 md:grid-cols-2">
-      <app-form-input [control]="productForm.precio()" label="Precio" type="number" placeholder="0.00" />
-      <app-form-input [control]="productForm.costo()" label="Costo" type="number" placeholder="0.00" />
+    <!-- Tipo de venta -->
+    <div class="mb-4">
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Tipo de venta</label>
+      <div class="flex gap-4">
+        <p-button type="button" class="flex-1 rounded-2xl border p-4 text-center transition font-semibold"
+          [class.border-emerald-600]="!productModel().es_por_gramos"
+          [class.bg-emerald-50]="!productModel().es_por_gramos" [class.text-emerald-700]="!productModel().es_por_gramos"
+          [class.border-slate-200]="productModel().es_por_gramos" [class.bg-white]="productModel().es_por_gramos"
+          [class.text-slate-600]="productModel().es_por_gramos" (click)="setSaleType(false)" variant="text">
+          📦 Venta por unidades
+        </p-button>
+        <p-button type="button" class="flex-1 rounded-2xl border p-4 text-center transition font-semibold"
+          [class.border-emerald-600]="productModel().es_por_gramos" [class.bg-emerald-50]="productModel().es_por_gramos"
+          [class.text-emerald-700]="productModel().es_por_gramos"
+          [class.border-slate-200]="!productModel().es_por_gramos" [class.bg-white]="!productModel().es_por_gramos"
+          [class.text-slate-600]="!productModel().es_por_gramos" (click)="setSaleType(true)" variant="text">
+          ⚖️ Venta por gramos
+        </p-button>
+      </div>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
-      <app-form-select [control]="productForm.categoria_id()" label="Categoría" [options]="categoryOptions()"
-        placeholder="Selecciona una categoría" />
       <app-form-select [control]="productForm.status()" label="Estado" [options]="statusOptions"
         placeholder="Selecciona estado" />
     </div>
 
-    <app-form-input [control]="productForm.stock_total()" label="Stock total" type="number"
-      placeholder="Cantidad disponible" />
+    <app-form-input [control]="productForm.costo()" label="Costo" type="number" placeholder="0.00" />
+    @if (!productModel().es_por_gramos) {
+    <div class="grid gap-4 md:grid-cols-2">
+      <app-form-input [control]="productForm.stock_total()" label="Stock total" type="number"
+        placeholder="Cantidad disponible" />
+      <app-form-input [control]="productForm.precio()" label="Precio" type="number" placeholder="0.00" />
+    </div>
 
-    @if (productModel().tipo_producto === 'variantes') {
+    } @else {
+    <!-- Mostrar el stock total calculado como lectura -->
+    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-4">
+      <p class="text-sm font-semibold text-slate-700">Stock total calculado:</p>
+      <p class="text-2xl font-bold text-slate-900 mt-1">
+        {{ totalStockFromPresentations() }} unidades/paquetes
+      </p>
+    </div>
+    }
+
+    @if (productModel().es_por_gramos) {
     <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
       <div class="mb-4 flex items-center justify-between gap-3">
         <div>
-          <p class="text-sm font-semibold text-slate-900">Variantes del producto</p>
-          <p class="text-sm text-slate-500">Cada variante puede tener sus propias imágenes y precios.</p>
+          <p class="text-sm font-semibold text-slate-900">Presentaciones del producto (Venta por gramos)</p>
+          <p class="text-sm text-slate-500">Agrega los diferentes gramajes con sus respectivos precios y stock.</p>
         </div>
       </div>
 
-      <div class="grid gap-4 md:grid-cols-2">
-        <app-form-input [control]="newVariantForm.nombre()" label="Nombre variante" type="text"
-          placeholder="Nombre de la variante" />
-        <app-form-input [control]="newVariantForm.precio()" label="Precio" type="number" placeholder="0.00" />
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <app-form-input [control]="newVariantForm.stock()" label="Stock" type="number" placeholder="Cantidad" />
-        <app-form-input [control]="newVariantForm.gramos_disponibles()" label="Gramos disponibles" type="number"
-          placeholder="Cantidad en g" />
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <app-form-input [control]="newVariantForm.descripcion()" label="Descripción" type="text"
-          placeholder="Breve descripción" />
-        <app-form-select [control]="newVariantForm.status()" label="Estado" [options]="statusOptions"
-          placeholder="Selecciona estado" />
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <app-form-input [control]="newVariantForm.cantidad_minima_venta()" label="Cantidad mínima" type="number"
-          placeholder="1" />
-        <app-form-input [control]="newVariantForm.precio_minimo_venta()" label="Precio mínimo" type="number"
-          placeholder="0.00" />
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <app-form-chips [control]="newVariantForm.opciones_venta()" label="Opciones de venta"
-          placeholder="Escribe opciones de venta" />
-        <app-form-datepicker [control]="newVariantForm.fecha_llegada()" label="Fecha de llegada"
-          placeholder="Fecha de llegada" />
-      </div>
-
-      <div class="rounded-xl border border-slate-200 bg-white p-4">
-        <label class="mb-2 block text-sm font-medium text-slate-700">Imágenes de variante</label>
-        <input type="file" multiple accept="image/*"
-          class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none"
-          (change)="onVariantImageFilesSelected($event)" />
-
-        @if (pendingVariantImages().length > 0) {
-        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          @for (item of pendingVariantImages(); track item.preview) {
-          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
-            <img src="{{ item.preview }}" alt="Preview imagen variante" class="h-40 w-full object-cover" />
-            <button type="button"
-              class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
-              (click)="removePendingVariantImage(pendingVariantImages().indexOf(item))">
-              ×
-            </button>
-          </div>
-          }
+      <div class="grid gap-4 md:grid-cols-3">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Gramos</label>
+          <input type="number"
+            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
+            [value]="newPresentation().gramos" (change)="setNewPresentationField('gramos', $any($event.target).value)"
+            placeholder="Ej. 10" />
         </div>
-        }
-
-        @if (newVariant().urls_imagenes.length > 0) {
-        <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          @for (imageUrl of newVariant().urls_imagenes; track imageUrl) {
-          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
-            <img src="{{ imageUrl }}" alt="Imagen variante" class="h-40 w-full object-cover" />
-            <button type="button"
-              class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
-              (click)="removeVariantImage(imageUrl)">
-              ×
-            </button>
-          </div>
-          }
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Precio</label>
+          <input type="number"
+            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
+            [value]="newPresentation().precio" (change)="setNewPresentationField('precio', $any($event.target).value)"
+            placeholder="0.00" />
         </div>
-        }
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Stock</label>
+          <input type="number"
+            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
+            [value]="newPresentation().stock" (change)="setNewPresentationField('stock', $any($event.target).value)"
+            placeholder="Cantidad disponible" />
+        </div>
       </div>
 
-      <div class="flex flex-wrap gap-3 justify-end">
-        @if (editingVariantIndex() !== null) {
-        <button type="button"
-          class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-          (click)="resetVariantForm()">
-          Cancelar edición
-        </button>
+      <div class="mt-4 flex justify-end gap-3">
+        @if (editingPresentationIndex() !== null) {
+        <p-button type="button" (click)="resetPresentationForm()" severity="warn" label="Cancelar edición">
+        </p-button>
         }
-        <button type="button"
-          class="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
-          (click)="addVariant()">
-          @if (editingVariantIndex() === null) { Agregar variante }
-          @else { Actualizar variante }
-        </button>
+        <p-button type="button" (click)="addPresentation()">
+          @if (editingPresentationIndex() === null) { Agregar presentación }
+          @else { Actualizar presentación }
+        </p-button>
       </div>
 
-      @if (productVariants().length > 0) {
-      <div class="mt-4 space-y-3">
-        @for (variant of productVariants(); track variant.id ?? variant.nombre) {
+      @if (presentations().length > 0) {
+      <div class="mt-6 space-y-3">
+        <label class="block text-sm font-semibold text-slate-700">Presentaciones agregadas</label>
+        @for (pres of presentations(); track pres.gramos) {
         <div class="rounded-2xl border border-slate-200 bg-white p-4">
-          <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div class="flex items-center justify-between gap-4">
             <div>
-              <p class="font-semibold text-slate-900">{{ variant.nombre }}</p>
-              <p class="text-sm text-slate-500">Precio: ${{ variant.precio }} · Stock: {{ variant.stock }} · Gramos: {{
-                variant.gramos_disponibles }}</p>
-              <p class="text-sm text-slate-500">Opciones: {{ variant.opciones_venta }}</p>
+              <p class="font-semibold text-slate-900">{{ pres.gramos }}g</p>
+              <p class="text-sm text-slate-500">Precio: ${{ pres.precio }} · Stock: {{ pres.stock }}</p>
             </div>
             <div class="flex gap-2">
-              <button type="button"
-                class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-                (click)="startEditVariant(productVariants().indexOf(variant))">
-                Editar
-              </button>
-              <button type="button"
-                class="rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                (click)="removeVariant(productVariants().indexOf(variant))">
-                Eliminar
-              </button>
+              <p-button type="button" rounded="true" (click)="startEditPresentation(presentations().indexOf(pres))"
+                icon="pi pi-pencil">
+              </p-button>
+              <p-button type="button" rounded="true" severity="danger"
+                (click)="removePresentation(presentations().indexOf(pres))" icon="pi pi-trash">
+              </p-button>
             </div>
           </div>
-          @if (variant.urls_imagenes.length > 0) {
-          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            @for (imageUrl of variant.urls_imagenes; track imageUrl) {
-            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-              <img src="{{ imageUrl }}" alt="Imagen variante" class="h-40 w-full object-cover" />
-            </div>
-            }
-          </div>
-          }
         </div>
         }
       </div>
@@ -179,14 +140,10 @@
       @if (tags().length > 0) {
       <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
         @for (tag of tags(); track tag.id) {
-        <button type="button" class="rounded-full border px-4 py-2 text-sm transition"
-          [class.border-emerald-600]="selectedTagNames().includes(tag.nombre)"
-          [class.bg-emerald-600]="selectedTagNames().includes(tag.nombre)"
-          [class.text-white]="selectedTagNames().includes(tag.nombre)"
-          [class.bg-white]="!selectedTagNames().includes(tag.nombre)"
-          [class.text-slate-700]="!selectedTagNames().includes(tag.nombre)" (click)="toggleTag(tag.nombre)">
-          {{ tag.nombre }}
-        </button>
+        <p-button type="button" [variant]="selectedTagNames().includes(tag.nombre) ? undefined : 'outlined'"
+          [severity]="selectedTagNames().includes(tag.nombre) ? 'success' : 'secondary'" [label]="tag.nombre"
+          rounded="true" (click)="toggleTag(tag.nombre)">
+        </p-button>
         }
       </div>
       } @else {
@@ -197,38 +154,43 @@
     <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
       <label class="mb-2 block text-sm font-medium text-slate-700">Imágenes del producto</label>
       <p class="text-xs text-slate-500 mb-3">Solo se permiten imágenes cuadradas. Verifica la vista previa antes de
-        guardar.</p>
+        guardar. Las imágenes son obligatorias.</p>
       <input type="file" multiple accept="image/*"
         class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none"
         (change)="onImageFilesSelected($event)" />
 
       @if (pendingImages().length > 0) {
-      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        @for (item of pendingImages(); track item.preview) {
-        <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
-          <img src="{{ item.preview }}" alt="Preview imagen" class="h-40 w-full object-cover" />
-          <button type="button"
-            class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
-            (click)="removePendingImage(pendingImages().indexOf(item))">
-            ×
-          </button>
+      <div class="mt-4">
+        <p class="text-xs font-semibold text-amber-700 mb-2">Imágenes por subir (no guardadas aún):</p>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          @for (item of pendingImages(); track item.preview) {
+          <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
+            <p-image [src]="item.preview" preview="true" alt="Preview imagen" class="h-40 w-full object-cover" />
+            <p-button type="button" icon="pi pi-trash" severity="danger" class="absolute right-3 top-3"
+              (click)="removePendingImage(pendingImages().indexOf(item))">
+            </p-button>
+          </div>
+          }
         </div>
-        }
       </div>
       }
 
       @if (productImages().length > 0) {
-      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        @for (imageUrl of productImages(); track imageUrl) {
-        <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white">
-          <img src="{{ imageUrl }}" alt="Imagen del producto" class="h-40 w-full object-cover" />
-          <button type="button"
-            class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-slate-600 transition hover:bg-red-600 hover:text-white"
-            (click)="removeImage(imageUrl)">
-            ×
-          </button>
-        </div>
-        }
+      <div class="mt-4">
+        <p class="text-xs font-semibold text-slate-700 mb-2">Imágenes guardadas (carrusel de visualización):</p>
+        <p-carousel [value]="productImages()" [numVisible]="3" [numScroll]="3" [circular]="false"
+          [showIndicators]="true">
+          <ng-template #item let-item>
+            <div
+              class="relative flex justify-center items-center overflow-hidden rounded-3xl border border-slate-200 bg-white p-2 m-2">
+              <p-image [src]="item" alt="Imagen del producto" width="100%" [preview]="true"
+                styleClass="h-64 object-contain rounded-2xl" />
+              <p-button type="button" icon="pi pi-trash" severity="danger" (click)="removeImage(item)"
+                class="absolute top-3 right-3">
+              </p-button>
+            </div>
+          </ng-template>
+        </p-carousel>
       </div>
       }
     </div>
@@ -236,25 +198,6 @@
     @if (generalError()) {
     <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
       {{ generalError() }}
-    </div>
-    }
-
-    @if (showVariantErrorsModal()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6">
-      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
-        <h3 class="text-xl font-semibold mb-3">Errores en la variante</h3>
-        <ul class="list-disc pl-5 space-y-2 max-h-48 overflow-auto text-sm text-slate-700">
-          @for (errorEntry of variantErrorEntries(); track errorEntry.message) {
-          <li>{{ errorEntry.message }}</li>
-          }
-        </ul>
-        <div class="mt-6 flex justify-end">
-          <button type="button" class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-700 hover:bg-slate-200"
-            (click)="closeVariantErrorsModal()">
-            Cerrar
-          </button>
-        </div>
-      </div>
     </div>
     }
 
@@ -268,27 +211,15 @@
           }
         </ul>
         <div class="mt-6 flex justify-end">
-          <button type="button" class="rounded-xl bg-slate-100 px-4 py-2 text-sm text-slate-700 hover:bg-slate-200"
-            (click)="closeErrorsModal()">
-            Cerrar
-          </button>
+          <p-button type="button" (click)="closeErrorsModal()" label="Cerrar" severity="danger"></p-button>
         </div>
       </div>
     </div>
     }
 
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-      <button type="button"
-        class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
-        (click)="cancelEdit()">
-        Volver al listado
-      </button>
-      <button type="submit"
-        class="rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-        [disabled]="saving()">
-        @if (!saving()) { Guardar producto }
-        @if (saving()) { Guardando... }
-      </button>
+      <p-button type="button" (click)="cancelEdit()" label="Volver al listado"></p-button>
+      <p-button type="submit" [disabled]="saving()" label="Guardar producto" severity="info"></p-button>
     </div>
   </form>
   }

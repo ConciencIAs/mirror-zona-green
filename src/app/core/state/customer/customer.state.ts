@@ -7,6 +7,7 @@ import {
     patchState,
     withHooks
 } from '@ngrx/signals';
+import { roleEnum } from '@src/app/shared/models/constans/customer/roleEnum';
 
 // Asegúrate de importar tus tipos desde tu archivo de modelos
 import { Perfil } from '@src/app/shared/models/interfaces/db/db';
@@ -52,7 +53,7 @@ export const UserStore = signalStore(
     withComputed((store) => ({
         // Verifica si hay un usuario real logueado
         isAuthenticated: computed(() =>
-            store.perfil().rol !== 'anonymous' && store.perfil().id !== ''
+            store.perfil().rol !== roleEnum.ANONYMOUS && store.perfil().id !== ''
         ),
 
         // Selectores útiles para proteger rutas o mostrar/ocultar UI

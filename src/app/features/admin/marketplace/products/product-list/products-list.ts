@@ -1,15 +1,17 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
+import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
-import { Categoria, Producto } from '@src/app/shared/models/interfaces/db/db';
+import { Producto } from '@src/app/shared/models/interfaces/db/db';
+
+import { ButtonModule, ButtonSeverity } from 'primeng/button';
 
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ButtonModule],
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
@@ -19,10 +21,10 @@ export class ProductsList {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly confirmService = inject(ConfirmationModalService);
 
   readonly loading = signal(true);
   readonly products = signal<Producto[]>([]);
-  readonly categories = signal<Categoria[]>([]);
 
   constructor() {
     this.loadInitialData();
@@ -31,9 +33,8 @@ export class ProductsList {
   private async loadInitialData() {
     this.loading.set(true);
 
-    const [productsRes, categoriesRes] = await Promise.all([
+    const [productsRes] = await Promise.all([
       this.dbService.select(TableName.PRODUCTOS),
-      this.dbService.select(TableName.CATEGORIAS),
     ]);
 
     if (productsRes.error) {
@@ -44,19 +45,7 @@ export class ProductsList {
       this.products.set((productsRes.data as unknown as Producto[]) ?? []);
     }
 
-    if (categoriesRes.error) {
-      console.error('Error al cargar categorías', categoriesRes.error);
-      this.toastService.error('No se pudo cargar las categorías.');
-      this.categories.set([]);
-    } else {
-      this.categories.set((categoriesRes.data as unknown as Categoria[]) ?? []);
-    }
-
     this.loading.set(false);
-  }
-
-  getCategoryName(categoryId: string | null) {
-    return this.categories().find((category) => category.id === categoryId)?.nombre ?? '-';
   }
 
   openCreateForm() {
@@ -65,5 +54,41 @@ export class ProductsList {
 
   editProduct(product: Producto) {
     this.router.navigate([product.id], { relativeTo: this.route });
+  }
+
+  confirmProductDelete(product: Producto) {
+    this.confirmService.confirm({
+      message: `¿Estas seguro de eliminar el producto ${product.nombre}?`,
+      header: 'Confirmación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.deleteProduct(product);
+      },
+    });
+  }
+
+  private async deleteProduct(product: Producto) {
+    const { error } = await this.dbService.delete(TableName.PRODUCTOS, { id: product.id });
+
+    if (error) {
+      console.error('Error al eliminar producto', error);
+      this.toastService.error('No se pudo eliminar el producto.');
+    } else {
+      this.toastService.success('Producto eliminado correctamente');
+      this.loadInitialData();
+    }
+  }
+
+  getProductSeverity(status: string): ButtonSeverity {
+    switch (status) {
+      case 'activo':
+        return 'success';
+      case 'inactivo':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
 }

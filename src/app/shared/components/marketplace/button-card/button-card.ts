@@ -5,6 +5,7 @@ import { CartStore } from '@src/app/core/state/card/card.state';
 
 //primeng
 import { ButtonModule } from 'primeng/button';
+import { Producto } from '@src/app/shared/models/interfaces/db/db';
 
 @Component({
   selector: 'app-cart-button',
@@ -40,6 +41,7 @@ import { ButtonModule } from 'primeng/button';
             rounded="true"
             icon="pi pi-plus"
             size="small"
+            [disabled]="!canIncrease()"
           >
           </p-button>
         </div>
@@ -52,15 +54,17 @@ export class CartButtonComponent implements OnInit, OnDestroy {
   cartStore = inject(CartStore);
 
   // 2. Entradas del componente
-  productId = input<string | undefined>(undefined);
-  variantId = input<string | undefined>(undefined);
-  esGramos = input<boolean>(false);
+  product = input.required<Producto>();
+  paquete_gramos = input<number | null | undefined>(undefined);
 
   // 3. Selectores computados desde el Store
   cartItem = computed(() =>
-    this.cartStore.items().find(
-      i => i.producto_id === this.productId() || i.variante_id === this.variantId()
-    )
+    this.paquete_gramos() !== null && this.paquete_gramos() !== undefined ?
+      this.cartStore.items().find(
+        i => i.producto_id === this.product().id && i.paquete_gramos === this.paquete_gramos()
+      ) : this.cartStore.items().find(
+        i => i.producto_id === this.product().id
+      )
   );
   storeQuantity = computed(() => this.cartItem()?.cantidad || 0);
 
@@ -70,6 +74,11 @@ export class CartButtonComponent implements OnInit, OnDestroy {
   displayQuantity = computed(() => {
     const lq = this.localQuantity();
     return lq !== null ? lq : this.storeQuantity();
+  });
+
+  canIncrease = computed(() => {
+    const q = this.displayQuantity();
+    return q <= this.product().stock_total;
   });
 
   // 5. Configuración de RxJS para el Debounce
@@ -115,14 +124,13 @@ export class CartButtonComponent implements OnInit, OnDestroy {
 
     if (targetQty === 0 && item?.id) {
       // ⚠️ Recuerda agregar la eliminación en Supabase dentro de este método en tu Store
-      this.cartStore.removeItem(item.id);
+      this.cartStore.removeItem(item);
     } else if (diff !== 0) {
       // Utilizamos addItem para forzar la ejecución de tu función persistCartItem()
       // Si el usuario bajó de 5 a 2, diff será -3, y el Store lo restará exitosamente.
       this.cartStore.addItem({
-        producto_id: this.productId(),
-        variante_id: this.variantId() || undefined, // Manejo de opcional si tu backend lo requiere
-        es_gramos: this.esGramos(),
+        producto_id: this.product().id,
+        paquete_gramos: this.paquete_gramos(),
         cantidad: diff,
         usuario_id: '' // Tu store ya lo reemplaza por el usuario real
       });

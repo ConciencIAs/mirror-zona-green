@@ -58,7 +58,7 @@ export class Navbar implements OnInit {
   protected sidebarOpen = signal(false);
   protected isDark = signal(false);
 
-  totalCartItems = this.cartStore.totalItems();
+  totalCartItems = this.cartStore.totalItems;
 
   // Reactive state for configuration
   protected readonly settingsConfig = signal<SettingsConfig | null>(null);

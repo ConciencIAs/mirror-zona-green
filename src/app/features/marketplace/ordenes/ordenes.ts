@@ -63,21 +63,4 @@ export class Ordenes {
     }
   }
 
-  protected parseOrderItems(list: Json): Json[] {
-    if (!list) {
-      return [];
-    }
-
-    let parsed: unknown = list;
-
-    if (typeof list === 'string') {
-      try {
-        parsed = JSON.parse(list);
-      } catch {
-        return [];
-      }
-    }
-
-    return Array.isArray(parsed) ? (parsed as Json[]) : [];
-  }
 }

@@ -1,4 +1,4 @@
-<div class="space-y-6 p-4">
+<div class="space-y-6 p-4 pt-12">
   <div>
     <a routerLink="/marketplace" class="text-sm font-semibold text-[#1f6c2f] hover:underline">&larr; Volver al
       marketplace</a>
@@ -9,9 +9,23 @@
   } @else {
   @if (product()) {
   <div class="grid gap-8 md:grid-cols-[1fr_1fr]">
-    <!-- Imagen -->
-    <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f6f0] p-4">
-      <img [src]="variantImageUrl" [alt]="product()!.nombre" class="h-auto w-full rounded-2xl object-cover" />
+    <!-- Carrusel de imágenes -->
+    <div class="rounded-3xl border border-[#d7dfc7] bg-white overflow-hidden">
+      @if (productImages.length > 0) {
+      <p-carousel [value]="productImages" [numVisible]="2" [numScroll]="2" [circular]="true" [showIndicators]="true"
+        [showNavigators]="productImages.length > 1">
+        <ng-template #item let-imgUrl>
+          <div class="flex items-center justify-center p-4 min-h-[320px]">
+            <p-image [src]="imgUrl" alt="Imagen del producto" width="100%" [preview]="true"
+              imageClass="w-full h-80 object-contain rounded-2xl" />
+          </div>
+        </ng-template>
+      </p-carousel>
+      } @else {
+      <div class="flex items-center justify-center h-80 bg-[#f5f7ef] text-[#a4b49b]">
+        <i class="pi pi-image text-6xl"></i>
+      </div>
+      }
     </div>
 
     <!-- Detalles y controles -->
@@ -31,60 +45,43 @@
         }
       </div>
 
-      @if (!hasVariants()) {
-      <div class="rounded-3xl border border-[#d7dfc7] bg-[#f8faf2] p-6">
-        <p class="text-sm text-[#55644d]">Precio</p>
-        <p class="mt-2 text-4xl font-bold text-[#1f6c2f]">{{ product()!.precio | moneda }}</p>
+      <p class="text-sm leading-6 text-[#55644d]">{{ product()!.descripcion || 'Sin descripción disponible' }}</p>
+
+      <!-- Precio -->
+      <div>
+        <p class="text-3xl font-bold text-[#1d341c]">{{ displayedPrice() | moneda }}</p>
+        @if (product()!.es_por_gramos && selectedPresentation()) {
+        <p class="text-sm text-[#55644d] mt-1">Precio por {{ selectedPresentation()!.gramos }}g</p>
+        }
+      </div>
+
+      <!-- Selector de Presentaciones (solo por gramos) -->
+      @if (product()!.es_por_gramos && product()!.presentaciones?.length) {
+      <div class="space-y-3">
+        <label class="block text-sm font-semibold text-[#425137]">Seleccionar presentación</label>
+        <div class="flex flex-wrap gap-2">
+          @for (pres of product()!.presentaciones; track pres.gramos) {
+          <p-button type="button" [label]="pres.gramos + 'g - ' + (pres.precio | moneda)" [rounded]="true"
+            [severity]="selectedGrams() === pres.gramos ? 'success' : 'secondary'"
+            [variant]="selectedGrams() === pres.gramos ? undefined : 'outlined'" (click)="selectGrams(pres.gramos)" />
+          }
+        </div>
+        @if (selectedPresentation()) {
+        <p class="text-xs text-[#55644d]">Stock disponible para esta presentación: {{ selectedPresentation()!.stock }}
+        </p>
+        }
       </div>
       }
 
-      <p class="text-sm leading-6 text-[#55644d]">{{ product()!.descripcion || 'Sin descripción disponible' }}</p>
-
-      <!-- Controles según tipo de producto -->
-      @if (hasVariants()) {
-      <div class="space-y-4">
-        <label class="block text-sm font-semibold text-[#425137]">Seleccionar variante</label>
-        <select class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
-          [value]="selectedVariantId()" (change)="selectedVariantId.set($any($event.target).value)">
-          @for (variant of variants(); track variant.id) {
-          <option [value]="variant.id">
-            {{ variant.nombre }} - {{ variant.precio_minimo_venta | moneda }}
-          </option>
-          }
-        </select>
-
-        @if (selectedVariant()) {
-        <div class="rounded-2xl border border-[#d7dfc7] bg-[#fcfdf7] p-4">
-          <p class="text-sm font-semibold text-[#1f6c2f]">{{ selectedVariant()!.nombre }}</p>
-          <p class="mt-2 text-sm text-[#55644d]">Stock disponible: {{ selectedVariant()!.stock }}</p>
-          @if (selectedVariant()!.gramos_disponibles) {
-          <p class="text-sm text-[#55644d]">Gramos disponibles: {{ selectedVariant()!.gramos_disponibles }}</p>
-
-          <label class="mt-4 block text-sm font-semibold text-[#425137]">Cantidad de gramos</label>
-          <input type="number"
-            class="mt-2 w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
-            [value]="selectedGrams()" (change)="updateGrams($any($event.target).value)" min="0"
-            [max]="selectedVariant()!.gramos_disponibles" placeholder="Ingresar gramos" />
-          } @else {
-          <label class="mt-4 block text-sm font-semibold text-[#425137]">Cantidad</label>
-          <input type="number"
-            class="mt-2 w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
-            [value]="quantity()" (change)="updateQuantity($any($event.target).value)" min="1"
-            [max]="selectedVariant()!.stock" placeholder="Ingresar cantidad" />
-          }
-        </div>
-        }
-      </div>
-      } @else {
+      <!-- Controles de cantidad -->
       <div class="space-y-4">
         <label class="block text-sm font-semibold text-[#425137]">Cantidad</label>
         <input type="number"
           class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
-          [value]="quantity()" (change)="updateQuantity($any($event.target).value)" min="1"
-          [max]="product()!.stock_total" placeholder="Ingresar cantidad" />
-        <p class="text-sm text-[#55644d]">Stock disponible: {{ product()!.stock_total }}</p>
+          [value]="quantity()" (change)="updateQuantity($any($event.target).value)" min="1" [max]="displayedStock()"
+          placeholder="Ingresar cantidad" />
+        <p class="text-sm text-[#55644d]">Stock disponible: {{ displayedStock() }}</p>
       </div>
-      }
 
       @if (added()) {
       <div
@@ -94,14 +91,11 @@
       }
 
       <div class="flex gap-4">
-        <button type="button" (click)="addToCart()" [disabled]="!canAdd() || adding()"
-          class="flex-1 rounded-full bg-[#1f6c2f] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]">
-          {{ adding() ? 'Agregando...' : 'Agregar al carrito' }}
-        </button>
-        <a routerLink="/marketplace/carrito"
-          class="inline-flex items-center justify-center rounded-full border border-[#d7dfc7] px-6 py-3 text-sm font-semibold text-[#1f6c2f] transition hover:bg-[#eef6df]">
-          Ver carrito
-        </a>
+        <p-button type="button" (click)="addToCart()" [disabled]="!canAdd() || adding()"
+          [label]="adding() ? 'Agregando...' : 'Agregar al carrito'" icon="pi pi-shopping-cart" severity="success"
+          styleClass="flex-1" />
+        <p-button type="button" routerLink="/marketplace/carrito" label="Ver carrito" severity="secondary"
+          variant="outlined" icon="pi pi-shopping-bag" />
       </div>
     </div>
   </div>

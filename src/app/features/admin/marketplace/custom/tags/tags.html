@@ -1,0 +1,59 @@
+<div class="max-w-[1200px] mx-auto p-12">
+  <!-- Tabs -->
+  <div class="flex gap-4 border-b border-white/10 mb-6">
+    <p-button class="pb-3 px-2 text-[14px] font-semibold transition-colors" [disabled]="true" variant="text">
+      Tags ({{ tags().length }})
+    </p-button>
+  </div>
+
+  <!-- TAGS TAB -->
+  <div>
+    <!-- Add New Tag -->
+    <div class="bg-[#f5f5f0] dark:bg-[#1a2818] p-5 rounded-lg mb-6">
+      <h3 class="text-[15px] font-semibold mb-4 text-[#1d1d1b] dark:text-[#d8e8cc]">Crear nuevo tag</h3>
+      <div class="flex gap-3">
+        <input [(ngModel)]="newTagName" type="text" placeholder="Nombre del tag..."
+          class="flex-1 px-4 py-2.5 rounded-lg border border-[#e4e4d4] dark:border-[#243424] bg-white dark:bg-[#0d1a0d] text-[#1d1d1b] dark:text-[#e0ead4] placeholder-[#888880] dark:placeholder-[#5a7a54]"
+          (keyup.enter)="addTag()" [disabled]="isLoading()" />
+        <p-button (click)="addTag()" [disabled]="isLoading()" severity="success">
+          {{ isLoading() ? 'Guardando...' : 'Agregar' }}
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Tags List -->
+    <div class="bg-white dark:bg-[#0d1a0d] rounded-lg border border-[#e4e4d4] dark:border-[#1e301e] overflow-hidden">
+      @if (tags().length === 0) {
+      <div class="p-8 text-center text-[#888880]">No hay tags registrados</div>
+      } @else {
+      <div class="divide-y divide-[#e4e4d4] dark:divide-[#1e301e]">
+        @for (tag of tags(); track tag.id) {
+        <div class="p-4 flex items-center justify-between hover:bg-[#f9f9f7] dark:hover:bg-[#162916] transition-colors">
+          @if (editingTagId() === tag.id) {
+          <input [(ngModel)]="editingTagName" type="text"
+            class="flex-1 px-3 py-2 rounded border border-[#20a038] bg-white dark:bg-[#1a2818] text-[#1d1d1b] dark:text-[#e0ead4]"
+            (keyup.enter)="updateTag(tag)" (keyup.escape)="cancelEditTag()" />
+          } @else {
+          <span class="text-[14px] text-[#1d1d1b] dark:text-[#e0ead4]">{{ tag.nombre }}</span>
+          }
+
+          <div class="flex gap-2 ml-auto">
+            @if (editingTagId() === tag.id) {
+            <p-button (click)="updateTag(tag)" severity="success" icon="pi pi-save">
+            </p-button>
+            <p-button (click)="cancelEditTag()" severity="secondary" icon="pi pi-times">
+            </p-button>
+            } @else {
+            <p-button (click)="startEditTag(tag)" severity="success" icon="pi pi-pencil">
+            </p-button>
+            <p-button (click)="deleteTag(tag)" severity="danger" icon="pi pi-trash">
+            </p-button>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</div>

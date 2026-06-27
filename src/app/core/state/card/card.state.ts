@@ -1,11 +1,10 @@
-import { computed, effect, inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import {
   signalStore,
   withState,
   withComputed,
   withMethods,
   patchState,
-  withHooks
 } from '@ngrx/signals';
 
 import { Carrito } from '@src/app/shared/models/interfaces/db/db';
@@ -18,12 +17,9 @@ type CartState = {
   items: Carrito[];
 };
 
-const CART_STORAGE_KEY = 'cart-items';
-
 const getInitialState = (): CartState => {
-  const storedCart = localStorage.getItem(CART_STORAGE_KEY);
   return {
-    items: storedCart ? JSON.parse(storedCart) : []
+    items: []
   };
 };
 
@@ -48,38 +44,42 @@ export const CartStore = signalStore(
 
     const persistCartItem = async (item: Carrito) => {
       try {
-        const user = await supabaseAuthService.getUser();
-        if (!user?.id) return; // Si no hay usuario, el estado local ya hizo su trabajo
+        const user = await supabaseAuthService.getSession().session?.user;
+        if (!user?.id) return;
+
+        // 1. Normalizamos a null para evitar choques con el índice de BD
+        const pGramos = item.paquete_gramos ?? null;
 
         const payload = {
-          cantidad: item.cantidad,
-          es_gramos: item.es_gramos,
-          producto_id: item.producto_id,
           usuario_id: user.id,
-          variante_id: item.variante_id
+          producto_id: item.producto_id,
+          paquete_gramos: pGramos,
+          cantidad: item.cantidad
         };
 
-        const updateResult = await supabaseDbService
+        // 2. Usamos UPSERT: Crea si no existe, actualiza si ya existe
+        const { data, error } = await supabaseDbService
           .from(TableName.CARRITO)
-          .update({ cantidad: item.cantidad, es_gramos: item.es_gramos })
-          .match({
-            usuario_id: user.id,
-            producto_id: item.producto_id,
-            variante_id: item.variante_id
-          })
-          .select('cantidad')
-          .maybeSingle();
+          .upsert(payload, { onConflict: 'usuario_id, producto_id, paquete_gramos' })
+          .select('id') // Pedimos que nos devuelva el ID real generado
+          .single();
 
-        const updateData = updateResult.data as unknown;
-
-        // Si actualizó correctamente, terminamos.
-        if (!updateResult.error && Array.isArray(updateData) && updateData.length > 0) {
+        if (error) {
+          toastService.error("error al sincronizar el item del carrito");
           return;
         }
 
-        // Si no existía, lo insertamos.
-        const { error } = await supabaseDbService.insert(TableName.CARRITO, payload);
-        if (error) throw error;
+        // 3. Parcheamos el store silenciosamente con el ID real de la BD
+        // Esto previene errores de "trackBy" en el HTML
+        if (data?.id && !item.id) {
+          patchState(store, (state) => ({
+            items: state.items.map(i =>
+              i.producto_id === item.producto_id && i.paquete_gramos === item.paquete_gramos
+                ? { ...i, id: data.id }
+                : i
+            )
+          }));
+        }
 
       } catch (error) {
         console.error('Error sincronizando item del carrito:', error);
@@ -89,8 +89,10 @@ export const CartStore = signalStore(
 
     const removeCartItemDB = async (item: Carrito) => {
       try {
-        const user = await supabaseAuthService.getUser();
+        const user = await supabaseAuthService.getSession().session?.user;
         if (!user?.id) return;
+
+        const pGramos = item.paquete_gramos ?? null;
 
         const { error } = await supabaseDbService
           .from(TableName.CARRITO)
@@ -98,7 +100,7 @@ export const CartStore = signalStore(
           .match({
             usuario_id: user.id,
             producto_id: item.producto_id,
-            variante_id: item.variante_id
+            paquete_gramos: pGramos, // Match exacto con null si aplica
           });
 
         if (error) throw error;
@@ -107,43 +109,34 @@ export const CartStore = signalStore(
       }
     };
 
-    const clearCartDB = async () => {
-      try {
-        const user = await supabaseAuthService.getUser();
-        if (!user?.id) return;
-
-        const { error } = await supabaseDbService
-          .from(TableName.CARRITO)
-          .delete()
-          .match({ usuario_id: user.id });
-
-        if (error) throw error;
-      } catch (error) {
-        console.error('Error limpiando carrito en BD:', error);
-      }
-    };
-
     // --- MÉTODOS DEL STORE ---
 
     return {
-      addItem(nuevoItem: Omit<Carrito, 'id'> & { id?: string; cantidad?: number }) {
+      addItem(nuevoItem: Partial<Carrito>) {
         let updatedItem: Carrito | null = null;
+        const pGramos = nuevoItem.paquete_gramos ?? null; // Normalizamos desde la entrada
+        const initialQuantity = nuevoItem.cantidad ?? 1;
 
         patchState(store, (state) => {
+          // Buscamos por LLAVE LÓGICA (producto + gramos), nunca por ID
           const existing = state.items.find(
-            i => i.producto_id === nuevoItem.producto_id && i.variante_id === nuevoItem.variante_id
+            i => i.producto_id === nuevoItem.producto_id && (i.paquete_gramos ?? null) === pGramos
           );
-
-          const initialQuantity = nuevoItem.cantidad ?? 1;
 
           if (existing) {
             updatedItem = { ...existing, cantidad: existing.cantidad + initialQuantity };
-            return { items: state.items.map(item => item.id === existing.id ? updatedItem! : item) };
+            return {
+              items: state.items.map(i =>
+                i.producto_id === existing.producto_id && (i.paquete_gramos ?? null) === pGramos
+                  ? updatedItem!
+                  : i
+              )
+            };
           }
 
           updatedItem = {
             ...nuevoItem,
-            id: nuevoItem.id || crypto.randomUUID(),
+            paquete_gramos: pGramos,
             cantidad: initialQuantity
           } as Carrito;
 
@@ -156,24 +149,26 @@ export const CartStore = signalStore(
         }
       },
 
-      removeItem(id: string) {
-        const itemToDelete = store.items().find(i => i.id === id);
+      // ATENCIÓN: Cambiamos a recibir el item completo para no depender del ID
+      removeItem(itemTarget: Carrito) {
+        const pGramos = itemTarget.paquete_gramos ?? null;
 
         patchState(store, (state) => ({
-          items: state.items.filter(i => i.id !== id)
+          items: state.items.filter(i =>
+            !(i.producto_id === itemTarget.producto_id && (i.paquete_gramos ?? null) === pGramos)
+          )
         }));
 
-        if (itemToDelete) {
-          removeCartItemDB(itemToDelete);
-        }
+        removeCartItemDB(itemTarget);
       },
 
-      increaseQuantity(id: string) {
+      increaseQuantity(itemTarget: Carrito) {
         let updatedItem: Carrito | null = null;
+        const pGramos = itemTarget.paquete_gramos ?? null;
 
         patchState(store, (state) => ({
           items: state.items.map(item => {
-            if (item.id === id) {
+            if (item.producto_id === itemTarget.producto_id && (item.paquete_gramos ?? null) === pGramos) {
               updatedItem = { ...item, cantidad: item.cantidad + 1 };
               return updatedItem;
             }
@@ -181,24 +176,23 @@ export const CartStore = signalStore(
           })
         }));
 
-        if (updatedItem) {
-          persistCartItem(updatedItem);
-        }
+        if (updatedItem) persistCartItem(updatedItem);
       },
 
-      decreaseQuantity(id: string) {
+      decreaseQuantity(itemTarget: Carrito) {
         let updatedItem: Carrito | null = null;
         let itemToRemove: Carrito | null = null;
+        const pGramos = itemTarget.paquete_gramos ?? null;
 
         patchState(store, (state) => ({
           items: state.items.map(item => {
-            if (item.id === id) {
+            if (item.producto_id === itemTarget.producto_id && (item.paquete_gramos ?? null) === pGramos) {
               if (item.cantidad > 1) {
                 updatedItem = { ...item, cantidad: item.cantidad - 1 };
                 return updatedItem;
               } else {
                 itemToRemove = item;
-                return null; // Marcado para eliminar
+                return null;
               }
             }
             return item;
@@ -214,21 +208,17 @@ export const CartStore = signalStore(
 
       clearCart() {
         patchState(store, { items: [] });
-        clearCartDB();
+        const user = supabaseAuthService.getSession().session?.user;
+        if (user?.id) {
+          supabaseDbService.from(TableName.CARRITO).delete().match({ usuario_id: user.id });
+        }
       },
 
       setCart(cartItems: Carrito[]) {
-        patchState(store, { items: cartItems });
+        // Asegurarnos de normalizar la BD que llega al front
+        const normalizados = cartItems.map(i => ({ ...i, paquete_gramos: i.paquete_gramos ?? null }));
+        patchState(store, { items: normalizados });
       }
     };
-  }),
-
-  withHooks({
-    onInit(store) {
-      effect(() => {
-        // Mantiene localStorage sincronizado con cualquier cambio del estado en tiempo real
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(store.items()));
-      });
-    }
   })
 );

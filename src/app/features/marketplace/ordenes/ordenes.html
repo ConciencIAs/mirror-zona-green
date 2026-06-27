@@ -1,4 +1,4 @@
-<div class="space-y-6 p-4">
+<div class="space-y-6 p-4 pt-12">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <h1 class="text-3xl font-bold text-[#1d341c]">Mis órdenes</h1>
@@ -39,7 +39,7 @@
         <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
           <h2 class="text-sm font-semibold text-[#1f6c2f]">Productos</h2>
           <div class="mt-3 space-y-3 text-sm text-[#55644d]">
-            @for (item of parseOrderItems(order.lista_productos); track item) {
+            @for (item of order.lista_productos; track item) {
             <div class="rounded-2xl border border-[#dfe8d6] bg-[#f7fbf1] p-3">
               <p class="font-semibold text-[#1d341c]">{{ $any(item).nombre || $any(item).producto || 'Artículo' }}</p>
               <p>Cantidad: {{ $any(item).cantidad || $any(item).qty || 1 }}</p>
@@ -52,10 +52,10 @@
           <h2 class="text-sm font-semibold text-[#1f6c2f]">Resumen</h2>
           <div class="mt-4 space-y-3 text-sm text-[#55644d]">
             <p>Total: <span class="font-semibold text-[#1d341c]">{{ order.precio_total | moneda }}</span></p>
-            <p>Tipo de entrega: {{ order.tipo_entrega || 'No especificado' }}</p>
-            <p>Comentarios del agente:</p>
+            <p class="font-bold">Tipo de entrega: {{ order.tipo_entrega || 'No especificado' }}</p>
+            <p>Comentarios del usuario:</p>
             <div class="rounded-2xl border border-[#d7dfc7] bg-[#f5f7ef] p-3 text-sm text-[#425137]">
-              {{ order.comentarios_agente || 'Sin comentarios por el momento' }}
+              {{ order.comentarios_usuario || 'Sin comentarios por el momento' }}
             </div>
           </div>
         </div>

@@ -36,8 +36,6 @@ export class Customer {
     { label: 'Admin', value: 'admin' },
     { label: 'Customer', value: 'customer' },
     { label: 'Agente', value: 'agente' },
-    { label: 'Médico', value: 'medico' },
-    { label: 'Anónimo', value: 'anonymous' },
   ];
 
   constructor() {
@@ -140,8 +138,6 @@ export class Customer {
         return 'bg-violet-100 text-violet-700';
       case 'agente':
         return 'bg-blue-100 text-blue-700';
-      case 'medico':
-        return 'bg-teal-100 text-teal-700';
       case 'customer':
         return 'bg-amber-100 text-amber-700';
       default:

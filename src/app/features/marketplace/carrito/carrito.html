@@ -1,12 +1,9 @@
-<div class="space-y-6 p-4">
+<div class="space-y-6 p-4 pt-12">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <h1 class="text-3xl font-bold text-[#1d341c]">Carrito de compras</h1>
       <p class="mt-2 text-sm text-[#4b5b44]">Revisa los productos y avanza al checkout.</p>
     </div>
-    <button type="button" (click)="goToCheckout()" [disabled]="cartDetails().length === 0"
-      class="rounded-full bg-[#1f6c2f] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]">Ir
-      a checkout</button>
   </div>
 
   @if (loading()) {
@@ -30,19 +27,17 @@
       <div
         class="grid gap-4 border-t items-center  border-[#e4ebdd] p-4 text-sm text-[#2e391c] md:grid-cols-[3fr_1fr_1fr_1fr]">
         <div class="space-y-2">
-          <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }}</p>
-          @if (item.variante) {
-          <p class="text-xs text-[#5f6c4f]">Variante: {{ item.variante.nombre }}</p>
-          }
-          <p class="text-xs text-[#5f6c4f]">{{ item.unitPrice | moneda }} c/u</p>
+          <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }} {{
+            item.cartLine?.paquete_gramos}}</p>
+          <p class="text-xs text-[#5f6c4f]">{{ item.unitPrice | moneda }}/cu</p>
         </div>
         <div class="flex items-center gap-2">
-          <app-cart-button [productId]="item.producto?.id" [variantId]="item.variante?.id" />
+          <app-cart-button [product]="item.producto" [paquete_gramos]="item.cartLine.paquete_gramos" />
         </div>
 
         <div class="font-semibold text-[#1f6c2f]">{{ item.subtotal | moneda }}</div>
-        <button type="button" (click)="removeItem(item.cartLine.id)"
-          class="text-sm font-semibold text-[#a32f2f] underline">Eliminar</button>
+        <p-button type="button" (click)="removeItem(item.cartLine)" severity="danger" label="Eliminar">
+        </p-button>
       </div>
       }
     </div>
@@ -53,10 +48,9 @@
         <p class="text-sm">Total artículos: <span class="font-semibold">{{ cartDetails().length }}</span></p>
         <p class="mt-1 text-3xl font-bold text-[#1f6c2f]">{{ total() | moneda }}</p>
       </div>
-      <button type="button" (click)="confirmOrder()" [disabled]="submitting() || cartDetails().length === 0"
-        class="inline-flex items-center justify-center rounded-full bg-[#1f6c2f] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]">
-        {{ submitting() ? 'Creando orden...' : 'Confirmar crear orden' }}
-      </button>
+      <p-button type="button" severity="success" (click)="goToCheckout()" [disabled]="cartDetails().length === 0">
+        Proceder al Checkout
+      </p-button>
     </div>
   </div>
   }

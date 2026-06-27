@@ -11,7 +11,6 @@ export type Json =
     | Json[];
 
 export type EstadoOrden =
-    | 'pendiente'
     | 'pagado'
     | 'en_proceso'
     | 'enviado'
@@ -22,28 +21,13 @@ export type EstadoProducto = 'activo' | 'inactivo';
 
 export type EstadoUsuario = 'activo' | 'inactivo' | 'bloqueado' | 'eliminado';
 
-export type RolUsuario = 'admin' | 'customer' | 'agente' | 'medico' | 'anonymous';
+export type RolUsuario = 'admin' | 'customer' | 'agente' | 'anonymous';
 
 export type TipoDoc = 'CC' | 'CE' | 'NIT' | 'Pasaporte';
 
 // ==========================================
 // INTERFACES (MODELOS DE BASE DE DATOS)
 // ==========================================
-
-export interface Carrito {
-    id: string;
-    cantidad: number;
-    es_gramos: boolean;
-    producto_id: string | null | undefined;
-    usuario_id: string;
-    variante_id: string | null | undefined;
-}
-
-export interface Categoria {
-    id: string;
-    nombre: string;
-    deleted_at: string | null;
-}
 
 export interface HistorialInventario {
     id: string;
@@ -55,18 +39,6 @@ export interface HistorialInventario {
     producto_id: string | null;
     tipo_movimiento: string;
     variante_id: string | null;
-}
-
-export interface Orden {
-    id: string;
-    comentarios_agente: string | null;
-    created_at: string | null;
-    lista_productos: Json; // Puede reemplazarse por una interfaz específica si conoces la estructura del JSON
-    precio_total: number;
-    status: EstadoOrden;
-    tipo_entrega: string;
-    updated_at: string | null;
-    usuario_id: string;
 }
 
 export interface PageConfig {
@@ -93,42 +65,10 @@ export interface Perfil {
     status?: EstadoUsuario;
 }
 
-export interface ProductoVariante {
-    id: string;
-    cantidad_minima_venta: number | null;
 
-    descripcion: string | null;
-    fecha_llegada: Date;
-    gramos_disponibles: number | null;
-    nombre: string;
-    opciones_venta: number[] | null;
-    precio: number;
-    precio_minimo_venta: number | null;
-    producto_id: string | null;
-    status: EstadoProducto;
-    stock: number;
-    updated_at: string | null;
-    created_at: string | null;
-    deleted_at: string | null;
-    urls_imagenes: string[] | null;
-}
-
-export interface Producto {
-    id: string;
-    categoria_id: string | null;
-    nombre: string;
-    descripcion: string | null;
-    urls_imagenes: string[] | null;
-    costo: number;
-    precio: number;
-    sku: string;
-    status: EstadoProducto;
-    stock_total: number;
-    tags: string[] | null;
-    updated_at: string | null;
-    created_at: string | null;
-    deleted_at: string | null;
-    has_product_variantes: boolean;
+export interface Presents {
+    cantidad: number;
+    precio: number
 }
 
 export interface Rol {
@@ -149,4 +89,63 @@ export interface UsuarioPublico {
     correo: string;
     created_at: string | null;
     uid: string | null;
+}
+
+export interface PresentacionProducto {
+    gramos: number;
+    precio: number;
+    stock: number;
+}
+
+export interface Producto {
+    id: string;
+    sku: string;
+    nombre: string;
+    descripcion: string | null;
+    urls_imagenes: string[];
+    costo: number;
+    precio: number;
+    status: 'activo' | 'inactivo';
+    stock_total: number;
+    tags: string[] | null;
+    es_por_gramos: boolean; // <-- Nuestra nueva flag
+    presentaciones: PresentacionProducto[]; // Lista de paquetes
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface Carrito {
+    id: string;
+    usuario_id: string;
+    producto_id: string;
+    cantidad: number;
+    paquete_gramos?: number | null;
+}
+
+export interface Orden {
+    id: string;
+    usuario_id: string;
+    nombre_cliente: string | null; // <-- Para analítica
+    correo_cliente: string | null; // <-- Para analítica
+    comentarios_usuario: string | null;
+    created_at: string | null;
+    lista_productos: SnapshotAnalitica[]; // Array de SnapshotAnalitica
+    precio_total: number;
+    status: 'pendiente' | 'pagado' | 'en_proceso' | 'enviado' | 'entregado' | 'cancelado';
+    tipo_entrega: string;
+    updated_at: string | null;
+}
+
+export interface SnapshotAnalitica {
+    sku: string;
+    nombre: string;
+    es_por_gramos: boolean;
+    cantidad_comprada: number;
+    paquete_gramos: number | null;
+    total_gramos_entregados: number | null;
+    precio_unitario: number;
+    subtotal: number;
+    // Guardamos el usuario a nivel de ítem también, útil para cruzar datos en Looker/PowerBI
+    comprador_nombre: string | null;
+    comprador_correo: string;
 }

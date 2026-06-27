@@ -22,6 +22,12 @@ export const marketplaceRoutes: Routes = [
         data: { zone: 'marketplace' }
       },
       {
+        path: 'checkout',
+        loadComponent: () => import('./checkout/checkout').then(m => m.Checkout),
+        title: 'Checkout',
+        data: { zone: 'marketplace' }
+      },
+      {
         path: 'ordenes',
         loadComponent: () => import('./ordenes/ordenes').then(m => m.Ordenes),
         title: 'Ordenes',
