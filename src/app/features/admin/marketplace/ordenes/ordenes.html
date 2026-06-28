@@ -59,6 +59,8 @@
               }
             </select>
 
+            <span> Tipo de entrega: {{ order.tipo_entrega }}</span>
+
             <label class="block text-sm font-semibold text-[#425137]">Comentario agente</label>
             <textarea rows="4" disabled
               class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]">{{ order.comentarios_usuario || 'Sin comentarios por el momento' }}</textarea>
