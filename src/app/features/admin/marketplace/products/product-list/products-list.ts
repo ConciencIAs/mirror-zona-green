@@ -6,12 +6,15 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Producto } from '@src/app/shared/models/interfaces/db/db';
 
+
 import { ButtonModule, ButtonSeverity } from 'primeng/button';
+import { TabsModule } from 'primeng/tabs';
+import { Tags } from '@src/app/features/admin/marketplace/custom/tags/tags';
 
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [ButtonModule, TabsModule, Tags],
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
@@ -25,6 +28,7 @@ export class ProductsList {
 
   readonly loading = signal(true);
   readonly products = signal<Producto[]>([]);
+  readonly tab = signal<'productos' | 'tags'>('productos');
 
   constructor() {
     this.loadInitialData();

@@ -30,7 +30,7 @@
           <p class="text-sm text-[#55644d]">Fecha: {{ order.created_at | fechaFormato }}</p>
         </div>
         <span
-          class="inline-flex items-center rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">{{
+          class="inline-flex capitalize items-center rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">{{
           order.status }}</span>
       </div>
 
@@ -51,25 +51,24 @@
         <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
           <h2 class="text-sm font-semibold text-[#1f6c2f]">Controles</h2>
           <div class="mt-4 space-y-4 text-sm text-[#55644d]">
-            <label class="block text-sm font-semibold text-[#425137]">Estado</label>
-            <select class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
-              [value]="orderStatuses()[order.id]" (change)="updateStatus(order.id, $any($event.target).value)">
-              @for (status of statusOptions; track status) {
-              <option [value]="status" class="normal-case">{{ status }}</option>
-              }
-            </select>
+            <div class="flex flex-col gap-2">
+              <label class=" block text-sm font-semibold text-[#425137]">Estado</label>
+              <p-select [options]="statusOptions" [(ngModel)]="order.status" placeholder="Select a City"
+                [editable]="true" optionLabel="label" optionValue="value" class="w-full md:w-56" />
+            </div>
 
-            <span> Tipo de entrega: {{ order.tipo_entrega }}</span>
+            <span> Tipo de entrega: <strong> {{ order.tipo_entrega }}</strong></span>
 
-            <label class="block text-sm font-semibold text-[#425137]">Comentario agente</label>
-            <textarea rows="4" disabled
-              class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]">{{ order.comentarios_usuario || 'Sin comentarios por el momento' }}</textarea>
+            <p-iftalabel class="py-2">
+              <label class="block text-sm font-semibold text-[#425137] mt-2">Comentario del usuario</label>
+              <textarea rows=" 4" disabled pTextarea [autoResize]="true"
+                class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]">{{
+                order.comentarios_usuario || 'Sin comentarios por el momento' }}</textarea>
+            </p-iftalabel>
 
-            <button type="button"
-              class="inline-flex items-center justify-center rounded-full bg-[#1f6c2f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#185023] disabled:cursor-not-allowed disabled:bg-[#a4b49b]"
-              (click)="saveOrder(order)" [disabled]="saving()">
+            <p-button type="button" [loading]="saving()" rounded="true" (click)="saveOrder(order)">
               {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
-            </button>
+            </p-button>
           </div>
         </div>
       </div>

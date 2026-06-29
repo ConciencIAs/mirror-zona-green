@@ -11,6 +11,7 @@ export type Json =
     | Json[];
 
 export type EstadoOrden =
+    | 'pendiente'
     | 'pagado'
     | 'en_proceso'
     | 'enviado'
@@ -131,9 +132,15 @@ export interface Orden {
     created_at: string | null;
     lista_productos: SnapshotAnalitica[]; // Array de SnapshotAnalitica
     precio_total: number;
-    status: 'pendiente' | 'pagado' | 'en_proceso' | 'enviado' | 'entregado' | 'cancelado';
+    status: EstadoOrden;
     tipo_entrega: string;
     updated_at: string | null;
+    tracking: Tracking[];
+}
+
+export interface Tracking {
+    status: string;
+    date: string;
 }
 
 export interface SnapshotAnalitica {

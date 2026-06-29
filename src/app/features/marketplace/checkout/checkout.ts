@@ -161,7 +161,7 @@ export class Checkout implements OnInit {
       `*Comentarios:* ${formValues.comentarios}`,
       '',
       orderId ? `*Número de Orden:* ${orderId}` : '',
-      'Quedo atento(a) para coordinar el pago y la entrega. ¡Gracias!'
+      'Quedo atento(a) para coordinar el aporte y la entrega. ¡Gracias!'
     ];
 
     const text = encodeURIComponent(lines.join('\n'));

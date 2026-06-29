@@ -1,60 +1,91 @@
-<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
   <div>
-    <h1 class="text-3xl font-semibold text-slate-900">Productos</h1>
-    <p class="mt-1 text-sm text-slate-500">Listado de productos del marketplace.</p>
+    <h1 class="text-3xl font-semibold text-slate-900">Productos y Avisos</h1>
+    <p class="mt-1 text-sm text-slate-500">Listado de productos del marketplace y configuración de anuncios destacados.
+    </p>
   </div>
+  @if (tab() === 'productos') {
   <p-button type="button" (click)="openCreateForm()">
     Nuevo producto
   </p-button>
+  }
 </div>
 
-<section class="rounded-3xl bg-white p-6 shadow-sm">
-  @if (loading()) {
-  <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
-    Cargando productos...
-  </div>
-  } @else {
-  @if (products().length === 0) {
-  <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
-    No hay productos registrados aún.
-  </div>
-  } @else {
-  <div class="overflow-x-auto">
-    <table class="min-w-full text-left text-sm text-slate-600">
-      <thead class="border-b border-slate-200 text-slate-900">
-        <tr>
-          <th class="px-4 py-3">Nombre</th>
-          <th class="px-4 py-3">SKU</th>
-          <th class="px-4 py-3">Precio</th>
-          <th class="px-4 py-3">Stock</th>
-          <th class="px-4 py-3">Estado</th>
-          <th class="px-4 py-3">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-100">
-        @for (product of products(); track product.id) {
-        <tr>
-          <td class="px-4 py-4 font-medium text-slate-900">{{ product.nombre }}</td>
-          <td class="px-4 py-4">{{ product.sku }}</td>
-          <td class="px-4 py-4">${{ product.precio }}</td>
-          <td class="px-4 py-4">{{ product.stock_total }}</td>
-          <td class="px-4 py-4">
-            <p-button [label]="product.status" [rounded]="true"
-              [severity]="getProductSeverity(product.status)"></p-button>
-          </td>
-          <td class="px-4 py-4 flex gap-3">
-            <p-button type="button" (click)="editProduct(product)">
-              Editar
-            </p-button>
-            <p-button type="button" severity="danger" (click)="confirmProductDelete(product)">
-              Eliminar
-            </p-button>
-          </td>
-        </tr>
+<p-tabs [(value)]="tab">
+  <p-tablist>
+    <p-tab value="productos">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-box"></i>
+        <span>Productos</span>
+      </div>
+    </p-tab>
+    <p-tab value="tags">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-megaphone"></i>
+        <span>Tags</span>
+      </div>
+    </p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <p-tabpanel value="productos">
+      <section class="rounded-3xl bg-white p-6 shadow-sm">
+        @if (loading()) {
+        <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+          Cargando productos...
+        </div>
+        } @else {
+        @if (products().length === 0) {
+        <div class="rounded-3xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+          No hay productos registrados aún.
+        </div>
+        } @else {
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-sm text-slate-600">
+            <thead class="border-b border-slate-200 text-slate-900">
+              <tr>
+                <th class="px-4 py-3">Nombre</th>
+                <th class="px-4 py-3">SKU</th>
+                <th class="px-4 py-3">Precio</th>
+                <th class="px-4 py-3">Stock</th>
+                <th class="px-4 py-3">Estado</th>
+                <th class="px-4 py-3">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              @for (product of products(); track product.id) {
+              <tr>
+                <td class="px-4 py-4 font-medium text-slate-900">{{ product.nombre }}</td>
+                <td class="px-4 py-4">{{ product.sku }}</td>
+                <td class="px-4 py-4">${{ product.precio }}</td>
+                <td class="px-4 py-4">{{ product.stock_total }}</td>
+                <td class="px-4 py-4">
+                  <p-button [label]="product.status" [rounded]="true"
+                    [severity]="getProductSeverity(product.status)"></p-button>
+                </td>
+                <td class="px-4 py-4 flex gap-3">
+                  <p-button type="button" (click)="editProduct(product)">
+                    Editar
+                  </p-button>
+                  <p-button type="button" severity="danger" (click)="confirmProductDelete(product)">
+                    Eliminar
+                  </p-button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
         }
-      </tbody>
-    </table>
-  </div>
-  }
-  }
-</section>
+        }
+      </section>
+    </p-tabpanel>
+
+    <p-tabpanel value="tags">
+      <div
+        class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm">
+        <app-tags />
+      </div>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>
