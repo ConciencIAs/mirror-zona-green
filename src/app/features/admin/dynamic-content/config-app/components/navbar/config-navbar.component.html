@@ -1,0 +1,107 @@
+    @if (loading()) {
+      <div class="flex flex-col items-center justify-center py-20 gap-3">
+        <i class="pi pi-spin pi-spinner text-4xl text-emerald-600"></i>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Cargando Navbar...</p>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Barra de Navegación (Navbar)</h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Personaliza la barra de navegación estructurada en
+              secciones con permisos de rol.</p>
+          </div>
+          <p-button label="Guardar Navbar" icon="pi pi-check" [loading]="saving()" (onClick)="saveConfig()" styleClass="p-button-emerald"></p-button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Color de Fondo de la Navbar</label>
+            <div class="flex items-center gap-3">
+              <input type="color" [(ngModel)]="config().background_color"
+                class="border border-slate-300 dark:border-slate-700 rounded-md w-12 h-9 p-0 cursor-pointer bg-transparent" />
+              <span class="font-mono text-sm font-semibold text-slate-700 dark:text-slate-300">{{
+                config().background_color }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 border-t border-dashed border-slate-200 dark:border-slate-800 pt-6">
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Secciones del Navbar</h3>
+
+          <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6">
+            <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Crear Nueva Sección</h4>
+            <div class="flex flex-wrap gap-3 items-center">
+              <div class="flex-1 min-w-[200px]">
+                <input pInputText type="text" placeholder="Título de la Sección" [(ngModel)]="newNavbarSectionTitle"
+                  class="w-full" />
+              </div>
+              <div class="flex-1 min-w-[200px]">
+                <input pInputText type="text" placeholder="Roles permitidos (ej: admin, agente) - Opcional"
+                  [(ngModel)]="newNavbarSectionRoles" class="w-full" />
+              </div>
+              <p-button label="Crear Sección" icon="pi pi-plus" (onClick)="addNavbarSection()" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-6">
+            @if (config().sections.length === 0) {
+            <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay secciones en la barra
+              de navegación.</div>
+            } @else {
+            @for (section of config().sections; track $index; let sectionIdx = $index) {
+            <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/50 dark:bg-slate-950/20">
+              <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-bold text-slate-800 dark:text-slate-200">{{ section.title }}</span>
+                  @if (section.roles && section.roles.length > 0) {
+                  @for (role of section.roles; track role) {
+                  <span
+                    class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold px-2 py-0.5 rounded border border-indigo-150 dark:border-indigo-900/30">{{
+                    role }}</span>
+                  }
+                  } @else {
+                  <span
+                    class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-semibold px-2 py-0.5 rounded">Público</span>
+                  }
+                </div>
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" pTooltip="Eliminar Sección"
+                  (onClick)="removeNavbarSection(sectionIdx)" />
+              </div>
+
+              <div class="flex flex-col gap-2 mb-4">
+                @if (section.items.length === 0) {
+                <div class="text-xs text-slate-500 italic py-2">No hay enlaces en esta sección.</div>
+                } @else {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  @for (item of section.items; track $index; let itemIdx = $index) {
+                  <div
+                    class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-lg p-2.5 shadow-2xs">
+                    <div>
+                      <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ item.label }}</span>
+                      <span class="font-mono text-xs text-slate-400 block mt-0.5">{{ item.path }}</span>
+                    </div>
+                    <p-button icon="pi pi-times" severity="danger" [text]="true" size="small"
+                      (onClick)="removeNavbarLink(sectionIdx, itemIdx)" />
+                  </div>
+                  }
+                </div>
+                }
+              </div>
+
+              <div
+                class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-lg p-3">
+                <div class="flex-1"><input pInputText type="text" placeholder="Etiqueta del enlace"
+                    [(ngModel)]="getNewNavbarItem(sectionIdx).label" class="w-full text-sm" /></div>
+                <div class="flex-1"><input pInputText type="text" placeholder="Ruta (ej: /customer/home)"
+                    [(ngModel)]="getNewNavbarItem(sectionIdx).path" class="w-full text-sm font-mono" /></div>
+                <p-button label="Agregar Enlace" icon="pi pi-plus" severity="secondary" size="small"
+                  (onClick)="addNavbarLink(sectionIdx)" />
+              </div>
+            </div>
+            }
+            }
+          </div>
+        </div>
+      </div>
+    }

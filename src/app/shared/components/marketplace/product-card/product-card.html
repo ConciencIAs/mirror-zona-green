@@ -13,7 +13,7 @@
     </p-carousel>
     } @else {
     <p-image src="/assets/images/placeholder.svg" alt="Imagen del producto" width="100%" [preview]="true"
-      styleClass="w-full h-80 object-contain rounded-2xl" />
+      imageClass="w-full h-80 object-contain rounded-2xl" />
     }
   </div>
 
@@ -43,7 +43,7 @@
         @if (!product().es_por_gramos) {
         <p class="text-2xl font-extrabold text-[#1d2b16]">${{ product().precio | number:'1.0-0' }}</p>
         } @else {
-        <p class="text-sm font-medium text-[#55644d]">Venta por peso</p>
+        <p class="text-sm font-medium text-[#55644d]">Seleccion informada</p>
         }
       </div>
 

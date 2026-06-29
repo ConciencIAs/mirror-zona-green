@@ -23,21 +23,21 @@
 
     <!-- Tipo de venta -->
     <div class="mb-4">
-      <label class="block text-sm font-semibold text-slate-700 mb-2">Tipo de venta</label>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Tipo de producto</label>
       <div class="flex gap-4">
         <p-button type="button" class="flex-1 rounded-2xl border p-4 text-center transition font-semibold"
           [class.border-emerald-600]="!productModel().es_por_gramos"
           [class.bg-emerald-50]="!productModel().es_por_gramos" [class.text-emerald-700]="!productModel().es_por_gramos"
           [class.border-slate-200]="productModel().es_por_gramos" [class.bg-white]="productModel().es_por_gramos"
           [class.text-slate-600]="productModel().es_por_gramos" (click)="setSaleType(false)" variant="text">
-          📦 Venta por unidades
+          📦 Producto simple
         </p-button>
         <p-button type="button" class="flex-1 rounded-2xl border p-4 text-center transition font-semibold"
           [class.border-emerald-600]="productModel().es_por_gramos" [class.bg-emerald-50]="productModel().es_por_gramos"
           [class.text-emerald-700]="productModel().es_por_gramos"
           [class.border-slate-200]="!productModel().es_por_gramos" [class.bg-white]="!productModel().es_por_gramos"
           [class.text-slate-600]="!productModel().es_por_gramos" (click)="setSaleType(true)" variant="text">
-          ⚖️ Venta por gramos
+          ⚖️ Producto con variantes
         </p-button>
       </div>
     </div>

@@ -8,391 +8,70 @@
       <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Gestiona la información global, barra de navegación,
         pie de página y anuncios.</p>
     </div>
-    <div>
-      <p-button id="btn-save-config"
-        [label]="'Guardar Sección ' + (activeTab() === 'general' ? 'General' : activeTab() === 'navbar' ? 'Navbar' : activeTab() === 'footer' ? 'Footer' : 'Anuncios')"
-        icon="pi pi-check" [loading]="saving()" (onClick)="saveConfig()" styleClass="p-button-emerald" />
-    </div>
   </div>
+  <p-tabs [(value)]="tab">
 
-  <div class="flex gap-2 border-b border-slate-200 dark:border-slate-800 pb-0.5 overflow-x-auto">
-    <button
-      class="flex items-center gap-2 px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 bg-transparent cursor-pointer"
-      [class.text-emerald-600]="activeTab() === 'general'" [class.border-emerald-600]="activeTab() === 'general'"
-      [class.text-slate-500]="activeTab() !== 'general'" [class.border-transparent]="activeTab() !== 'general'"
-      [class.hover:text-emerald-500]="activeTab() !== 'general'" (click)="setTab('general')">
-      <i class="pi pi-info-circle"></i>
-      General
-    </button>
-    <button
-      class="flex items-center gap-2 px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 bg-transparent cursor-pointer"
-      [class.text-emerald-600]="activeTab() === 'navbar'" [class.border-emerald-600]="activeTab() === 'navbar'"
-      [class.text-slate-500]="activeTab() !== 'navbar'" [class.border-transparent]="activeTab() !== 'navbar'"
-      [class.hover:text-emerald-500]="activeTab() !== 'navbar'" (click)="setTab('navbar')">
-      <i class="pi pi-bars"></i>
-      Navbar
-    </button>
-    <button
-      class="flex items-center gap-2 px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 bg-transparent cursor-pointer"
-      [class.text-emerald-600]="activeTab() === 'footer'" [class.border-emerald-600]="activeTab() === 'footer'"
-      [class.text-slate-500]="activeTab() !== 'footer'" [class.border-transparent]="activeTab() !== 'footer'"
-      [class.hover:text-emerald-500]="activeTab() !== 'footer'" (click)="setTab('footer')">
-      <i class="pi pi-map"></i>
-      Footer
-    </button>
-    <button
-      class="flex items-center gap-2 px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 bg-transparent cursor-pointer"
-      [class.text-emerald-600]="activeTab() === 'publicidad'" [class.border-emerald-600]="activeTab() === 'publicidad'"
-      [class.text-slate-500]="activeTab() !== 'publicidad'" [class.border-transparent]="activeTab() !== 'publicidad'"
-      [class.hover:text-emerald-500]="activeTab() !== 'publicidad'" (click)="setTab('publicidad')">
-      <i class="pi pi-megaphone"></i>
-      Anuncios (Publicidad)
-    </button>
-  </div>
-
-  @if (loading()) {
-  <div class="flex flex-col items-center justify-center py-20 gap-3">
-    <i class="pi pi-spin pi-spinner text-4xl text-emerald-600"></i>
-    <p class="text-slate-500 dark:text-slate-400 text-sm">Cargando configuración...</p>
-  </div>
-  } @else {
-  <div
-    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
-
-    @if (activeTab() === 'general') {
-    <div class="flex flex-col gap-4">
-      <div>
-        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Información General</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Configuración básica que se utiliza en diferentes
-          partes del sitio web.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-        <div class="flex flex-col gap-2">
-          <label r="config-nombre" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Nombre de la
-            Aplicación / Marca</label>
-          <input id="config-nombre" pInputText type="text" [(ngModel)]="config().nombre" placeholder="Zona Green"
-            class="w-full" />
+    <p-tablist>
+      <p-tab value="general">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-info-circle"></i>
+          <span>General</span>
         </div>
+      </p-tab>
 
-        <div class="flex flex-col gap-2">
-          <label for="config-telefono" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Teléfono
-            General</label>
-          <input id="config-telefono" pInputText type="text" [(ngModel)]="config().telefono"
-            placeholder="+57 300 123 4567" class="w-full" />
+      <p-tab value="navbar">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-bars"></i>
+          <span>Navbar</span>
         </div>
+      </p-tab>
 
-        <div class="flex flex-col gap-2 md:col-span-2">
-          <label for="config-logo" class="text-sm font-semibold text-slate-700 dark:text-slate-300">URL del Logo
-            (Imagen)</label>
-          <div class="flex items-center gap-4">
-            <input id="config-logo" pInputText type="text" [(ngModel)]="config().logo_url"
-              placeholder="https://ejemplo.com/logo.png" class="flex-1" />
-            @if (config().logo_url) {
-            <div
-              class="w-14 h-14 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-1 flex-shrink-0">
-              <img [src]="config().logo_url" alt="Preview logo" class="max-w-full max-h-full object-contain" />
-            </div>
-            }
-          </div>
+      <p-tab value="footer">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-map"></i>
+          <span>Footer</span>
         </div>
-      </div>
-    </div>
-    }
+      </p-tab>
 
-    @if (activeTab() === 'navbar') {
-    <div class="flex flex-col gap-4">
-      <div>
-        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Barra de Navegación (Navbar)</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Personaliza la barra de navegación estructurada en
-          secciones con permisos de rol.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Color de Fondo de la Navbar</label>
-          <div class="flex items-center gap-3">
-            <input type="color" [(ngModel)]="config().navbar.background_color"
-              class="border border-slate-300 dark:border-slate-700 rounded-md w-12 h-9 p-0 cursor-pointer bg-transparent" />
-            <span class="font-mono text-sm font-semibold text-slate-700 dark:text-slate-300">{{
-              config().navbar.background_color }}</span>
-          </div>
+      <p-tab value="publicidad">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-megaphone"></i>
+          <span>Anuncios (Publicidad)</span>
         </div>
-      </div>
+      </p-tab>
+    </p-tablist>
 
-      <div class="mt-8 border-t border-dashed border-slate-200 dark:border-slate-800 pt-6">
-        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Secciones del Navbar</h3>
+    <p-tabpanels>
 
-        <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6">
-          <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Crear Nueva Sección</h4>
-          <div class="flex flex-wrap gap-3 items-center">
-            <div class="flex-1 min-w-[200px]">
-              <input pInputText type="text" placeholder="Título de la Sección" [(ngModel)]="newNavbarSectionTitle"
-                class="w-full" />
-            </div>
-            <div class="flex-1 min-w-[200px]">
-              <input pInputText type="text" placeholder="Roles permitidos (ej: admin, agente) - Opcional"
-                [(ngModel)]="newNavbarSectionRoles" class="w-full" />
-            </div>
-            <p-button label="Crear Sección" icon="pi pi-plus" (onClick)="addNavbarSection()" />
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-6">
-          @if (config().navbar.sections.length === 0) {
-          <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay secciones en la barra
-            de navegación.</div>
-          } @else {
-          @for (section of config().navbar.sections; track $index; let sectionIdx = $index) {
-          <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/50 dark:bg-slate-950/20">
-            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-bold text-slate-800 dark:text-slate-200">{{ section.title }}</span>
-                @if (section.roles && section.roles.length > 0) {
-                @for (role of section.roles; track role) {
-                <span
-                  class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold px-2 py-0.5 rounded border border-indigo-150 dark:border-indigo-900/30">{{
-                  role }}</span>
-                }
-                } @else {
-                <span
-                  class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-semibold px-2 py-0.5 rounded">Público</span>
-                }
-              </div>
-              <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" pTooltip="Eliminar Sección"
-                (onClick)="removeNavbarSection(sectionIdx)" />
-            </div>
-
-            <div class="flex flex-col gap-2 mb-4">
-              @if (section.items.length === 0) {
-              <div class="text-xs text-slate-500 italic py-2">No hay enlaces en esta sección.</div>
-              } @else {
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                @for (item of section.items; track $index; let itemIdx = $index) {
-                <div
-                  class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-lg p-2.5 shadow-2xs">
-                  <div>
-                    <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ item.label }}</span>
-                    <span class="font-mono text-xs text-slate-400 block mt-0.5">{{ item.path }}</span>
-                  </div>
-                  <p-button icon="pi pi-times" severity="danger" [text]="true" size="small"
-                    (onClick)="removeNavbarLink(sectionIdx, itemIdx)" />
-                </div>
-                }
-              </div>
-              }
-            </div>
-
-            <div
-              class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-lg p-3">
-              <div class="flex-1"><input pInputText type="text" placeholder="Etiqueta del enlace"
-                  [(ngModel)]="getNewNavbarItem(sectionIdx).label" class="w-full text-sm" /></div>
-              <div class="flex-1"><input pInputText type="text" placeholder="Ruta (ej: /customer/home)"
-                  [(ngModel)]="getNewNavbarItem(sectionIdx).path" class="w-full text-sm font-mono" /></div>
-              <p-button label="Agregar Enlace" icon="pi pi-plus" severity="secondary" size="small"
-                (onClick)="addNavbarLink(sectionIdx)" />
-            </div>
-          </div>
-          }
-          }
-        </div>
-      </div>
-    </div>
-    }
-
-    @if (activeTab() === 'footer') {
-    <div class="flex flex-col gap-4">
-      <div>
-        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Pie de Página (Footer)</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Personaliza el diseño, las secciones de enlaces,
-          información de contacto y redes sociales.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Color de Fondo del Footer</label>
-          <div class="flex items-center gap-3">
-            <input type="color" [(ngModel)]="config().footer.background_color"
-              class="border border-slate-300 dark:border-slate-700 rounded-md w-12 h-9 p-0 cursor-pointer bg-transparent" />
-            <span class="font-mono text-sm font-semibold text-slate-700 dark:text-slate-300">{{
-              config().footer.background_color }}</span>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label for="config-copyright" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Texto de
-            Copyright</label>
-          <input id="config-copyright" pInputText type="text" [(ngModel)]="config().footer.texto_copyright"
-            placeholder="© 2025 Zona Green." class="w-full" />
-        </div>
-      </div>
-
-      <div class="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6">
-        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Información de Contacto</h3>
+      <p-tabpanel value="general">
         <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-950 p-5 rounded-xl border border-slate-200 dark:border-slate-800">
-          <div class="flex flex-col gap-1.5"><label
-              class="text-xs font-bold text-slate-600 dark:text-slate-400">WhatsApp (Número legible)</label><input
-              pInputText type="text" [(ngModel)]="config().footer.contact.whatsapp_phone" /></div>
-          <div class="flex flex-col gap-1.5"><label
-              class="text-xs font-bold text-slate-600 dark:text-slate-400">WhatsApp (Enlace directo)</label><input
-              pInputText type="text" [(ngModel)]="config().footer.contact.whatsapp_link" /></div>
-          <div class="flex flex-col gap-1.5"><label class="text-xs font-bold text-slate-600 dark:text-slate-400">Email
-              de Contacto</label><input pInputText type="text" [(ngModel)]="config().footer.contact.email" /></div>
-          <div class="flex flex-col gap-1.5"><label
-              class="text-xs font-bold text-slate-600 dark:text-slate-400">Dirección / Ubicación</label><input
-              pInputText type="text" [(ngModel)]="config().footer.contact.direccion" /></div>
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <app-config-general />
         </div>
-      </div>
+      </p-tabpanel>
 
-      <div class="mt-6 border-t border-slate-200 dark:border-slate-800 pt-6">
-        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Enlaces de Redes Sociales</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="flex flex-col gap-1.5"><label class="text-xs font-bold text-slate-600 dark:text-slate-400"><i
-                class="pi pi-instagram text-pink-500 mr-1"></i> Instagram</label><input pInputText type="text"
-              [(ngModel)]="config().footer.social.instagram" /></div>
-          <div class="flex flex-col gap-1.5"><label class="text-xs font-bold text-slate-600 dark:text-slate-400"><i
-                class="pi pi-facebook text-blue-600 mr-1"></i> Facebook</label><input pInputText type="text"
-              [(ngModel)]="config().footer.social.facebook" /></div>
-          <div class="flex flex-col gap-1.5"><label class="text-xs font-bold text-slate-600 dark:text-slate-400"><i
-                class="pi pi-linkedin text-blue-500 mr-1"></i> LinkedIn</label><input pInputText type="text"
-              [(ngModel)]="config().footer.social.linkedin" /></div>
-          <div class="flex flex-col gap-1.5"><label class="text-xs font-bold text-slate-600 dark:text-slate-400"><i
-                class="pi pi-youtube text-red-650 mr-1"></i> YouTube</label><input pInputText type="text"
-              [(ngModel)]="config().footer.social.youtube" /></div>
-        </div>
-      </div>
-
-      <div class="mt-8 border-t border-dashed border-slate-200 dark:border-slate-800 pt-6">
-        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Secciones de Enlaces del Footer</h3>
-        <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6">
-          <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Crear Nueva Sección de Enlaces
-          </h4>
-          <div class="flex gap-3 items-center">
-            <div class="flex-1"><input pInputText type="text" placeholder="Título de la Sección"
-                [(ngModel)]="newFooterSectionTitle" class="w-full" /></div>
-            <p-button label="Crear Sección" icon="pi pi-plus" (onClick)="addFooterSection()" />
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-6">
-          @if (config().footer.sections.length === 0) {
-          <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay secciones de enlaces
-            creadas.</div>
-          } @else {
-          @for (section of config().footer.sections; track $index; let sectionIdx = $index) {
-          <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/50 dark:bg-slate-950/20">
-            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
-              <span class="font-bold text-slate-800 dark:text-slate-200">{{ section.title }}</span>
-              <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" pTooltip="Eliminar Sección"
-                (onClick)="removeFooterSection(sectionIdx)" />
-            </div>
-
-            <div class="flex flex-col gap-2 mb-4">
-              @if (section.items.length === 0) {
-              <div class="text-xs text-slate-500 italic py-2">No hay enlaces en esta sección.</div>
-              } @else {
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                @for (item of section.items; track $index; let itemIdx = $index) {
-                <div
-                  class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-lg p-2.5 shadow-2xs">
-                  <div>
-                    <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ item.label }}</span>
-                    <span class="font-mono text-xs text-slate-450 block mt-0.5">{{ item.url }}</span>
-                  </div>
-                  <p-button icon="pi pi-times" severity="danger" [text]="true" size="small"
-                    (onClick)="removeFooterLink(sectionIdx, itemIdx)" />
-                </div>
-                }
-              </div>
-              }
-            </div>
-
-            <div
-              class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-lg p-3">
-              <div class="flex-1"><input pInputText type="text" placeholder="Etiqueta del enlace"
-                  [(ngModel)]="getNewFooterItem(sectionIdx).label" class="w-full text-sm" /></div>
-              <div class="flex-1"><input pInputText type="text" placeholder="URL / Ruta"
-                  [(ngModel)]="getNewFooterItem(sectionIdx).url" class="w-full text-sm font-mono" /></div>
-              <p-button label="Agregar Enlace" icon="pi pi-plus" severity="secondary" size="small"
-                (onClick)="addFooterLink(sectionIdx)" />
-            </div>
-          </div>
-          }
-          }
-        </div>
-      </div>
-    </div>
-    }
-
-    @if (activeTab() === 'publicidad') {
-    <div class="flex flex-col gap-4">
-      <div>
-        <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Franja de Publicidad (Banner Superior)</h2>
-        <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Crea y gestiona mensajes rotativos destacados.</p>
-      </div>
-
-      @if (config().advertising_banner && config().advertising_banner.length > 0) {
-      <div class="bg-amber-500 text-white rounded-xl p-4 mb-6 relative shadow-md overflow-hidden">
-        <span class="absolute top-0 left-4 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-b-md">VISTA
-          PREVIA</span>
-        <div class="flex flex-col gap-2.5 items-center font-semibold text-sm pt-2">
-          @for (item of config().advertising_banner; track $index) {
-          <div class="flex items-center gap-2">
-            <i [class]="item.icon"></i>
-            <span>{{ item.text }}</span>
-            @if (item.link) {
-            <a [href]="item.link" target="_blank"
-              class="text-white hover:underline text-xs ml-2 inline-flex items-center gap-1">Ver más</a>
-            }
-          </div>
-          }
-        </div>
-      </div>
-      }
-
-      <div class="mt-4">
-        <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Items de Publicidad</h3>
+      <p-tabpanel value="navbar">
         <div
-          class="border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 p-4 min-h-[5rem] flex flex-col justify-center mb-6">
-          @if (!config().advertising_banner || config().advertising_banner.length === 0) {
-          <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay anuncios agregados.
-          </div>
-          } @else {
-          <div class="grid grid-cols-1 gap-2">
-            @for (item of config().advertising_banner; track $index) {
-            <div
-              class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-lg p-3">
-              <div class="flex items-center gap-3">
-                <i [class]="item.icon" class="text-lg text-amber-500 w-6 text-center"></i>
-                <div>
-                  <div class="font-semibold text-sm text-slate-800 dark:text-slate-200">{{ item.text }}</div>
-                  @if (item.link) { <div class="font-mono text-xs text-slate-450">{{ item.link }}</div> }
-                </div>
-              </div>
-              <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small"
-                (onClick)="removeAdvertisingItem($index)" />
-            </div>
-            }
-          </div>
-          }
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <app-config-navbar />
         </div>
+      </p-tabpanel>
 
-        <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
-          <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Agregar Anuncio</h4>
-          <div class="flex flex-wrap gap-3 items-center">
-            <div class="flex-[2] min-w-[250px]"><input pInputText type="text" placeholder="Texto del anuncio"
-                [(ngModel)]="newAdvertisingItem().text" class="w-full" /></div>
-            <div class="flex-1 min-w-[150px]"><input pInputText type="text" placeholder="Enlace URL"
-                [(ngModel)]="newAdvertisingItem().link" class="w-full" /></div>
-            <div class="flex-1 min-w-[150px]"><input pInputText type="text" placeholder="Icono (ej: pi pi-percentage)"
-                [(ngModel)]="newAdvertisingItem().icon" class="w-full" /></div>
-            <p-button label="Agregar" icon="pi pi-plus" severity="secondary" (onClick)="addAdvertisingItem()" />
-          </div>
+      <p-tabpanel value="footer">
+        <div
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <app-config-footer />
         </div>
-      </div>
-    </div>
-    }
-  </div>
-  }
+      </p-tabpanel>
+
+      <p-tabpanel value="publicidad">
+        <div
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 md:p-8 shadow-sm">
+          <app-config-publicidad />
+        </div>
+      </p-tabpanel>
+
+    </p-tabpanels>
+
+  </p-tabs>
 </div>

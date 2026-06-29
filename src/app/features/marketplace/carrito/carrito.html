@@ -1,8 +1,8 @@
 <div class="space-y-6 p-4 pt-12">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 class="text-3xl font-bold text-[#1d341c]">Carrito de compras</h1>
-      <p class="mt-2 text-sm text-[#4b5b44]">Revisa los productos y avanza al checkout.</p>
+      <h1 class="text-3xl font-bold text-[#1d341c]">Selección informada</h1>
+      <p class="mt-2 text-sm text-[#4b5b44]">Revisa y confirma tu selección informada.</p>
     </div>
   </div>
 
@@ -11,7 +11,8 @@
   } @else {
   @if (cartDetails().length === 0) {
   <div class="rounded-3xl border border-[#d7dfc7] bg-[#f5f7ef] p-8 text-center text-[#4b5b44]">
-    Tu carrito está vacío. <a routerLink="/marketplace" class="font-semibold text-[#1f6c2f] underline">Volver al
+    Tu selección informada está vacío. <a routerLink="/marketplace"
+      class="font-semibold text-[#1f6c2f] underline">Volver al
       marketplace</a>.
   </div>
   } @else {
@@ -49,7 +50,7 @@
         <p class="mt-1 text-3xl font-bold text-[#1f6c2f]">{{ total() | moneda }}</p>
       </div>
       <p-button type="button" severity="success" (click)="goToCheckout()" [disabled]="cartDetails().length === 0">
-        Proceder al Checkout
+        Confirmar selección
       </p-button>
     </div>
   </div>

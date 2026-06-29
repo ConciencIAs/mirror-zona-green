@@ -32,7 +32,6 @@
     <div class="flex flex-col gap-6">
       <div>
         <h1 class="text-4xl font-bold text-[#1d341c]">{{ product()!.nombre }}</h1>
-        <p class="mt-2 text-sm text-[#55644d]">SKU: {{ product()!.sku }}</p>
         @if (product()!.tags?.length) {
         <div class="mt-4 flex flex-wrap gap-2">
           @for (tag of product()!.tags; track tag) {
@@ -51,7 +50,7 @@
       <div>
         <p class="text-3xl font-bold text-[#1d341c]">{{ displayedPrice() | moneda }}</p>
         @if (product()!.es_por_gramos && selectedPresentation()) {
-        <p class="text-sm text-[#55644d] mt-1">Precio por {{ selectedPresentation()!.gramos }}g</p>
+        <p class="text-sm text-[#55644d] mt-1">Aporte por {{ selectedPresentation()!.gramos }}g</p>
         }
       </div>
 

@@ -1,0 +1,66 @@
+@if (loading()) {
+<div class="flex flex-col items-center justify-center py-20 gap-3">
+  <i class="pi pi-spin pi-spinner text-4xl text-emerald-600"></i>
+  <p class="text-slate-500 dark:text-slate-400 text-sm">Cargando Anuncios...</p>
+</div>
+} @else {
+<div class="flex flex-col gap-4">
+  <div class="flex justify-between items-center flex-wrap gap-4">
+    <div>
+      <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Franja de Publicidad (Banner Superior)</h2>
+      <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Crea y gestiona mensajes rotativos destacados.</p>
+    </div>
+    <p-button label="Guardar Anuncios" icon="pi pi-check" [loading]="saving()" (onClick)="saveConfig()"
+      styleClass="p-button-emerald"></p-button>
+  </div>
+
+  @if (config() && config().length > 0) {
+  <div class="bg-amber-500 text-white mb-6 relative shadow-md overflow-hidden">
+    <span class="absolute top-0 left-4 bg-slate-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-b-md">VISTA
+      PREVIA</span>
+    <app-advertising-banner [items]="config()" />
+  </div>
+  }
+
+  <div class="mt-4">
+    <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Items de Publicidad</h3>
+    <div
+      class="border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 p-4 min-h-[5rem] flex flex-col justify-center mb-6">
+      @if (!config() || config().length === 0) {
+      <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay anuncios agregados.
+      </div>
+      } @else {
+      <div class="grid grid-cols-1 gap-2">
+        @for (item of config(); track $index) {
+        <div
+          class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-lg p-3">
+          <div class="flex items-center gap-3">
+            <i [class]="item.icon" class="text-lg text-amber-500 w-6 text-center"></i>
+            <div>
+              <div class="font-semibold text-sm text-slate-800 dark:text-slate-200">{{ item.text }}</div>
+              @if (item.link) { <div class="font-mono text-xs text-slate-450">{{ item.link }}</div> }
+            </div>
+          </div>
+          <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small"
+            (onClick)="removeAdvertisingItem($index)" />
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+      <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Agregar Anuncio</h4>
+      <div class="flex flex-wrap gap-3 items-center">
+        <div class="flex-[2] min-w-[250px]"><input pInputText type="text" placeholder="Texto del anuncio"
+            [(ngModel)]="newAdvertisingItem().text" class="w-full" /></div>
+        <div class="flex-1 min-w-[150px]"><input pInputText type="text" placeholder="Enlace URL"
+            [(ngModel)]="newAdvertisingItem().link" class="w-full" /></div>
+        <div class="flex-1 min-w-[150px]"><input pInputText type="text" placeholder="Icono (ej: pi pi-percentage)"
+            [(ngModel)]="newAdvertisingItem().icon" class="w-full" /></div>
+        <p-button label="Agregar" icon="pi pi-plus" severity="secondary" (onClick)="addAdvertisingItem()" />
+      </div>
+    </div>
+  </div>
+</div>
+}

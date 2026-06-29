@@ -58,6 +58,49 @@
               {{ order.comentarios_usuario || 'Sin comentarios por el momento' }}
             </div>
           </div>
+          <p-timeline [value]="buildTimeline(order)" layout="horizontal">
+
+            <ng-template pTemplate="opposite" let-item>
+              <div class="text-xs text-surface-500 text-center min-h-10">
+                {{ item.date || '-' }}
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="marker" let-item>
+
+              <div class="flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all" [ngClass]="{
+
+            'bg-green-500 border-green-500 text-white':
+                item.completed,
+
+            'bg-primary border-primary text-white scale-110':
+                item.current,
+
+            'bg-red-500 border-red-500 text-white':
+                item.cancelled,
+
+            'bg-white border-surface-300 text-surface-300':
+                !item.completed && !item.current && !item.cancelled
+
+        }">
+
+                @if(item.completed || item.current || item.cancelled){
+                <i class="pi pi-check text-sm"></i>
+                }
+
+              </div>
+
+            </ng-template>
+
+            <ng-template pTemplate="content" let-item>
+              <div class="text-center mt-2">
+                <div class="font-medium capitalize">
+                  {{ item.status.replace('_', ' ') }}
+                </div>
+              </div>
+            </ng-template>
+
+          </p-timeline>
         </div>
       </div>
     </div>

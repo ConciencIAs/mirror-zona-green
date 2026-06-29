@@ -7,6 +7,9 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
 import { ConfirmationService } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
+
+import { ConfigPublicidadComponent } from '../config-app/components/publicidad/config-publicidad.component';
 
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
@@ -20,7 +23,7 @@ export interface ContentListItem {
 
 @Component({
   selector: 'app-dynamic-content-list',
-  imports: [TableModule, ButtonModule, ConfirmDialogModule, TagModule, DatePipe],
+  imports: [TableModule, ButtonModule, ConfirmDialogModule, TagModule, DatePipe, TabsModule, ConfigPublicidadComponent],
   providers: [ConfirmationService],
   templateUrl: './pages.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -34,6 +37,7 @@ export class DynamicContentList implements OnInit {
 
   pages = signal<ContentListItem[]>([]);
   loading = signal(false);
+  tab = signal<'paginas' | 'avisos'>('paginas');
 
   async ngOnInit(): Promise<void> {
     await this.loadPages();
