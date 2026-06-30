@@ -63,8 +63,14 @@ export const adminRoutes: Routes = [
                 loadComponent: () => import('./marketplace/products/product-edit/products-editor').then(m => m.ProductsEditor),
                 data: { zone: 'admin' },
                 title: 'Editar producto'
-              }
+              },
             ]
+          },
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./marketplace/dashboard/dashboard').then(m => m.DashboardComponent),
+            data: { zone: 'admin' },
+            title: 'Ventas'
           },
           {
             path: 'custom',
