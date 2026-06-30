@@ -1,0 +1,427 @@
+<div class="p-4 md:p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- HEADER + FILTROS                                    -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div
+    class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+        <i class="pi pi-chart-bar text-indigo-500"></i>
+        Dashboard de Ventas
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">Analíticas de transacciones, productos y usuarios</p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full lg:w-auto">
+      <!-- Filtro por usuario -->
+      <p-select
+        [(ngModel)]="usuarioSeleccionado"
+        [options]="listaUsuarios"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Filtrar por usuario"
+        [showClear]="true"
+        (onChange)="onUsuarioChange()"
+        class="w-full sm:w-64">
+      </p-select>
+
+      <div class="flex gap-2 items-center">
+        <p-datepicker [(ngModel)]="fechaInicio" placeholder="Desde" [showIcon]="true"
+          dateFormat="dd/mm/yy" class="w-36"></p-datepicker>
+        <p-datepicker [(ngModel)]="fechaFin" placeholder="Hasta" [showIcon]="true"
+          dateFormat="dd/mm/yy" class="w-36"></p-datepicker>
+      </div>
+
+      <div class="flex gap-2">
+        <p-button label="Filtrar" icon="pi pi-search" (onClick)="filtrarPorFechas()"
+          severity="primary" [outlined]="true" size="small"></p-button>
+        <p-button icon="pi pi-refresh" (onClick)="limpiarFiltros()"
+          severity="secondary" [outlined]="true" size="small"
+          pTooltip="Limpiar filtros"></p-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (cargando) {
+    <div class="flex justify-center items-center py-20">
+      <i class="pi pi-spin pi-spinner text-4xl text-indigo-500"></i>
+    </div>
+  }
+
+  @if (!cargando) {
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- KPIs PRINCIPALES (fila 1)                           -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+    <!-- Total Órdenes -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:shadow-md transition-shadow">
+      <div class="bg-blue-50 p-3 rounded-xl text-blue-500 shrink-0">
+        <i class="pi pi-shopping-cart text-xl"></i>
+      </div>
+      <div>
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Órdenes</p>
+        <h2 class="text-2xl font-bold text-slate-800">{{ totalOrdenes }}</h2>
+      </div>
+    </div>
+
+    <!-- Ingresos Totales -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:shadow-md transition-shadow">
+      <div class="bg-emerald-50 p-3 rounded-xl text-emerald-500 shrink-0">
+        <i class="pi pi-dollar text-xl"></i>
+      </div>
+      <div>
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Ingresos</p>
+        <h2 class="text-xl font-bold text-slate-800">{{ totalVentas | currency:'COP':'symbol-narrow':'1.0-0' }}</h2>
+      </div>
+    </div>
+
+    <!-- Ticket Promedio -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:shadow-md transition-shadow">
+      <div class="bg-violet-50 p-3 rounded-xl text-violet-500 shrink-0">
+        <i class="pi pi-chart-line text-xl"></i>
+      </div>
+      <div>
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Ticket Prom.</p>
+        <h2 class="text-xl font-bold text-slate-800">{{ ticketPromedio | currency:'COP':'symbol-narrow':'1.0-0' }}</h2>
+      </div>
+    </div>
+
+    <!-- Productos Vendidos -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 hover:shadow-md transition-shadow">
+      <div class="bg-amber-50 p-3 rounded-xl text-amber-500 shrink-0">
+        <i class="pi pi-box text-xl"></i>
+      </div>
+      <div>
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Productos</p>
+        <h2 class="text-2xl font-bold text-slate-800">{{ totalProductosVendidos }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs SECUNDARIOS (fila 2) -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+    <!-- Gramos Totales -->
+    <div class="bg-gradient-to-r from-teal-500 to-emerald-500 p-5 rounded-2xl shadow-sm flex items-center gap-4 text-white">
+      <div class="bg-white/20 p-3 rounded-xl shrink-0">
+        <i class="pi pi-objects-column text-xl"></i>
+      </div>
+      <div>
+        <p class="text-white/80 text-xs font-medium uppercase tracking-wider">Gramos Vendidos</p>
+        <h2 class="text-2xl font-bold">{{ formatGramos(totalGramosVendidos) }}</h2>
+      </div>
+    </div>
+
+    <!-- Órdenes Completadas -->
+    <div class="bg-gradient-to-r from-indigo-500 to-blue-500 p-5 rounded-2xl shadow-sm flex items-center gap-4 text-white">
+      <div class="bg-white/20 p-3 rounded-xl shrink-0">
+        <i class="pi pi-check-circle text-xl"></i>
+      </div>
+      <div>
+        <p class="text-white/80 text-xs font-medium uppercase tracking-wider">Completadas</p>
+        <h2 class="text-2xl font-bold">{{ ordenesCompletadas }} / {{ totalOrdenes }}</h2>
+      </div>
+    </div>
+
+    <!-- Tasa de Cancelación -->
+    <div class="bg-gradient-to-r from-rose-500 to-pink-500 p-5 rounded-2xl shadow-sm flex items-center gap-4 text-white">
+      <div class="bg-white/20 p-3 rounded-xl shrink-0">
+        <i class="pi pi-times-circle text-xl"></i>
+      </div>
+      <div>
+        <p class="text-white/80 text-xs font-medium uppercase tracking-wider">Cancelación</p>
+        <h2 class="text-2xl font-bold">{{ tasaCancelacion | number:'1.1-1' }}%</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- GRÁFICAS                                            -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+    <!-- Donut de estados -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 flex flex-col">
+      <h3 class="text-base font-bold text-slate-800 mb-2 flex items-center gap-2">
+        <i class="pi pi-chart-pie text-indigo-400"></i>
+        Órdenes por Estado
+      </h3>
+      @if (chartSeries.length > 0) {
+        <div class="flex-grow flex items-center justify-center">
+          <apx-chart
+            [series]="chartSeries"
+            [chart]="chartConfig"
+            [labels]="chartLabels"
+            [colors]="chartColors"
+            [dataLabels]="chartDataLabels"
+            [legend]="chartLegend"
+            [responsive]="chartResponsive">
+          </apx-chart>
+        </div>
+      } @else {
+        <div class="flex-grow flex items-center justify-center text-slate-400 text-sm">
+          <i class="pi pi-info-circle mr-2"></i> Sin datos de órdenes
+        </div>
+      }
+    </div>
+
+    <!-- Barras top 5 productos -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-3 flex flex-col">
+      <h3 class="text-base font-bold text-slate-800 mb-2 flex items-center gap-2">
+        <i class="pi pi-chart-bar text-amber-400"></i>
+        Top 5 Productos por Ingresos
+      </h3>
+      @if (barChartSeries.length > 0 && barChartSeries[0]?.data?.length > 0) {
+        <div class="flex-grow flex items-center justify-center">
+          <apx-chart
+            [series]="barChartSeries"
+            [chart]="barChartConfig"
+            [xaxis]="barChartXaxis"
+            [colors]="barChartColors"
+            [dataLabels]="barChartDataLabels"
+            [plotOptions]="barChartPlotOptions">
+          </apx-chart>
+        </div>
+      } @else {
+        <div class="flex-grow flex items-center justify-center text-slate-400 text-sm">
+          <i class="pi pi-info-circle mr-2"></i> Sin datos de productos
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- TABLAS DE PRODUCTOS (Tabs: Gramos / Unidad)         -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
+    <div class="p-5 pb-0">
+      <h3 class="text-base font-bold text-slate-800 flex items-center gap-2 mb-4">
+        <i class="pi pi-list text-teal-400"></i>
+        Rendimiento por Producto
+      </h3>
+    </div>
+
+    <p-tabs value="0">
+      <p-tablist>
+        <p-tab value="0">
+          <i class="pi pi-objects-column mr-2"></i>
+          Por Gramos ({{ topProductosGramos.length }})
+        </p-tab>
+        <p-tab value="1">
+          <i class="pi pi-box mr-2"></i>
+          Por Unidad ({{ topProductosUnidad.length }})
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Tab: Productos por Gramos -->
+        <p-tabpanel value="0">
+          @if (topProductosGramos.length > 0) {
+            <p-table [value]="topProductosGramos" [paginator]="true" [rows]="5"
+              responsiveLayout="scroll" [rowHover]="true" tableStyleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Producto</th>
+                  <th>SKU</th>
+                  <th>Detalle Paquetes</th>
+                  <th class="text-center">Total Paquetes</th>
+                  <th class="text-center">Total Gramos</th>
+                  <th class="text-center">Órdenes</th>
+                  <th class="text-right">Ingresos</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-prod>
+                <tr>
+                  <td class="font-medium text-slate-700">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block w-2 h-2 rounded-full bg-teal-400"></span>
+                      {{ prod.nombre }}
+                    </div>
+                  </td>
+                  <td class="text-xs text-slate-500 font-mono">{{ prod.sku }}</td>
+                  <td>
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (paq of prod.paquetesVendidos; track paq.gramos) {
+                        <span
+                          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 cursor-help"
+                          [pTooltip]="'Paquete de ' + formatGramos(paq.gramos) + ' — Vendidos: ' + paq.cantidadVendida + ' — Ingresos: $' + paq.ingresos.toLocaleString('es-CO')"
+                          tooltipPosition="top">
+                          <i class="pi pi-box text-[10px]"></i>
+                          {{ formatGramos(paq.gramos) }}
+                          <span class="bg-teal-500 text-white rounded-full px-1.5 py-0.5 text-[10px] leading-none ml-0.5">
+                            ×{{ paq.cantidadVendida }}
+                          </span>
+                        </span>
+                      } @empty {
+                        <span class="text-slate-400 text-xs">Sin detalle</span>
+                      }
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <p-tag [value]="prod.cantidad.toString()" severity="info"></p-tag>
+                  </td>
+                  <td class="text-center font-medium text-teal-600">{{ formatGramos(prod.totalGramos) }}</td>
+                  <td class="text-center text-slate-600">{{ prod.ordenes }}</td>
+                  <td class="text-right font-bold text-emerald-600">{{ prod.ingresos | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="7" class="text-center text-slate-400 py-8">No hay productos por gramos en este periodo</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <div class="text-center text-slate-400 py-8">
+              <i class="pi pi-inbox text-3xl mb-2"></i>
+              <p>No hay productos vendidos por gramos</p>
+            </div>
+          }
+        </p-tabpanel>
+
+        <!-- Tab: Productos por Unidad -->
+        <p-tabpanel value="1">
+          @if (topProductosUnidad.length > 0) {
+            <p-table [value]="topProductosUnidad" [paginator]="true" [rows]="5"
+              responsiveLayout="scroll" [rowHover]="true" tableStyleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Producto</th>
+                  <th>SKU</th>
+                  <th class="text-center">Unidades Vendidas</th>
+                  <th class="text-center">Aparece en Órdenes</th>
+                  <th class="text-right">Ingresos</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-prod>
+                <tr>
+                  <td class="font-medium text-slate-700">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block w-2 h-2 rounded-full bg-indigo-400"></span>
+                      {{ prod.nombre }}
+                    </div>
+                  </td>
+                  <td class="text-xs text-slate-500 font-mono">{{ prod.sku }}</td>
+                  <td class="text-center">
+                    <p-tag [value]="prod.cantidad.toString()" severity="info"></p-tag>
+                  </td>
+                  <td class="text-center text-slate-600">{{ prod.ordenes }}</td>
+                  <td class="text-right font-bold text-emerald-600">{{ prod.ingresos | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="5" class="text-center text-slate-400 py-8">No hay productos por unidad en este periodo</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          } @else {
+            <div class="text-center text-slate-400 py-8">
+              <i class="pi pi-inbox text-3xl mb-2"></i>
+              <p>No hay productos vendidos por unidad</p>
+            </div>
+          }
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <!-- TABLA DE USUARIOS + REGISTRO DE ÓRDENES            -->
+  <!-- ═══════════════════════════════════════════════════ -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+    <!-- Mejores Clientes -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <i class="pi pi-users text-violet-400"></i>
+        Mejores Clientes
+      </h3>
+      <p-table [value]="topUsuarios" [paginator]="true" [rows]="5" responsiveLayout="scroll"
+        [rowHover]="true" tableStyleClass="p-datatable-sm" [sortField]="'gastado'" [sortOrder]="-1">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="nombre">Cliente <p-sortIcon field="nombre"></p-sortIcon></th>
+            <th pSortableColumn="totalOrdenes" class="text-center">Órdenes <p-sortIcon field="totalOrdenes"></p-sortIcon></th>
+            <th class="text-center">Productos</th>
+            <th class="text-center">Gramos</th>
+            <th pSortableColumn="gastado" class="text-right">Gastado <p-sortIcon field="gastado"></p-sortIcon></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              <div class="flex flex-col">
+                <span class="font-medium text-slate-700">{{ user.nombre }}</span>
+                <span class="text-xs text-slate-400">{{ user.correo }}</span>
+              </div>
+            </td>
+            <td class="text-center">
+              <p-tag [value]="user.totalOrdenes.toString()" severity="secondary"></p-tag>
+            </td>
+            <td class="text-center text-slate-600">{{ user.productosComprados }}</td>
+            <td class="text-center text-teal-600 text-sm">
+              @if (user.gramosComprados > 0) {
+                {{ formatGramos(user.gramosComprados) }}
+              } @else {
+                <span class="text-slate-300">—</span>
+              }
+            </td>
+            <td class="text-right font-bold text-emerald-600">{{ user.gastado | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center text-slate-400 py-8">No hay datos de clientes</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Registro de Órdenes -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <i class="pi pi-clock text-blue-400"></i>
+        Registro de Órdenes
+      </h3>
+      <p-table [value]="ordenesFiltradas" [paginator]="true" [rows]="5" responsiveLayout="scroll"
+        [rowHover]="true" styleClass="p-datatable-sm" [sortField]="'created_at'" [sortOrder]="-1">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="created_at">Fecha <p-sortIcon field="created_at"></p-sortIcon></th>
+            <th>Cliente</th>
+            <th>Productos</th>
+            <th>Estado</th>
+            <th pSortableColumn="precio_total" class="text-right">Total <p-sortIcon field="precio_total"></p-sortIcon></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-orden>
+          <tr>
+            <td class="text-sm text-slate-600">{{ orden.created_at | date:'dd/MM/yy HH:mm' }}</td>
+            <td>
+              <div class="flex flex-col">
+                <span class="text-sm font-medium text-slate-700 truncate max-w-[140px]">{{ orden.nombre_cliente }}</span>
+                <span class="text-xs text-slate-400 truncate max-w-[140px]">{{ orden.correo_cliente }}</span>
+              </div>
+            </td>
+            <td class="text-center text-sm text-slate-600">{{ orden.lista_productos?.length || 0 }}</td>
+            <td>
+              <p-tag [value]="formatEstado(orden.status)" [severity]="getSeverity(orden.status)"></p-tag>
+            </td>
+            <td class="text-right text-sm font-bold text-slate-800">{{ orden.precio_total | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center text-slate-400 py-8">No hay órdenes registradas</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+  </div>
+
+  } <!-- end @if (!cargando) -->
+
+</div>
