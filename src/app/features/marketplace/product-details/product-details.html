@@ -91,9 +91,9 @@
 
       <div class="flex gap-4">
         <p-button type="button" (click)="addToCart()" [disabled]="!canAdd() || adding()"
-          [label]="adding() ? 'Agregando...' : 'Agregar al carrito'" icon="pi pi-shopping-cart" severity="success"
+          [label]="adding() ? 'Agregando...' : 'Selección informada'" icon="pi pi-shopping-cart" severity="success"
           styleClass="flex-1" />
-        <p-button type="button" routerLink="/marketplace/carrito" label="Ver carrito" severity="secondary"
+        <p-button type="button" routerLink="/marketplace/carrito" label="Ver selección" severity="secondary"
           variant="outlined" icon="pi pi-shopping-bag" />
       </div>
     </div>

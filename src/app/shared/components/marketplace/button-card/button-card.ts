@@ -19,7 +19,7 @@ import { Producto } from '@src/app/shared/models/interfaces/db/db';
           rounded="true"
           icon="pi pi-shopping-cart"
           styleClass="bg-primary"
-          label="Agregar"
+          label="Reservar"
           size="small"
         />
       } @else {

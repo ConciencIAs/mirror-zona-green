@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal, effect, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -20,6 +21,7 @@ import { ButtonModule } from 'primeng/button';
 })
 export class Marketplace implements OnDestroy {
   private readonly dbService = inject(SupabaseDbService);
+  private scroller = inject(ViewportScroller);
 
   // Estados de datos primarios (Vienen de la BD)
   protected readonly products = signal<Producto[]>([]);
@@ -143,6 +145,10 @@ export class Marketplace implements OnDestroy {
       this.loading.set(false);
       this.loadingMore.set(false);
     }
+  }
+
+  goToTop() {
+    this.scroller.scrollToPosition([0, 0]);
   }
 
   // --- CAPTURA DE EVENTOS DE LA UI ---

@@ -11,8 +11,8 @@ export type Json =
     | Json[];
 
 export type EstadoOrden =
-    | 'pendiente'
-    | 'pagado'
+    | 'seleccion'
+    | 'aporte'
     | 'en_proceso'
     | 'enviado'
     | 'entregado'
@@ -136,6 +136,7 @@ export interface Orden {
     tipo_entrega: string;
     updated_at: string | null;
     tracking: Tracking[];
+    direccion: string
 }
 
 export interface Tracking {
