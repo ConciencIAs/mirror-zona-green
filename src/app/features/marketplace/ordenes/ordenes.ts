@@ -28,8 +28,8 @@ export class Ordenes {
   protected readonly hasOrders = computed(() => this.orders().length > 0);
 
   readonly estados: EstadoOrden[] = [
-    'pendiente',
-    'pagado',
+    'seleccion',
+    'aporte',
     'en_proceso',
     'enviado',
     'entregado'

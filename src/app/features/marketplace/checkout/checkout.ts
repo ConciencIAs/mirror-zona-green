@@ -9,6 +9,7 @@ import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Producto } from '@src/app/shared/models/interfaces/db/db';
 import { MonedaPipe } from '@src/app/shared/pipes/moneda.pipe';
 import { ButtonModule } from 'primeng/button';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
 
 @Component({
   selector: 'app-checkout',
@@ -24,6 +25,7 @@ export class Checkout implements OnInit {
   private readonly router = inject(Router);
   private readonly edgeService = inject(EdgeFunctionsService);
   private readonly fb = inject(FormBuilder);
+  private readonly userStore = inject(UserStore);
 
   protected readonly loading = signal(true);
   protected readonly submitting = signal(false);
@@ -53,7 +55,8 @@ export class Checkout implements OnInit {
   private initForm(): void {
     this.checkoutForm = this.fb.group({
       tipoEntrega: ['', Validators.required],
-      comentarios: ['', [Validators.required, Validators.minLength(5)]]
+      comentarios: ['', [Validators.required, Validators.minLength(5)]],
+      direccion: [this.userStore.perfil().ubicacion, Validators.required]
     });
   }
 
@@ -109,7 +112,8 @@ export class Checkout implements OnInit {
       // Asegúrate de que tu edgeService reciba este payload con los campos extra
       const payload = {
         tipo_entrega: formValues.tipoEntrega,
-        comentarios: formValues.comentarios
+        comentarios: formValues.comentarios,
+        direccion: formValues.direccion
       };
 
       const response = await this.edgeService.createOrder(this.cartItems(), payload);
@@ -146,9 +150,9 @@ export class Checkout implements OnInit {
 
   private buildWhatsAppUrl(orderId: string, formValues: any): string {
     const lines = [
-      'Hola Zona Green, acabo de realizar un pedido:',
+      'Hola Zona Green, acabo de realizar la siguiente selección:',
       '',
-      '*Detalles de la compra:*',
+      '*Detalles:*',
       ...this.cartDetails().map((item) => {
         const name = item.producto?.nombre || 'Producto';
         const formato = item.producto?.es_por_gramos ? ` (${item.cartLine.paquete_gramos}g)` : '';
@@ -161,7 +165,7 @@ export class Checkout implements OnInit {
       `*Comentarios:* ${formValues.comentarios}`,
       '',
       orderId ? `*Número de Orden:* ${orderId}` : '',
-      'Quedo atento(a) para coordinar el aporte y la entrega. ¡Gracias!'
+      'Quedo atento(a) para coordinar el aporte. ¡Gracias!'
     ];
 
     const text = encodeURIComponent(lines.join('\n'));

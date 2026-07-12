@@ -15,6 +15,10 @@ export const roleGuard: CanActivateFn = (route, state) => {
 
   const findUserRole = userRole.find((role) => role.nombre === customerRole);
 
+  if (userStore.perfil().status !== 'activo') {
+    return router.parseUrl('/home');
+  }
+
   if (findUserRole?.urls_permitidas.includes(zone)) {
     return true;
   }

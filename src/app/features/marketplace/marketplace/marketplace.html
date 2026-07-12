@@ -1,14 +1,14 @@
-<div class="mx-auto max-w-7xl space-y-8 p-4 md:p-8 pt-12">
+<div class="mx-auto max-w-7xl space-y-8 p-4 pt-14">
 
   <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
     <div>
-      <h1 class="text-4xl font-extrabold text-[#1d341c] tracking-tight">Marketplace</h1>
-      <p class="mt-2 text-[#4b5b44]">Busca y encuentra productos frescos y variantes por nombre o etiquetas.
+      <h1 class="text-4xl font-extrabold text-[#1d341c] tracking-tight">Selección informada</h1>
+      <p class="mt-2 text-[#4b5b44]">Busca opciones disponibles
       </p>
     </div>
 
     <a routerLink="/marketplace/carrito" pButton><i class="pi pi-shopping-cart"></i>
-      Ver mi carrito
+      Ver mi selección
     </a>
   </div>
 
@@ -96,14 +96,11 @@
           Trayendo más existencias...
         </div>
         } @else if (hasMore()) {
-        <button type="button" (click)="loadMore()"
-          class="rounded-full border border-[#d7dfc7] bg-white px-10 py-3 text-sm font-bold text-[#1f6c2f] shadow-sm transition-all hover:bg-[#eef6df] hover:border-[#1f6c2f] hover:shadow active:scale-98">
-          Ver más productos
-        </button>
+        <p-button type="button" (click)="loadMore()" label="Ver más productos" rounded="true"
+          variant="outlined"></p-button>
         } @else {
-        <p class="text-xs font-semibold tracking-wide text-[#8a997a] uppercase bg-[#f8faf2] px-4 py-1.5 rounded-full">
-          Has llegado al final del catálogo
-        </p>
+        <p-button type="button" (click)="goToTop()" icon="pi pi-chevron-up" label="Volver arriba" iconPos="left"
+          rounded="true" variant="outlined"></p-button>
         }
       </div>
     </div>

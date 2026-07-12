@@ -11,8 +11,8 @@ export type Json =
     | Json[];
 
 export type EstadoOrden =
-    | 'pendiente'
-    | 'pagado'
+    | 'seleccion'
+    | 'aporte'
     | 'en_proceso'
     | 'enviado'
     | 'entregado'
@@ -96,6 +96,7 @@ export interface PresentacionProducto {
     gramos: number;
     precio: number;
     stock: number;
+    sku: string;
 }
 
 export interface Producto {
@@ -113,6 +114,7 @@ export interface Producto {
     presentaciones: PresentacionProducto[]; // Lista de paquetes
     created_at: string | null;
     updated_at: string | null;
+    reservado?: number;
 }
 
 export interface Carrito {
@@ -136,6 +138,7 @@ export interface Orden {
     tipo_entrega: string;
     updated_at: string | null;
     tracking: Tracking[];
+    direccion: string
 }
 
 export interface Tracking {

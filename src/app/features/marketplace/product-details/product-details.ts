@@ -51,13 +51,39 @@ export class ProductDetails {
   });
 
   /** Stock a mostrar: el de la presentación seleccionada o el stock_total */
-  protected readonly displayedStock = computed(() => {
+  protected readonly maxAvailableUnits = computed(() => {
     const prod = this.product();
     if (!prod) return 0;
+    const reservado = prod.reservado ?? 0;
+
+    const pGramos = prod.es_por_gramos ? this.selectedGrams() : null;
+    const existingItem = this.cartStore.items().find(i => i.producto_id === prod.id && (i.paquete_gramos ?? null) === pGramos);
+    const existingQty = existingItem ? existingItem.cantidad : 0;
+
     if (prod.es_por_gramos) {
-      return this.selectedPresentation()?.stock ?? 0;
+      const pres = this.selectedPresentation();
+      const presStock = pres?.stock ?? 0;
+      const gramos = pres?.gramos ?? 1;
+
+      const remainingPresStock = Math.max(0, presStock - existingQty);
+      const remainingGlobalGrams = Math.max(0, prod.stock_total - reservado);
+      const remainingGlobalBags = Math.floor(remainingGlobalGrams / gramos);
+      
+      return Math.min(remainingPresStock, remainingGlobalBags);
+    } else {
+      return Math.max(0, prod.stock_total - reservado);
     }
-    return prod.stock_total;
+  });
+
+  protected readonly reservedAmountText = computed(() => {
+    const prod = this.product();
+    if (!prod) return '';
+    const reservado = prod.reservado ?? 0;
+    if (prod.es_por_gramos) {
+      return `${reservado} gramos reservados (global)`;
+    } else {
+      return `${reservado} unidades reservadas`;
+    }
   });
 
   protected readonly canAdd = computed(() => {
@@ -65,7 +91,7 @@ export class ProductDetails {
     if (!prod) return false;
     const qty = this.quantity();
     if (qty <= 0) return false;
-    if (qty > this.displayedStock()) return false;
+    if (qty > this.maxAvailableUnits()) return false;
     if (prod.es_por_gramos && this.selectedGrams() === null) return false;
     return true;
   });
@@ -117,13 +143,19 @@ export class ProductDetails {
   }
 
   protected async addToCart(): Promise<void> {
+    const prod = this.product();
+    if (!prod) return;
+
+    if (this.quantity() > this.maxAvailableUnits()) {
+      this.toastService.error(`No hay suficiente stock. Disponible para agregar: ${this.maxAvailableUnits()}`);
+      return;
+    }
+
     if (!this.canAdd()) {
       return;
     }
 
     this.adding.set(true);
-
-    console.log(this.quantity())
 
     try {
       const prod = this.product();
@@ -139,6 +171,8 @@ export class ProductDetails {
       });
 
       this.added.set(true);
+      await this.loadProduct(prod.id); // Reload product to refresh reservado
+
       setTimeout(() => {
         this.added.set(false);
       }, 3000);
@@ -151,7 +185,10 @@ export class ProductDetails {
   }
 
   protected updateQuantity(value: string): void {
-    this.quantity.set(Math.max(1, parseInt(value, 10) || 1));
+    const max = this.maxAvailableUnits();
+    let val = parseInt(value, 10) || 1;
+    val = Math.max(1, Math.min(val, max));
+    this.quantity.set(val);
   }
 
   protected get productImages(): string[] {

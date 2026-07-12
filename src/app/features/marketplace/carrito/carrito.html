@@ -28,8 +28,8 @@
       <div
         class="grid gap-4 border-t items-center  border-[#e4ebdd] p-4 text-sm text-[#2e391c] md:grid-cols-[3fr_1fr_1fr_1fr]">
         <div class="space-y-2">
-          <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }} {{
-            item.cartLine?.paquete_gramos}}</p>
+          <p class="font-semibold">{{ item.producto?.nombre || 'Producto no disponible' }}
+            @if(item.cartLine.paquete_gramos) { ({{item.cartLine.paquete_gramos}} g) } </p>
           <p class="text-xs text-[#5f6c4f]">{{ item.unitPrice | moneda }}/cu</p>
         </div>
         <div class="flex items-center gap-2">
