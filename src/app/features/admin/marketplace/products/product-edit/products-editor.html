@@ -58,9 +58,9 @@
     } @else {
     <!-- Mostrar el stock total calculado como lectura -->
     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-4">
-      <p class="text-sm font-semibold text-slate-700">Stock total calculado:</p>
+      <p class="text-sm font-semibold text-slate-700">Stock total calculado (en gramos):</p>
       <p class="text-2xl font-bold text-slate-900 mt-1">
-        {{ totalStockFromPresentations() }} unidades/paquetes
+        {{ totalStockFromPresentations() }} g
       </p>
     </div>
     }
@@ -69,8 +69,7 @@
     <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4">
       <div class="mb-4 flex items-center justify-between gap-3">
         <div>
-          <p class="text-sm font-semibold text-slate-900">Presentaciones del producto (Venta por gramos)</p>
-          <p class="text-sm text-slate-500">Agrega los diferentes gramajes con sus respectivos precios y stock.</p>
+          <p class="text-sm font-semibold text-slate-900">Presentaciones</p>
         </div>
       </div>
 
@@ -95,6 +94,13 @@
             class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
             [value]="newPresentation().stock" (change)="setNewPresentationField('stock', $any($event.target).value)"
             placeholder="Cantidad disponible" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">SKU</label>
+          <input type="text"
+            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
+            [value]="newPresentation().sku" (change)="setNewPresentationField('sku', $any($event.target).value)"
+            placeholder="SKU de la presentación" [readonly]="true" disabled />
         </div>
       </div>
 

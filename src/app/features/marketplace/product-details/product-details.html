@@ -65,10 +65,6 @@
             [variant]="selectedGrams() === pres.gramos ? undefined : 'outlined'" (click)="selectGrams(pres.gramos)" />
           }
         </div>
-        @if (selectedPresentation()) {
-        <p class="text-xs text-[#55644d]">Stock disponible para esta presentación: {{ selectedPresentation()!.stock }}
-        </p>
-        }
       </div>
       }
 
@@ -77,9 +73,16 @@
         <label class="block text-sm font-semibold text-[#425137]">Cantidad</label>
         <input type="number"
           class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
-          [value]="quantity()" (change)="updateQuantity($any($event.target).value)" min="1" [max]="displayedStock()"
+          [value]="quantity()" (change)="updateQuantity($any($event.target).value)" min="1" [max]="maxAvailableUnits()"
           placeholder="Ingresar cantidad" />
-        <p class="text-sm text-[#55644d]">Stock disponible: {{ displayedStock() }}</p>
+
+        <div class="text-sm text-[#55644d] space-y-1 mt-2">
+          @if (!product()!.es_por_gramos) {
+          <p>Stock físico total: {{ product()!.stock_total }} unidades</p>
+          }
+          <p class="text-[#d97706]">{{ reservedAmountText() }}</p>
+          <p class="font-semibold text-[#1f6c2f]">Disponible para agregar: {{ maxAvailableUnits() }} unidades</p>
+        </div>
       </div>
 
       @if (added()) {

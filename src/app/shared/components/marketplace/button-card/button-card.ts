@@ -6,6 +6,7 @@ import { CartStore } from '@src/app/core/state/card/card.state';
 //primeng
 import { ButtonModule } from 'primeng/button';
 import { Producto } from '@src/app/shared/models/interfaces/db/db';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
 
 @Component({
   selector: 'app-cart-button',
@@ -52,6 +53,7 @@ import { Producto } from '@src/app/shared/models/interfaces/db/db';
 export class CartButtonComponent implements OnInit, OnDestroy {
   // 1. Inyectamos el Store
   cartStore = inject(CartStore);
+  toastService = inject(ToastService);
 
   // 2. Entradas del componente
   product = input.required<Producto>();
@@ -76,9 +78,31 @@ export class CartButtonComponent implements OnInit, OnDestroy {
     return lq !== null ? lq : this.storeQuantity();
   });
 
+  getMaxTotalQuantity(): number {
+    const p = this.product();
+    const pGramos = this.paquete_gramos();
+    const reservado = p.reservado ?? 0;
+    
+    const cartItem = this.cartItem();
+    const existingQty = cartItem ? cartItem.cantidad : 0;
+
+    if (p.es_por_gramos && pGramos != null) {
+      const pres = p.presentaciones?.find(x => x.gramos === pGramos);
+      const presStock = pres ? pres.stock : 0;
+      
+      const remainingPresStock = Math.max(0, presStock - existingQty);
+      const availableGrams = Math.max(0, p.stock_total - reservado);
+      const maxBagsFromGrams = Math.floor(availableGrams / pGramos);
+      
+      return existingQty + Math.min(remainingPresStock, maxBagsFromGrams);
+    } else {
+      return existingQty + Math.max(0, p.stock_total - reservado);
+    }
+  }
+
   canIncrease = computed(() => {
     const q = this.displayQuantity();
-    return q <= this.product().stock_total;
+    return q < this.getMaxTotalQuantity();
   });
 
   // 5. Configuración de RxJS para el Debounce
@@ -106,6 +130,14 @@ export class CartButtonComponent implements OnInit, OnDestroy {
   updateQuantity(delta: number) {
     const current = this.displayQuantity();
     const newQty = Math.max(0, current + delta); // Evita números negativos
+
+    if (delta > 0) {
+      const available = this.getMaxTotalQuantity();
+      if (newQty > available) {
+        this.toastService.error(`No hay suficiente stock. Máximo permitido: ${available}`);
+        return;
+      }
+    }
 
     // 1. Cambiamos el número en pantalla instantáneamente
     this.localQuantity.set(newQty);

@@ -92,13 +92,14 @@ export class ProductsEditor implements OnInit {
     gramos: 0,
     precio: 0,
     stock: 0,
+    sku: crypto.randomUUID()
   });
   readonly editingPresentationIndex = signal<number | null>(null);
 
   readonly editingProductId = signal<string | null>(null);
 
   readonly totalStockFromPresentations = computed(() =>
-    this.presentations().reduce((sum, p) => sum + p.stock, 0)
+    this.presentations().reduce((sum, p) => sum + (p.stock * p.gramos), 0)
   );
 
   readonly statusOptions: SelectOption[] = [
@@ -209,7 +210,7 @@ export class ProductsEditor implements OnInit {
       precio: isGrams ? 0 : Number(model.precio) || 0,
       costo: Number(model.costo),
       stock_total: isGrams
-        ? currentPresentations.reduce((sum, p) => sum + p.stock, 0)
+        ? currentPresentations.reduce((sum, p) => sum + (p.stock * p.gramos), 0)
         : Number(model.stock_total),
       status: model.status,
       tags: this.selectedTagNames(),
@@ -332,6 +333,7 @@ export class ProductsEditor implements OnInit {
       gramos: 0,
       precio: 0,
       stock: 0,
+      sku: crypto.randomUUID()
     });
   }
 

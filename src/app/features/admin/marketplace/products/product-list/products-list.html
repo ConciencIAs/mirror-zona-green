@@ -45,7 +45,7 @@
               <tr>
                 <th class="px-4 py-3">Nombre</th>
                 <th class="px-4 py-3">SKU</th>
-                <th class="px-4 py-3">Precio</th>
+                <th class="px-4 py-3">Detalles</th>
                 <th class="px-4 py-3">Stock</th>
                 <th class="px-4 py-3">Estado</th>
                 <th class="px-4 py-3">Acciones</th>
@@ -56,7 +56,9 @@
               <tr>
                 <td class="px-4 py-4 font-medium text-slate-900">{{ product.nombre }}</td>
                 <td class="px-4 py-4">{{ product.sku }}</td>
-                <td class="px-4 py-4">${{ product.precio }}</td>
+                <td class="px-4 py-4">
+                  <p-button label="Ver detalles" [text]="true" (click)="showDetails(product)"></p-button>
+                </td>
                 <td class="px-4 py-4">{{ product.stock_total }}</td>
                 <td class="px-4 py-4">
                   <p-button [label]="product.status" [rounded]="true"
@@ -88,3 +90,28 @@
     </p-tabpanel>
   </p-tabpanels>
 </p-tabs>
+
+<p-dialog [header]="'Detalles: ' + selectedProductName()" [(visible)]="detailsDialogVisible" [modal]="true" [style]="{ width: '600px' }" [breakpoints]="{ '960px': '90vw' }">
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-left text-sm text-slate-600">
+      <thead class="border-b border-slate-200 text-slate-900">
+        <tr>
+          <th class="px-4 py-3">SKU</th>
+          <th class="px-4 py-3">Precio</th>
+          <th class="px-4 py-3">Gramos</th>
+          <th class="px-4 py-3">Stock</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @for (row of selectedProductDetails(); track row.sku) {
+        <tr>
+          <td class="px-4 py-4 font-medium text-slate-900">{{ row.sku }}</td>
+          <td class="px-4 py-4">${{ row.precio }}</td>
+          <td class="px-4 py-4">{{ row.gramos ? row.gramos + 'g' : 'N/A' }}</td>
+          <td class="px-4 py-4">{{ row.stock }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</p-dialog>

@@ -11,10 +11,20 @@ import { ButtonModule, ButtonSeverity } from 'primeng/button';
 import { TabsModule } from 'primeng/tabs';
 import { Tags } from '@src/app/features/admin/marketplace/custom/tags/tags';
 
+import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+
+interface ProductDetailRow {
+  sku: string;
+  precio: number;
+  gramos?: number | null;
+  stock: number;
+}
+
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [ButtonModule, TabsModule, Tags],
+  imports: [ButtonModule, TabsModule, Tags, TooltipModule, DialogModule],
   templateUrl: './products-list.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
@@ -29,6 +39,10 @@ export class ProductsList {
   readonly loading = signal(true);
   readonly products = signal<Producto[]>([]);
   readonly tab = signal<'productos' | 'tags'>('productos');
+
+  readonly detailsDialogVisible = signal(false);
+  readonly selectedProductDetails = signal<ProductDetailRow[]>([]);
+  readonly selectedProductName = signal<string>('');
 
   constructor() {
     this.loadInitialData();
@@ -94,5 +108,32 @@ export class ProductsList {
       default:
         return 'secondary';
     }
+  }
+
+  showDetails(product: Producto) {
+    this.selectedProductName.set(product.nombre);
+    
+    let rows: ProductDetailRow[] = [];
+    
+    if (product.presentaciones && product.presentaciones.length > 0) {
+      rows = product.presentaciones.map(p => ({
+        sku: p.sku,
+        precio: p.precio,
+        gramos: p.gramos,
+        stock: p.stock
+      }));
+    } else {
+      rows = [
+        {
+          sku: product.sku,
+          precio: product.precio,
+          stock: product.stock_total,
+          gramos: null
+        }
+      ];
+    }
+    
+    this.selectedProductDetails.set(rows);
+    this.detailsDialogVisible.set(true);
   }
 }

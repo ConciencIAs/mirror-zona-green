@@ -109,6 +109,35 @@ export const CartStore = signalStore(
       }
     };
 
+    const updateReservado = async (producto_id: string, cantidadDelta: number, paquete_gramos?: number | null) => {
+      if (!producto_id || cantidadDelta === 0) return;
+      
+      const actualDelta = paquete_gramos ? (cantidadDelta * paquete_gramos) : cantidadDelta;
+
+      try {
+        const { data, error } = await supabaseDbService
+          .from(TableName.PRODUCTOS)
+          .select('reservado')
+          .eq('id', producto_id)
+          .single();
+
+        if (error) {
+          console.error('Error obteniendo reservado:', error);
+          return;
+        }
+
+        const current = data?.reservado || 0;
+        const newReservado = Math.max(0, current + actualDelta);
+
+        await supabaseDbService
+          .from(TableName.PRODUCTOS)
+          .update({ reservado: newReservado })
+          .eq('id', producto_id);
+      } catch (e) {
+        console.error('Error al actualizar reservado:', e);
+      }
+    };
+
     // --- MÉTODOS DEL STORE ---
 
     return {
@@ -145,6 +174,7 @@ export const CartStore = signalStore(
 
         if (updatedItem) {
           persistCartItem(updatedItem);
+          updateReservado(nuevoItem.producto_id!, initialQuantity, pGramos);
           toastService.success('Producto agregado al carrito.');
         }
       },
@@ -160,6 +190,7 @@ export const CartStore = signalStore(
         }));
 
         removeCartItemDB(itemTarget);
+        updateReservado(itemTarget.producto_id, -itemTarget.cantidad, itemTarget.paquete_gramos);
       },
 
       increaseQuantity(itemTarget: Carrito) {
@@ -176,7 +207,10 @@ export const CartStore = signalStore(
           })
         }));
 
-        if (updatedItem) persistCartItem(updatedItem);
+        if (updatedItem) {
+          persistCartItem(updatedItem);
+          updateReservado(itemTarget.producto_id, 1, itemTarget.paquete_gramos);
+        }
       },
 
       decreaseQuantity(itemTarget: Carrito) {
@@ -201,17 +235,23 @@ export const CartStore = signalStore(
 
         if (updatedItem) {
           persistCartItem(updatedItem);
+          updateReservado(itemTarget.producto_id, -1, itemTarget.paquete_gramos);
         } else if (itemToRemove) {
           removeCartItemDB(itemToRemove);
+          updateReservado(itemTarget.producto_id, -1, itemTarget.paquete_gramos);
         }
       },
 
       clearCart() {
+        const currentItems = store.items();
         patchState(store, { items: [] });
         const user = supabaseAuthService.getSession().session?.user;
         if (user?.id) {
           supabaseDbService.from(TableName.CARRITO).delete().match({ usuario_id: user.id });
         }
+        currentItems.forEach(item => {
+          updateReservado(item.producto_id, -item.cantidad, item.paquete_gramos);
+        });
       },
 
       setCart(cartItems: Carrito[]) {
