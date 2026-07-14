@@ -25,6 +25,42 @@
       </span>
     </div>
 
+    <!-- ★ Rating -->
+    <div class="mb-3 flex items-center gap-1.5">
+      <div class="flex items-center gap-0.5">
+        @for (star of stars; track star) {
+          @let fill = starFill(star);
+          <svg class="h-4 w-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            @if (fill === 'full') {
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                fill="#f59e0b" stroke="#d97706" stroke-width="0.5" stroke-linejoin="round"/>
+            } @else if (fill === 'half') {
+              <!-- Mitad llena (clip izquierdo) -->
+              <defs>
+                <clipPath [attr.id]="'half-' + product().id + '-' + star">
+                  <rect x="0" y="0" width="12" height="24"/>
+                </clipPath>
+              </defs>
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                fill="#e5e7eb" stroke="#d1d5db" stroke-width="0.5" stroke-linejoin="round"/>
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                fill="#f59e0b" stroke="#d97706" stroke-width="0.5" stroke-linejoin="round"
+                [attr.clip-path]="'url(#half-' + product().id + '-' + star + ')'"/>
+            } @else {
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                fill="#e5e7eb" stroke="#d1d5db" stroke-width="0.5" stroke-linejoin="round"/>
+            }
+          </svg>
+        }
+      </div>
+      @if (hasRating()) {
+        <span class="text-xs font-semibold text-[#55644d]">{{ ratingAvg() | number:'1.1-1' }}</span>
+        <span class="text-[10px] text-[#8a997a]">({{ ratingCount() }})</span>
+      } @else {
+        <span class="text-[10px] text-[#a5b393] italic">Sin reseñas aún</span>
+      }
+    </div>
+
     <p class="mb-4 text-sm leading-relaxed text-[#55644d] line-clamp-2">
       {{ product().descripcion || 'Sin descripción disponible' }}
     </p>

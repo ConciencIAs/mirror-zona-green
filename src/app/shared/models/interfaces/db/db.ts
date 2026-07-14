@@ -110,11 +110,23 @@ export interface Producto {
     status: 'activo' | 'inactivo';
     stock_total: number;
     tags: string[] | null;
-    es_por_gramos: boolean; // <-- Nuestra nueva flag
-    presentaciones: PresentacionProducto[]; // Lista de paquetes
+    es_por_gramos: boolean;
+    presentaciones: PresentacionProducto[];
     created_at: string | null;
     updated_at: string | null;
     reservado?: number;
+    rating_average?: number;
+    rating_count?: number;
+}
+
+export interface ProductReview {
+    id?: string;
+    product_id: string;
+    user_id: string;
+    rating: number;
+    comment: string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface Carrito {
@@ -155,6 +167,8 @@ export interface SnapshotAnalitica {
     total_gramos_entregados: number | null;
     precio_unitario: number;
     subtotal: number;
+    /** ID real del producto en la tabla `productos` (presente en órdenes nuevas) */
+    id?: string;
     // Guardamos el usuario a nivel de ítem también, útil para cruzar datos en Looker/PowerBI
     comprador_nombre: string | null;
     comprador_correo: string;

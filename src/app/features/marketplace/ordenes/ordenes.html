@@ -36,18 +36,67 @@
       </div>
 
       <div class="mt-6 grid gap-4 md:grid-cols-[1fr_1fr]">
+        <!-- ── Productos ────────────────────────────────────── -->
         <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
           <h2 class="text-sm font-semibold text-[#1f6c2f]">Productos</h2>
           <div class="mt-3 space-y-3 text-sm text-[#55644d]">
-            @for (item of order.lista_productos; track item) {
+            @for (item of order.lista_productos; track $index) {
             <div class="rounded-2xl border border-[#dfe8d6] bg-[#f7fbf1] p-3">
-              <p class="font-semibold text-[#1d341c]">{{ $any(item).nombre || $any(item).producto || 'Artículo' }}</p>
-              <p>Cantidad: {{ $any(item).cantidad || $any(item).qty || 1 }}</p>
-              <p>Precio: {{ $any(item).precio || $any(item).precio_unitario || 0 | moneda }}</p>
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-[#1d341c] truncate">{{ $any(item).nombre || $any(item).producto || 'Artículo' }}</p>
+                  <p>Cantidad: {{ $any(item).cantidad || $any(item).qty || 1 }}</p>
+                  <p>Precio: {{ $any(item).precio || $any(item).precio_unitario || 0 | moneda }}</p>
+                </div>
+
+                <!-- Botón Opinar (solo órdenes entregadas) -->
+                @if (order.status === 'entregado') {
+                  @let productId = getProductId($any(item));
+                  @let existing = getExistingReview(productId);
+
+                  <button
+                    type="button"
+                    (click)="openReviewModal(productId, $any(item).nombre || 'Producto')"
+                    class="flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition"
+                    [class]="existing
+                      ? 'bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100'
+                      : 'bg-[#eef6df] border border-[#c4d9a8] text-[#1f6c2f] hover:bg-[#ddf0c4]'"
+                  >
+                    <!-- Icono estrella -->
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    {{ existing ? 'Editar opinión' : 'Opinar' }}
+                  </button>
+                }
+              </div>
+
+              <!-- Mini preview de reseña existente -->
+              @if (order.status === 'entregado') {
+                @let pid = getProductId($any(item));
+                @let rev = getExistingReview(pid);
+                @if (rev) {
+                <div class="mt-2 flex items-center gap-1.5 rounded-xl bg-amber-50 border border-amber-100 px-3 py-1.5">
+                  <div class="flex items-center gap-0.5">
+                    @for (s of [1,2,3,4,5]; track s) {
+                      <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                          [attr.fill]="s <= rev.rating ? '#f59e0b' : '#e5e7eb'"
+                          [attr.stroke]="s <= rev.rating ? '#d97706' : '#d1d5db'"
+                          stroke-width="0.5"/>
+                      </svg>
+                    }
+                  </div>
+                  <p class="text-xs text-amber-700 truncate">{{ rev.comment }}</p>
+                </div>
+                }
+              }
             </div>
             }
           </div>
         </div>
+
+        <!-- ── Resumen ─────────────────────────────────────── -->
         <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
           <h2 class="text-sm font-semibold text-[#1f6c2f]">Resumen</h2>
           <div class="mt-4 space-y-3 text-sm text-[#55644d]">
@@ -109,3 +158,17 @@
   }
   }
 </div>
+
+<!-- ══════════════════════════════════════════════════
+     MODAL DE RESEÑA
+══════════════════════════════════════════════════ -->
+@if (reviewTarget()) {
+  <app-product-review-modal
+    [productId]="reviewTarget()!.productId"
+    [productName]="reviewTarget()!.productName"
+    [existingReview]="reviewTarget()!.existing"
+    (closed)="closeReviewModal()"
+    (saved)="onReviewSaved($event)"
+    (deleted)="onReviewDeleted($event)"
+  />
+}
