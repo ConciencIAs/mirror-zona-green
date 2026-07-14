@@ -450,3 +450,230 @@ CREATE POLICY "Carrito - Selección" ON public.carrito FOR SELECT USING (auth.ui
 CREATE POLICY "Carrito - Inserción" ON public.carrito FOR INSERT WITH CHECK (auth.uid() = usuario_id);
 CREATE POLICY "Carrito - Actualización" ON public.carrito FOR UPDATE USING (auth.uid() = usuario_id);
 CREATE POLICY "Carrito - Eliminación" ON public.carrito FOR DELETE USING (auth.uid() = usuario_id);
+
+
+-------------------------------------------------------
+-- AGREGAR COLUMNAS A PRODUCTOS
+-------------------------------------------------------
+
+ALTER TABLE public.productos
+ADD COLUMN IF NOT EXISTS rating_average NUMERIC(3,2) NOT NULL DEFAULT 0,
+ADD COLUMN IF NOT EXISTS rating_count INTEGER NOT NULL DEFAULT 0;
+
+-------------------------------------------------------
+-- TABLA DE RESEÑAS
+-------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS public.product_reviews (
+
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    product_id UUID NOT NULL
+        REFERENCES public.productos(id)
+        ON DELETE CASCADE,
+
+    user_id UUID NOT NULL
+        REFERENCES auth.users(id)
+        ON DELETE CASCADE,
+
+    rating SMALLINT NOT NULL
+        CHECK (rating BETWEEN 1 AND 5),
+
+    comment TEXT,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CONSTRAINT uq_product_review
+        UNIQUE(product_id,user_id)
+
+);
+
+-------------------------------------------------------
+-- ÍNDICES
+-------------------------------------------------------
+
+CREATE INDEX IF NOT EXISTS idx_review_product
+ON public.product_reviews(product_id);
+
+CREATE INDEX IF NOT EXISTS idx_review_user
+ON public.product_reviews(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_review_created
+ON public.product_reviews(created_at DESC);
+
+-------------------------------------------------------
+-- UPDATE updated_at
+-------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.set_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_review_updated_at
+ON public.product_reviews;
+
+CREATE TRIGGER trg_review_updated_at
+BEFORE UPDATE
+ON public.product_reviews
+FOR EACH ROW
+EXECUTE FUNCTION public.set_updated_at();
+
+-------------------------------------------------------
+-- RECALCULAR PROMEDIO
+-------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.update_product_rating()
+RETURNS trigger
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    product UUID;
+BEGIN
+
+    product := COALESCE(NEW.product_id, OLD.product_id);
+
+    UPDATE public.productos p
+    SET
+
+        rating_average = COALESCE((
+            SELECT ROUND(AVG(rating)::numeric,2)
+            FROM public.product_reviews
+            WHERE product_id = product
+        ),0),
+
+        rating_count = (
+            SELECT COUNT(*)
+            FROM public.product_reviews
+            WHERE product_id = product
+        )
+
+    WHERE p.id = product;
+
+    RETURN NULL;
+
+END;
+$$;
+
+-------------------------------------------------------
+-- TRIGGERS
+-------------------------------------------------------
+
+DROP TRIGGER IF EXISTS trg_review_insert
+ON public.product_reviews;
+
+CREATE TRIGGER trg_review_insert
+AFTER INSERT
+ON public.product_reviews
+FOR EACH ROW
+EXECUTE FUNCTION public.update_product_rating();
+
+
+DROP TRIGGER IF EXISTS trg_review_update
+ON public.product_reviews;
+
+CREATE TRIGGER trg_review_update
+AFTER UPDATE
+ON public.product_reviews
+FOR EACH ROW
+EXECUTE FUNCTION public.update_product_rating();
+
+
+DROP TRIGGER IF EXISTS trg_review_delete
+ON public.product_reviews;
+
+CREATE TRIGGER trg_review_delete
+AFTER DELETE
+ON public.product_reviews
+FOR EACH ROW
+EXECUTE FUNCTION public.update_product_rating();
+
+-------------------------------------------------------
+-- RLS
+-------------------------------------------------------
+
+ALTER TABLE public.product_reviews
+ENABLE ROW LEVEL SECURITY;
+
+-------------------------------------------------------
+-- SELECT
+-------------------------------------------------------
+
+DROP POLICY IF EXISTS "reviews_select"
+ON public.product_reviews;
+
+CREATE POLICY "reviews_select"
+ON public.product_reviews
+FOR SELECT
+USING (true);
+
+-------------------------------------------------------
+-- INSERT
+-------------------------------------------------------
+
+DROP POLICY IF EXISTS "reviews_insert"
+ON public.product_reviews;
+
+CREATE POLICY "reviews_insert"
+ON public.product_reviews
+FOR INSERT
+TO authenticated
+WITH CHECK (
+    auth.uid() = user_id
+);
+
+-------------------------------------------------------
+-- UPDATE
+-------------------------------------------------------
+
+DROP POLICY IF EXISTS "reviews_update"
+ON public.product_reviews;
+
+CREATE POLICY "reviews_update"
+ON public.product_reviews
+FOR UPDATE
+TO authenticated
+USING (
+    auth.uid() = user_id
+)
+WITH CHECK (
+    auth.uid() = user_id
+);
+
+-------------------------------------------------------
+-- DELETE
+-------------------------------------------------------
+
+DROP POLICY IF EXISTS "reviews_delete"
+ON public.product_reviews;
+
+CREATE POLICY "reviews_delete"
+ON public.product_reviews
+FOR DELETE
+TO authenticated
+USING (
+    auth.uid() = user_id
+);
+
+-------------------------------------------------------
+-- EVITAR QUE LOS USUARIOS MODIFIQUEN LOS RATINGS
+-------------------------------------------------------
+
+REVOKE UPDATE (rating_average, rating_count)
+ON public.productos
+FROM authenticated;
+
+REVOKE UPDATE (rating_average, rating_count)
+ON public.productos
+FROM anon;
+
+
