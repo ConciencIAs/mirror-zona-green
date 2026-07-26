@@ -12,7 +12,12 @@ import { ImageModule } from 'primeng/image';
   imports: [CommonModule, RouterModule, CartButtonComponent, CarouselModule, ImageModule],
   templateUrl: './product-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: ``,
+  styles: `
+    :host ::ng-deep .p-carousel .p-carousel-item {
+      flex: 1 0 100% !important;
+      width: 100% !important;
+    }
+  `,
 })
 export class ProductCard {
   product = input.required<Producto>();
