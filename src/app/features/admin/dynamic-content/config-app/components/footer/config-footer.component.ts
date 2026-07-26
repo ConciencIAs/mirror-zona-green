@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,7 +13,8 @@ import { PageConfigDbService } from '@src/app/core/services/supabase/dynamic-con
   selector: 'app-config-footer',
   standalone: true,
   imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, TooltipModule],
-  templateUrl: './config-footer.component.html'
+  changeDetection: ChangeDetectionStrategy.Eager,
+  templateUrl: './config-footer.component.html',
 })
 export class ConfigFooterComponent implements OnInit {
   public readonly configStore = inject(AppConfigStore);
@@ -27,7 +28,7 @@ export class ConfigFooterComponent implements OnInit {
     texto_copyright: '',
     contact: { email: '', direccion: '', whatsapp_phone: '', whatsapp_link: '' },
     social: { facebook: '', instagram: '', linkedin: '', youtube: '' },
-    sections: []
+    sections: [],
   });
 
   newFooterSectionTitle = signal('');
@@ -41,7 +42,10 @@ export class ConfigFooterComponent implements OnInit {
     this.loading.set(true);
     try {
       await this.configStore.ensureFooter();
-      const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+      const deepClone = <T>(obj: T): T =>
+        typeof structuredClone !== 'undefined'
+          ? structuredClone(obj)
+          : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.footerConfig()));
     } catch (err) {
       this.toastService.error('Error al cargar la configuración del Footer');
@@ -56,7 +60,10 @@ export class ConfigFooterComponent implements OnInit {
       const res = await this.pageConfigDbService.saveConfigByName('footer', this.config());
       if (res.error) throw res.error;
       await this.configStore.ensureFooter(true);
-      const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+      const deepClone = <T>(obj: T): T =>
+        typeof structuredClone !== 'undefined'
+          ? structuredClone(obj)
+          : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.footerConfig()));
       this.toastService.success('Footer actualizado correctamente');
     } catch (err) {

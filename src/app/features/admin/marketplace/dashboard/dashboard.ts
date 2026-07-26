@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -61,7 +61,8 @@ export interface UsuarioResumen {
     TabsModule,
     TooltipModule,
   ],
-  templateUrl: './dashboard.html'
+  changeDetection: ChangeDetectionStrategy.Eager,
+  templateUrl: './dashboard.html',
 })
 export class DashboardComponent implements OnInit {
   private readonly dbService = inject(SupabaseDbService);
@@ -181,7 +182,7 @@ export class DashboardComponent implements OnInit {
 
   private aplicarFiltroUsuario() {
     if (this.usuarioSeleccionado) {
-      const filtradas = this.ordenesDb.filter(o => o.correo_cliente === this.usuarioSeleccionado);
+      const filtradas = this.ordenesDb.filter((o) => o.correo_cliente === this.usuarioSeleccionado);
       this.analizarDatos(filtradas);
     } else {
       this.analizarDatos(this.ordenesDb);
@@ -190,7 +191,7 @@ export class DashboardComponent implements OnInit {
 
   private construirListaUsuarios(datos: Orden[]) {
     const mapaUsuarios = new Map<string, string>();
-    datos.forEach(orden => {
+    datos.forEach((orden) => {
       if (orden.correo_cliente && !mapaUsuarios.has(orden.correo_cliente)) {
         mapaUsuarios.set(orden.correo_cliente, orden.nombre_cliente || orden.correo_cliente);
       }
@@ -199,8 +200,8 @@ export class DashboardComponent implements OnInit {
       { label: 'Todos los usuarios', value: '' },
       ...Array.from(mapaUsuarios.entries()).map(([correo, nombre]) => ({
         label: `${nombre} (${correo})`,
-        value: correo
-      }))
+        value: correo,
+      })),
     ];
   }
 
@@ -212,9 +213,9 @@ export class DashboardComponent implements OnInit {
     this.totalVentas = datos.reduce((sum, o) => sum + (o.precio_total || 0), 0);
     this.ticketPromedio = this.totalOrdenes > 0 ? this.totalVentas / this.totalOrdenes : 0;
 
-    const canceladas = datos.filter(o => o.status === 'cancelado').length;
+    const canceladas = datos.filter((o) => o.status === 'cancelado').length;
     this.tasaCancelacion = this.totalOrdenes > 0 ? (canceladas / this.totalOrdenes) * 100 : 0;
-    this.ordenesCompletadas = datos.filter(o => o.status === 'entregado').length;
+    this.ordenesCompletadas = datos.filter((o) => o.status === 'entregado').length;
 
     // ── Contadores globales de productos ──
     let totalProductos = 0;
@@ -223,7 +224,7 @@ export class DashboardComponent implements OnInit {
     // ── Análisis por Producto (separado gramos / unidad) ──
     const mapaProductos = new Map<string, ProductoResumen>();
 
-    datos.forEach(orden => {
+    datos.forEach((orden) => {
       if (!orden.lista_productos) return;
       orden.lista_productos.forEach((prod: SnapshotAnalitica) => {
         const key = prod.sku || prod.nombre;
@@ -235,7 +236,7 @@ export class DashboardComponent implements OnInit {
           totalGramos: 0,
           ingresos: 0,
           ordenes: 0,
-          paquetesVendidos: []
+          paquetesVendidos: [],
         };
 
         actual.cantidad += prod.cantidad_comprada;
@@ -243,13 +244,16 @@ export class DashboardComponent implements OnInit {
         actual.ordenes += 1;
 
         if (prod.es_por_gramos) {
-          const gramos = prod.total_gramos_entregados || (prod.paquete_gramos || 0) * prod.cantidad_comprada;
+          const gramos =
+            prod.total_gramos_entregados || (prod.paquete_gramos || 0) * prod.cantidad_comprada;
           actual.totalGramos += gramos;
           totalGramos += gramos;
 
           // Desglose por paquete
           if (prod.paquete_gramos) {
-            const paqueteExistente = actual.paquetesVendidos.find(p => p.gramos === prod.paquete_gramos);
+            const paqueteExistente = actual.paquetesVendidos.find(
+              (p) => p.gramos === prod.paquete_gramos,
+            );
             if (paqueteExistente) {
               paqueteExistente.cantidadVendida += prod.cantidad_comprada;
               paqueteExistente.ingresos += prod.subtotal;
@@ -257,7 +261,7 @@ export class DashboardComponent implements OnInit {
               actual.paquetesVendidos.push({
                 gramos: prod.paquete_gramos,
                 cantidadVendida: prod.cantidad_comprada,
-                ingresos: prod.subtotal
+                ingresos: prod.subtotal,
               });
             }
           }
@@ -273,25 +277,25 @@ export class DashboardComponent implements OnInit {
 
     const todosProductos = Array.from(mapaProductos.values());
     this.topProductosGramos = todosProductos
-      .filter(p => p.es_por_gramos)
+      .filter((p) => p.es_por_gramos)
       .sort((a, b) => b.ingresos - a.ingresos);
 
     this.topProductosUnidad = todosProductos
-      .filter(p => !p.es_por_gramos)
+      .filter((p) => !p.es_por_gramos)
       .sort((a, b) => b.ingresos - a.ingresos);
 
     // ── Análisis por Estado (Donut chart) ──
     const conteoEstados: Record<string, number> = {};
-    datos.forEach(orden => {
+    datos.forEach((orden) => {
       conteoEstados[orden.status] = (conteoEstados[orden.status] || 0) + 1;
     });
 
-    this.chartLabels = Object.keys(conteoEstados).map(k => this.formatEstado(k));
+    this.chartLabels = Object.keys(conteoEstados).map((k) => this.formatEstado(k));
     this.chartSeries = Object.values(conteoEstados);
 
     // ── Análisis por Usuario ──
     const mapaUsuarios = new Map<string, UsuarioResumen>();
-    datos.forEach(orden => {
+    datos.forEach((orden) => {
       const correo = orden.correo_cliente || 'desconocido';
       const actual = mapaUsuarios.get(correo) || {
         nombre: orden.nombre_cliente || 'Sin nombre',
@@ -300,7 +304,7 @@ export class DashboardComponent implements OnInit {
         gastado: 0,
         ultimaOrden: null,
         productosComprados: 0,
-        gramosComprados: 0
+        gramosComprados: 0,
       };
 
       actual.totalOrdenes += 1;
@@ -314,7 +318,8 @@ export class DashboardComponent implements OnInit {
         orden.lista_productos.forEach((prod: SnapshotAnalitica) => {
           actual.productosComprados += prod.cantidad_comprada;
           if (prod.es_por_gramos) {
-            actual.gramosComprados += prod.total_gramos_entregados || (prod.paquete_gramos || 0) * prod.cantidad_comprada;
+            actual.gramosComprados +=
+              prod.total_gramos_entregados || (prod.paquete_gramos || 0) * prod.cantidad_comprada;
           }
         });
       }
@@ -322,18 +327,21 @@ export class DashboardComponent implements OnInit {
       mapaUsuarios.set(correo, actual);
     });
 
-    this.topUsuarios = Array.from(mapaUsuarios.values())
-      .sort((a, b) => b.gastado - a.gastado);
+    this.topUsuarios = Array.from(mapaUsuarios.values()).sort((a, b) => b.gastado - a.gastado);
 
     // ── Barras top 5 productos ──
     const top5 = todosProductos.sort((a, b) => b.ingresos - a.ingresos).slice(0, 5);
-    this.barChartSeries = [{
-      name: 'Ingresos',
-      data: top5.map(p => p.ingresos)
-    }];
+    this.barChartSeries = [
+      {
+        name: 'Ingresos',
+        data: top5.map((p) => p.ingresos),
+      },
+    ];
     this.barChartXaxis = {
-      categories: top5.map(p => p.nombre.length > 18 ? p.nombre.substring(0, 18) + '…' : p.nombre),
-      labels: { style: { fontSize: '11px' } }
+      categories: top5.map((p) =>
+        p.nombre.length > 18 ? p.nombre.substring(0, 18) + '…' : p.nombre,
+      ),
+      labels: { style: { fontSize: '11px' } },
     };
   }
 
@@ -351,13 +359,20 @@ export class DashboardComponent implements OnInit {
 
   getSeverity(status: string): any {
     switch (status) {
-      case 'entregado': return 'success';
-      case 'enviado': return 'info';
-      case 'en_proceso': return 'warn';
-      case 'pagado': return 'info';
-      case 'cancelado': return 'danger';
-      case 'pendiente': return 'secondary';
-      default: return 'secondary';
+      case 'entregado':
+        return 'success';
+      case 'enviado':
+        return 'info';
+      case 'en_proceso':
+        return 'warn';
+      case 'pagado':
+        return 'info';
+      case 'cancelado':
+        return 'danger';
+      case 'pendiente':
+        return 'secondary';
+      default:
+        return 'secondary';
     }
   }
 
@@ -378,10 +393,12 @@ export class DashboardComponent implements OnInit {
     this.chartColors = ['#f59e0b', '#3b82f6', '#10b981', '#6366f1', '#ef4444', '#8b5cf6'];
     this.chartDataLabels = { enabled: true };
     this.chartLegend = { position: 'bottom', fontSize: '12px' };
-    this.chartResponsive = [{
-      breakpoint: 480,
-      options: { chart: { width: 260 }, legend: { position: 'bottom' } }
-    }];
+    this.chartResponsive = [
+      {
+        breakpoint: 480,
+        options: { chart: { width: 260 }, legend: { position: 'bottom' } },
+      },
+    ];
 
     // Bar chart
     this.barChartConfig = {
@@ -393,7 +410,7 @@ export class DashboardComponent implements OnInit {
     this.barChartColors = ['#6366f1'];
     this.barChartDataLabels = { enabled: false };
     this.barChartPlotOptions = {
-      bar: { borderRadius: 6, horizontal: false, columnWidth: '55%' }
+      bar: { borderRadius: 6, horizontal: false, columnWidth: '55%' },
     };
   }
 }
