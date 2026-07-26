@@ -24,6 +24,8 @@ import { DialogModule } from 'primeng/dialog';
 
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { environment } from '@src/environments/environment';
+import productCarouselPlugin from './components/product-carousel.plugin';
 
 @Component({
   selector: 'app-content-editor',
@@ -75,9 +77,13 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
       fromElement: false,
       storageManager: false,
 
-      plugins: [gjsBlocksBasic, plugin, customCodePlugin, gjsParserPostcss],
+      plugins: [gjsBlocksBasic, plugin, customCodePlugin, gjsParserPostcss, productCarouselPlugin],
       pluginsOpts: {
         [plugin as any]: { autoBuild: true },
+        [productCarouselPlugin as any]: {
+          sbUrl: environment.supabase.url,
+          sbKey: environment.supabase.key,
+        },
       },
 
       canvas: { styles: [], scripts: [] },

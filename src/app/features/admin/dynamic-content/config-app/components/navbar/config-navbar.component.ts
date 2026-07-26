@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,7 +13,8 @@ import { PageConfigDbService } from '@src/app/core/services/supabase/dynamic-con
   selector: 'app-config-navbar',
   standalone: true,
   imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, TooltipModule],
-  templateUrl: './config-navbar.component.html'
+  changeDetection: ChangeDetectionStrategy.Eager,
+  templateUrl: './config-navbar.component.html',
 })
 export class ConfigNavbarComponent implements OnInit {
   public readonly configStore = inject(AppConfigStore);
@@ -36,7 +37,10 @@ export class ConfigNavbarComponent implements OnInit {
     this.loading.set(true);
     try {
       await this.configStore.ensureNavbar();
-      const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+      const deepClone = <T>(obj: T): T =>
+        typeof structuredClone !== 'undefined'
+          ? structuredClone(obj)
+          : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.navbarConfig()));
     } catch (err) {
       this.toastService.error('Error al cargar la configuración de la Navbar');
@@ -51,7 +55,10 @@ export class ConfigNavbarComponent implements OnInit {
       const res = await this.pageConfigDbService.saveConfigByName('navbar', this.config());
       if (res.error) throw res.error;
       await this.configStore.ensureNavbar(true);
-      const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+      const deepClone = <T>(obj: T): T =>
+        typeof structuredClone !== 'undefined'
+          ? structuredClone(obj)
+          : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.navbarConfig()));
       this.toastService.success('Navbar actualizada correctamente');
     } catch (err) {

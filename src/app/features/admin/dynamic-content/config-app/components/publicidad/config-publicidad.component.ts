@@ -1,9 +1,12 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { AdvertisingItem, AdvertisingBannerConfig } from '@src/app/shared/models/interfaces/page-config.interface';
+import {
+  AdvertisingItem,
+  AdvertisingBannerConfig,
+} from '@src/app/shared/models/interfaces/page-config.interface';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
 import { PageConfigDbService } from '@src/app/core/services/supabase/dynamic-content/page-config-db.service';
@@ -13,7 +16,8 @@ import { AdvertisingBannerComponent } from '@src/app/shared/components/advertisi
   selector: 'app-config-publicidad',
   standalone: true,
   imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, AdvertisingBannerComponent],
-  templateUrl: './config-publicidad.component.html'
+  changeDetection: ChangeDetectionStrategy.Eager,
+  templateUrl: './config-publicidad.component.html',
 })
 export class ConfigPublicidadComponent implements OnInit {
   public readonly configStore = inject(AppConfigStore);
@@ -34,7 +38,10 @@ export class ConfigPublicidadComponent implements OnInit {
     this.loading.set(true);
     try {
       await this.configStore.ensureAdvertising();
-      const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+      const deepClone = <T>(obj: T): T =>
+        typeof structuredClone !== 'undefined'
+          ? structuredClone(obj)
+          : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.advertisingConfig().items));
     } catch (err) {
       this.toastService.error('Error al cargar la configuración de Publicidad');
@@ -50,7 +57,10 @@ export class ConfigPublicidadComponent implements OnInit {
       const res = await this.pageConfigDbService.saveConfigByName('advertising_banner', payload);
       if (res.error) throw res.error;
       await this.configStore.ensureAdvertising(true);
-      const deepClone = <T>(obj: T): T => typeof structuredClone !== 'undefined' ? structuredClone(obj) : JSON.parse(JSON.stringify(obj));
+      const deepClone = <T>(obj: T): T =>
+        typeof structuredClone !== 'undefined'
+          ? structuredClone(obj)
+          : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.advertisingConfig().items));
       this.toastService.success('Anuncios actualizados correctamente');
     } catch (err) {
