@@ -9,7 +9,7 @@
           <div>
             <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Barra de Navegación (Navbar)</h2>
             <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Personaliza la barra de navegación estructurada en
-              secciones con permisos de rol.</p>
+              secciones con permisos de rol y ordénalas por arrastre.</p>
           </div>
           <p-button label="Guardar Navbar" icon="pi pi-check" [loading]="saving()" (onClick)="saveConfig()" styleClass="p-button-emerald"></p-button>
         </div>
@@ -44,64 +44,118 @@
             </div>
           </div>
 
-          <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-4">
             @if (config().sections.length === 0) {
             <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay secciones en la barra
               de navegación.</div>
             } @else {
             @for (section of config().sections; track $index; let sectionIdx = $index) {
-            <div class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/50 dark:bg-slate-950/20">
-              <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-bold text-slate-800 dark:text-slate-200">{{ section.title }}</span>
-                  @if (section.roles && section.roles.length > 0) {
-                  @for (role of section.roles; track role) {
-                  <span
-                    class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[11px] font-bold px-2 py-0.5 rounded border border-indigo-150 dark:border-indigo-900/30">{{
-                    role }}</span>
-                  }
-                  } @else {
-                  <span
-                    class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] font-semibold px-2 py-0.5 rounded">Público</span>
-                  }
+            <div class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 p-3 flex flex-col gap-3">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-2 text-slate-400">
+                  <i class="pi pi-arrows-alt"></i>
+                  <span class="text-xs font-semibold uppercase tracking-wide">Sección {{ sectionIdx + 1 }}</span>
                 </div>
-                <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" pTooltip="Eliminar Sección"
-                  (onClick)="removeNavbarSection(sectionIdx)" />
+                <div class="flex items-center gap-1">
+                  <p-button icon="pi pi-pencil" severity="secondary" [text]="true" size="small" pTooltip="Editar Sección"
+                    (onClick)="openSectionEditModal(sectionIdx)" />
+                  <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small" pTooltip="Eliminar Sección"
+                    (onClick)="removeNavbarSection(sectionIdx)" />
+                </div>
               </div>
 
-              <div class="flex flex-col gap-2 mb-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                  <label class="text-xs font-semibold text-slate-600 dark:text-slate-400">Título</label>
+                  <p class="m-0 text-sm text-slate-700 dark:text-slate-200">{{ section.title || 'Sin título' }}</p>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="text-xs font-semibold text-slate-600 dark:text-slate-400">Roles permitidos</label>
+                  <p class="m-0 text-sm text-slate-700 dark:text-slate-200">{{ getNavbarSectionRolesText(sectionIdx) || 'Sin roles asignados' }}</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Enlaces de esta sección</span>
+                </div>
                 @if (section.items.length === 0) {
                 <div class="text-xs text-slate-500 italic py-2">No hay enlaces en esta sección.</div>
                 } @else {
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  @for (item of section.items; track $index; let itemIdx = $index) {
-                  <div
-                    class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/80 rounded-lg p-2.5 shadow-2xs">
-                    <div>
-                      <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ item.label }}</span>
-                      <span class="font-mono text-xs text-slate-400 block mt-0.5">{{ item.path }}</span>
+                <p-orderList [value]="section.items" [dragdrop]="true" >
+                  <ng-template let-item let-itemIdx="index" pTemplate="item">
+                    <div class="flex flex-col gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/40 p-2.5">
+                      <div class="flex justify-between items-center gap-2">
+                        <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Enlace {{ itemIdx + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                          <p-button icon="pi pi-pencil" severity="secondary" [text]="true" size="small"
+                            (onClick)="openLinkEditModal(sectionIdx, itemIdx)" />
+                          <p-button icon="pi pi-times" severity="danger" [text]="true" size="small"
+                            (onClick)="removeNavbarLink(sectionIdx, itemIdx)" />
+                        </div>
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <p class="m-0 text-sm font-semibold text-slate-700 dark:text-slate-200">{{ item.label || 'Sin etiqueta' }}</p>
+                        <p class="m-0 text-xs text-slate-500 dark:text-slate-400">{{ item.path || 'Sin ruta' }}</p>
+                      </div>
                     </div>
-                    <p-button icon="pi pi-times" severity="danger" [text]="true" size="small"
-                      (onClick)="removeNavbarLink(sectionIdx, itemIdx)" />
-                  </div>
-                  }
-                </div>
+                  </ng-template>
+                </p-orderList>
                 }
               </div>
 
-              <div
-                class="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-lg p-3">
+              <div class="flex items-center gap-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-lg p-2.5">
                 <div class="flex-1"><input pInputText type="text" placeholder="Etiqueta del enlace"
                     [(ngModel)]="getNewNavbarItem(sectionIdx).label" class="w-full text-sm" /></div>
-                <div class="flex-1"><input pInputText type="text" placeholder="Ruta (ej: /customer/home)"
+                <div class="flex-1"><input pInputText type="text" placeholder="Ruta"
                     [(ngModel)]="getNewNavbarItem(sectionIdx).path" class="w-full text-sm font-mono" /></div>
-                <p-button label="Agregar Enlace" icon="pi pi-plus" severity="secondary" size="small"
+                <p-button label="Agregar" icon="pi pi-plus" severity="secondary" size="small"
                   (onClick)="addNavbarLink(sectionIdx)" />
               </div>
             </div>
             }
             }
           </div>
+
+          <p-dialog header="Editar sección" [modal]="true" [draggable]="false" [resizable]="false"
+            [visible]="editSectionModalVisible()" [style]="{ width: '32rem' }" (onHide)="closeSectionEditModal()">
+            <div class="flex flex-col gap-3">
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Título de la sección</label>
+              <input pInputText type="text" [ngModel]="editSectionDraft().title"
+                (ngModelChange)="editSectionDraft.update(d => ({ ...d, title: $event }))" />
+
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Roles permitidos</label>
+              <input pInputText type="text" [ngModel]="editSectionDraft().rolesText"
+                (ngModelChange)="editSectionDraft.update(d => ({ ...d, rolesText: $event }))" placeholder="admin, agente" />
+            </div>
+
+            <ng-template pTemplate="footer">
+              <div class="flex justify-end gap-2">
+                <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="closeSectionEditModal()" />
+                <p-button label="Guardar" icon="pi pi-check" (onClick)="saveEditedSection()" />
+              </div>
+            </ng-template>
+          </p-dialog>
+
+          <p-dialog header="Editar enlace" [modal]="true" [draggable]="false" [resizable]="false"
+            [visible]="editLinkModalVisible()" [style]="{ width: '32rem' }" (onHide)="closeLinkEditModal()">
+            <div class="flex flex-col gap-3">
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Etiqueta</label>
+              <input pInputText type="text" [ngModel]="editLinkDraft().label"
+                (ngModelChange)="editLinkDraft.update(d => ({ ...d, label: $event }))" />
+
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Ruta</label>
+              <input pInputText type="text" [ngModel]="editLinkDraft().path"
+                (ngModelChange)="editLinkDraft.update(d => ({ ...d, path: $event }))" />
+            </div>
+
+            <ng-template pTemplate="footer">
+              <div class="flex justify-end gap-2">
+                <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="closeLinkEditModal()" />
+                <p-button label="Guardar" icon="pi pi-check" (onClick)="saveEditedLink()" />
+              </div>
+            </ng-template>
+          </p-dialog>
         </div>
       </div>
     }
