@@ -1,7 +1,7 @@
 
-# 🌿 Zona Green - Documento de Arquitectura y Funcionalidades Frontend (Angular)
+# 🌿 Cheyn Verde. - Documento de Arquitectura y Funcionalidades Frontend (Angular)
 
-[cite_start]Este documento define la estructura técnica, lógica de negocio y flujos de interfaz que el equipo de desarrollo o el asistente de IA deben seguir para implementar el frontend de la plataforma **Zona Green** (www.zonagreen.co) [cite: 53] utilizando **Angular**.
+[cite_start]Este documento define la estructura técnica, lógica de negocio y flujos de interfaz que el equipo de desarrollo o el asistente de IA deben seguir para implementar el frontend de la plataforma **Cheyn Verde.** (www.zonagreen.co) [cite: 53] utilizando **Angular**.
 
 ---
 
@@ -83,11 +83,11 @@ Permite agrupar múltiples ítems [cite: 272], actualizar unidades, calcular de 
 
   1.  **Invocación y Captura Logística:** Al presionar "Confirmar selección", el frontend despliega un formulario intermedio para definir si el pedido "necesita envío" o se va a "recoger en punto", junto con la dirección y observaciones del cliente.
   2.  **Procesamiento Atómico (Edge Function):** La aplicación consume la Supabase Edge Function enviando estos datos. La función valida el stock, calcula los precios reales, registra la orden de forma inmutable en la base de datos y **retorna el `order_id` generado automáticamente**.
-  3.  **Construcción del Mensaje Automatizado:** El servicio de Angular recibe el `order_id` y compila las variables para construir el texto codificado que se enviará al número oficial de Zona Green (`3134312139`). Este mensaje incluirá un enlace directo para que el staff gestione el pedido con un solo clic:
+  3.  **Construcción del Mensaje Automatizado:** El servicio de Angular recibe el `order_id` y compila las variables para construir el texto codificado que se enviará al número oficial de Cheyn Verde. (`3134312139`). Este mensaje incluirá un enlace directo para que el staff gestione el pedido con un solo clic:
 
       ```typescript
       // Estructura del mensaje enviado a WhatsApp:
-      const mensajeWzp = `🌿 *Zona Green - Solicitud de Orden #${orderId}* 🌿\n\n` +
+      const mensajeWzp = `🌿 *Cheyn Verde. - Solicitud de Orden #${orderId}* 🌿\n\n` +
                          `👤 *Cliente:* ${user.name}\n` +
                          `📱 *Celular:* ${user.phone}\n\n` +
                          `📦 *Detalle del Pedido:* \n${listaProductos}\n` +
@@ -105,10 +105,10 @@ Permite agrupar múltiples ítems [cite: 272], actualizar unidades, calcular de 
           * **Tipo de Entrega:** Permite cambiar el flag entre "Envío" o "Recoger en Punto" si el usuario cambió de opinión durante la charla.
           * **Comentarios del Agente:** Un área de texto (`textarea`) exclusiva para que el staff deje notas internas de seguimiento (ej: *"Comprobante de pago verificado por Nequi"*, *"Se envía por Interrapidísimo con la guía XYZ"*).
       * **Bloqueo de Modificación de Precios:** Por seguridad y auditoría, la lista de productos comprados, las cantidades y el precio total totalizado por la Edge Function se renderizan en modo de "solo lectura" (deshabilitados), garantizando la inmutabilidad de la transacción financiera original.
-  5.  El sistema redirige de forma automática abriendo una nueva pestaña con la URL hacia el número de WhatsApp oficial registrado de Zona Green (`3134312139`)[cite: 284, 302, 353].
+  5.  El sistema redirige de forma automática abriendo una nueva pestaña con la URL hacia el número de WhatsApp oficial registrado de Cheyn Verde. (`3134312139`)[cite: 284, 302, 353].
 
 ### 5.3 Flujo de Checkout 2 (Impresión de Guía Físicas)
-* Exclusivo para el operador de Zona Green en la interfaz administrativa[cite: 307].
+* Exclusivo para el operador de Cheyn Verde. en la interfaz administrativa[cite: 307].
 * Una vez que el equipo de soporte valida la transacción e ingreso de aportes económicos vía WhatsApp [cite: 305], digita el monto final recibido y confirma el despacho en la plataforma[cite: 305, 306].
 * Esto dispara un evento de impresión nativa del navegador (`window.print()`) cargando una hoja de estilos CSS `@media print` optimizada.
 * La guía genera en papel el resumen físico: Nombre del destinatario, Celular y Dirección de destino (o indicación de Recoger en Punto)[cite: 308, 309, 310]. *Por regla de negocio, esta vista de impresión es efímera y no persiste registros locales adicionales ya que el histórico se consolidó en el Checkout 1*[cite: 311].

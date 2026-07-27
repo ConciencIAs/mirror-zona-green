@@ -69,3 +69,13 @@
   }
 
 }
+
+.p-listbox-list {
+  flex-direction: row !important;
+  flex-wrap: wrap;
+}
+
+.p-listbox-list-container {
+  max-height: none !important;
+  min-height: none !important;
+}

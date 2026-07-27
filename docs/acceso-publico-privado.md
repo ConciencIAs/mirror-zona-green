@@ -1,4 +1,4 @@
-# Zona Green — Control de acceso: contenido público vs. privado
+# Cheyn Verde. — Control de acceso: contenido público vs. privado
 
 **Fecha:** 2026-05-29  
 **Destinatario:** Ingeniero backend  

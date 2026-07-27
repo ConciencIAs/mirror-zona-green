@@ -150,7 +150,7 @@ export class Checkout implements OnInit {
 
   private buildWhatsAppUrl(orderId: string, formValues: any): string {
     const lines = [
-      'Hola Zona Green, acabo de realizar la siguiente selección:',
+      'Hola Cheyn Verde., acabo de realizar la siguiente selección:',
       '',
       '*Detalles:*',
       ...this.cartDetails().map((item) => {

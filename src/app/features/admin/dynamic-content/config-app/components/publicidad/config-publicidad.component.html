@@ -8,7 +8,7 @@
   <div class="flex justify-between items-center flex-wrap gap-4">
     <div>
       <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Franja de Publicidad (Banner Superior)</h2>
-      <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Crea y gestiona mensajes rotativos destacados.</p>
+      <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Crea, edita y reordena mensajes rotativos destacados.</p>
     </div>
     <p-button label="Guardar Anuncios" icon="pi pi-check" [loading]="saving()" (onClick)="saveConfig()"
       styleClass="p-button-emerald"></p-button>
@@ -30,24 +30,61 @@
       <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay anuncios agregados.
       </div>
       } @else {
-      <div class="grid grid-cols-1 gap-2">
-        @for (item of config(); track $index) {
-        <div
-          class="flex justify-between items-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-lg p-3">
-          <div class="flex items-center gap-3">
-            <i [class]="item.icon" class="text-lg text-amber-500 w-6 text-center"></i>
-            <div>
-              <div class="font-semibold text-sm text-slate-800 dark:text-slate-200">{{ item.text }}</div>
-              @if (item.link) { <div class="font-mono text-xs text-slate-450">{{ item.link }}</div> }
+      <p-orderList [value]="config()" [dragdrop]="true" [styleClass]="'advertising-grid'"
+        (onReorder)="onAdvertisingReorder($event)">
+        <ng-template let-item let-index="index" pTemplate="item">
+          <div class="advertising-card w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 p-3 h-full">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-2 text-slate-400">
+                <i class="pi pi-arrows-alt"></i>
+                <span class="text-xs font-semibold uppercase tracking-wide">Anuncio {{ index + 1 }}</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <p-button icon="pi pi-pencil" severity="secondary" [text]="true" size="small"
+                  (onClick)="openEditModal(index)" />
+                <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small"
+                  (onClick)="removeAdvertisingItem(index)" />
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <i [class]="item.icon" class="text-lg text-amber-500 w-6 text-center"></i>
+                <div class="flex-1">
+                  <p class="m-0 font-semibold text-slate-700 dark:text-slate-200">{{ item.text || 'Sin texto' }}</p>
+                  <p class="m-0 text-xs text-slate-500 dark:text-slate-400">{{ item.link || 'Sin enlace' }}</p>
+                </div>
+              </div>
             </div>
           </div>
-          <p-button icon="pi pi-trash" severity="danger" [text]="true" size="small"
-            (onClick)="removeAdvertisingItem($index)" />
-        </div>
-        }
-      </div>
+        </ng-template>
+      </p-orderList>
       }
     </div>
+
+    <p-dialog header="Editar anuncio" [modal]="true" [draggable]="false" [resizable]="false"
+      [visible]="editModalVisible()" [style]="{ width: '32rem' }" (onHide)="closeEditModal()">
+      <div class="flex flex-col gap-3">
+        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Texto del anuncio</label>
+        <input pInputText type="text" [ngModel]="editDraft().text"
+          (ngModelChange)="updateEditDraft('text', $event)" placeholder="Texto del anuncio" />
+
+        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Enlace URL</label>
+        <input pInputText type="text" [ngModel]="editDraft().link"
+          (ngModelChange)="updateEditDraft('link', $event)" placeholder="Enlace URL" />
+
+        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Icono PrimeIcons</label>
+        <input pInputText type="text" [ngModel]="editDraft().icon"
+          (ngModelChange)="updateEditDraft('icon', $event)" placeholder="Icono PrimeIcons" />
+      </div>
+
+      <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-2">
+          <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="closeEditModal()" />
+          <p-button label="Guardar" icon="pi pi-check" (onClick)="saveEditedItem()" />
+        </div>
+      </ng-template>
+    </p-dialog>
 
     <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
       <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Agregar Anuncio</h4>

@@ -99,7 +99,7 @@ export interface AppConfig {
 }
 
 export const DEFAULT_APP_CONFIG: AppConfig = {
-  nombre: 'Zona Green',
+  nombre: 'Cheyn Verde.',
   logo_url: '/images/logo-zona-green-blanco.svg',
   telefono: '+57 300 123 4567',
   navbar: {
@@ -189,7 +189,7 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
       linkedin: '#',
       youtube: '#'
     },
-    texto_copyright: '© 2025 Zona Green. Todos los derechos reservados.',
+    texto_copyright: '© 2025 Cheyn Verde.. Todos los derechos reservados.',
     background_color: '#0f1e0f'
   },
   advertising_banner: [

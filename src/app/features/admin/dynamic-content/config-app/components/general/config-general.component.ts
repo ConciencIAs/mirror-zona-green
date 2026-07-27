@@ -51,7 +51,7 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
               pInputText
               type="text"
               [(ngModel)]="settings().nombre"
-              placeholder="Zona Green"
+              placeholder="Cheyn Verde."
               class="w-full"
             />
           </div>
