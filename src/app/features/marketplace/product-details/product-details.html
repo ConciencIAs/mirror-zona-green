@@ -1,7 +1,6 @@
 <div class="space-y-6 p-4 pt-12">
   <div>
-    <a routerLink="/seleccion" class="text-sm font-semibold text-[#1f6c2f] hover:underline">&larr; Volver al
-      marketplace</a>
+    <a routerLink="/seleccion" class="text-sm font-semibold text-[#1f6c2f] hover:underline">&larr; Volver a la seleccion informada</a>
   </div>
 
   @if (loading()) {
@@ -96,7 +95,7 @@
         <p-button type="button" (click)="addToCart()" [disabled]="!canAdd() || adding()"
           [label]="adding() ? 'Agregando...' : 'Selección informada'" icon="pi pi-shopping-cart" severity="success"
           styleClass="flex-1" />
-        <p-button type="button" routerLink="/marketplace/carrito" label="Ver selección" severity="secondary"
+        <p-button type="button" routerLink="/seleccion/carrito" label="Ver selección" severity="secondary"
           variant="outlined" icon="pi pi-shopping-bag" />
       </div>
     </div>
