@@ -3,7 +3,7 @@ import { authGuard } from '@src/app/core/guards/auth-guard';
 
 export const marketplaceRoutes: Routes = [
   {
-    path: 'marketplace',
+    path: 'seleccion',
     canActivateChild: [authGuard],
     canActivate: [authGuard],
     data: { zone: 'marketplace' },
