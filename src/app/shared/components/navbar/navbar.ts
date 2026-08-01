@@ -136,7 +136,7 @@ export class Navbar implements OnInit {
 
     if (!query.trim()) return;
 
-    this.router.navigate(['/marketplace'], {
+    this.router.navigate(['/seleccion'], {
       queryParams: { q: query.trim() },
     });
   }
