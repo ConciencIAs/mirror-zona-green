@@ -70,6 +70,57 @@
 
 }
 
+/* ── Auth pages: animated border-trace card frame ── */
+.auth-card-frame {
+  position: relative;
+  border-radius: 1.5rem;
+  padding: 2px;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.auth-card-frame::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  z-index: 0;
+  background: conic-gradient(from 0turn,
+      transparent 0turn,
+      transparent 0.74turn,
+      rgba(191, 240, 196, 0) 0.78turn,
+      #6bc767 0.82turn,
+      #20a038 0.85turn,
+      #6bc767 0.88turn,
+      rgba(191, 240, 196, 0) 0.92turn,
+      transparent 1turn);
+  animation: auth-border-trace 8s linear infinite;
+}
+
+@keyframes auth-border-trace {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* ── Auth pages: "INGRESA" / "REGÍSTRATE" heading pulse ── */
+.auth-heading-glow {
+  animation: auth-heading-pulse 8s ease-in-out infinite;
+}
+
+@keyframes auth-heading-pulse {
+
+  0%,
+  100% {
+    text-shadow: 0 0 0px rgba(32, 160, 56, 0);
+    letter-spacing: 0.08em;
+  }
+
+  50% {
+    text-shadow: 0 0 22px rgba(107, 199, 103, 0.85), 0 0 8px rgba(191, 240, 196, 0.9);
+    letter-spacing: 0.11em;
+  }
+}
+
 .p-listbox-list {
   flex-direction: row !important;
   flex-wrap: wrap;
