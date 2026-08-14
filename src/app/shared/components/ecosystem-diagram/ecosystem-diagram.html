@@ -1,0 +1,119 @@
+<div
+  class="relative w-full rounded-3xl overflow-hidden bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] p-6 sm:p-10">
+
+  <!-- Decorativos de fondo, mismo lenguaje visual que /auth -->
+  <div
+    class="absolute w-[380px] h-[380px] border-[46px] border-solid border-[#20a038]/14 rounded-full -top-[130px] -right-[110px] pointer-events-none z-0">
+  </div>
+  <div
+    class="absolute w-[300px] h-[300px] border-[36px] border-solid border-[#20a038]/10 rounded-full -bottom-[110px] -left-[90px] pointer-events-none z-0">
+  </div>
+
+  <div class="relative z-[1] w-full max-w-[640px] aspect-square mx-auto">
+    <svg viewBox="0 0 600 600" class="absolute inset-0 w-full h-full pointer-events-none">
+      <!-- Anillo punteado que conecta los nodos -->
+      <circle cx="300" cy="300" r="220" fill="none" stroke="white" stroke-opacity="0.25" stroke-width="1.5"
+        stroke-dasharray="2 8" />
+
+      <!-- Rayos hacia cada nodo -->
+      @for (n of nodes; track n.title) {
+      <line [attr.x1]="300" [attr.y1]="300" [attr.x2]="n.x" [attr.y2]="n.y" stroke="white" stroke-opacity="0.22"
+        stroke-width="1.2" />
+      }
+
+      <!-- Haces de luz saliendo del centro hacia cada satélite -->
+      @for (n of nodes; track n.title; let i = $index) {
+      <circle r="3.2" fill="#bff0c4">
+        <animateMotion [attr.dur]="(3 + i * 0.6) + 's'" [attr.begin]="(-i * 0.9) + 's'" repeatCount="indefinite"
+          [attr.path]="'M300,300 L' + n.x + ',' + n.y" />
+        <animate attributeName="opacity" values="0;1;1;0" [attr.dur]="(3 + i * 0.6) + 's'"
+          [attr.begin]="(-i * 0.9) + 's'" repeatCount="indefinite" />
+      </circle>
+      }
+
+      <!-- Haces de luz entrando desde cada satélite hacia el centro (más cantidad que los salientes) -->
+      @for (n of nodes; track n.title; let i = $index) {
+      @for (j of [0, 1, 2]; track j) {
+      <circle r="2.6" fill="white" opacity="0.85">
+        <animateMotion [attr.dur]="(2.2 + j * 0.5) + 's'" [attr.begin]="(-(i * 0.5 + j * 0.75)) + 's'"
+          repeatCount="indefinite" [attr.path]="'M' + n.x + ',' + n.y + ' L300,300'" />
+        <animate attributeName="opacity" values="0;0.9;0.9;0" [attr.dur]="(2.2 + j * 0.5) + 's'"
+          [attr.begin]="(-(i * 0.5 + j * 0.75)) + 's'" repeatCount="indefinite" />
+      </circle>
+      }
+      }
+
+      <!-- Haces de luz recorriendo el anillo -->
+      <circle r="3" fill="white">
+        <animateMotion dur="14s" repeatCount="indefinite"
+          path="M300,300 m -220,0 a 220,220 0 1,0 440,0 a 220,220 0 1,0 -440,0" />
+      </circle>
+      <circle r="3" fill="white" opacity="0.65">
+        <animateMotion dur="14s" begin="-7s" repeatCount="indefinite"
+          path="M300,300 m -220,0 a 220,220 0 1,0 440,0 a 220,220 0 1,0 -440,0" />
+      </circle>
+    </svg>
+
+    <!-- Centro -->
+    <div
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[36%] aspect-square rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center p-4 z-10">
+      <img [src]="logoUrl()" alt="Cheyn Verde" class="w-[62%] h-auto object-contain">
+      <span class="text-[9px] sm:text-[11px] text-[#5a5a52] mt-1.5 leading-tight px-1">Infraestructura de
+        articulación, confianza y trazabilidad</span>
+    </div>
+
+    <!-- Nodos -->
+    @for (n of nodes; track n.title; let i = $index) {
+    <button type="button"
+      class="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 group z-10 bg-transparent border-none cursor-pointer p-0"
+      [style.left.%]="(n.x / 600) * 100" [style.top.%]="(n.y / 600) * 100" (click)="select(i)"
+      [attr.aria-pressed]="selected() === i">
+      <span
+        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg ring-[3px] transition-all duration-300 group-hover:scale-105"
+        [class.ring-[#6bc767]]="selected() === i" [class.ring-transparent]="selected() !== i"
+        [class.scale-110]="selected() === i">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#146424" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round" class="w-7 h-7 sm:w-8 sm:h-8">
+          @switch (n.icon) {
+          @case ('territorio') {
+          <path d="M12 21s-7-7.5-7-12a7 7 0 1114 0c0 4.5-7 12-7 12z" />
+          <circle cx="12" cy="9" r="2.5" />
+          }
+          @case ('salud') {
+          <path d="M12 21s-8-4.5-8-11a5 5 0 019-3 5 5 0 019 3c0 6.5-8 11-8 11z" />
+          }
+          @case ('conocimiento') {
+          <circle cx="10" cy="10" r="6" />
+          <line x1="21" y1="21" x2="14.65" y2="14.65" />
+          }
+          @case ('operacion') {
+          <rect x="4" y="4" width="16" height="16" rx="3" />
+          <path d="M8 12l3 3 5-6" />
+          }
+          @case ('infraestructura') {
+          <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
+          }
+          }
+        </svg>
+      </span>
+      <span class="text-white text-[11px] sm:text-[12.5px] font-bold max-w-[112px] leading-tight text-center"
+        style="text-shadow: 0 1px 4px rgba(0,0,0,0.5)">{{ n.title }}</span>
+    </button>
+    }
+  </div>
+
+  <!-- Panel de detalle -->
+  <div class="relative z-[1] mt-8 max-w-[560px] mx-auto min-h-[110px]">
+    @if (selectedNode(); as node) {
+    <div class="bg-white rounded-2xl p-6 shadow-xl animate-fade-in">
+      <h3 class="text-lg font-bold text-[#0f1e0f] mb-2">{{ node.title }}</h3>
+      <p class="text-sm text-[#3a3a38] mb-3 leading-relaxed">{{ node.quienes }}</p>
+      <p class="text-sm text-[#146424] font-semibold leading-relaxed">
+        <span class="text-[#5a5a52] font-normal">Rol: </span>{{ node.rol }}
+      </p>
+    </div>
+    } @else {
+    <p class="text-center text-[#bcd6ae] text-sm italic px-4">Toca un nodo para ver su rol dentro del ecosistema.</p>
+    }
+  </div>
+</div>

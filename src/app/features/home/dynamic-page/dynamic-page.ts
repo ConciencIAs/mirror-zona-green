@@ -4,10 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { EcosystemDiagram } from '@src/app/shared/components/ecosystem-diagram/ecosystem-diagram';
 
 @Component({
   selector: 'app-dynamic-page',
-  imports: [],
+  imports: [EcosystemDiagram],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './dynamic-page.html',
 })
@@ -22,12 +23,14 @@ export class DynamicPage implements OnInit {
   public renderCss = signal<SafeHtml | undefined>(undefined);
   public loading = signal<boolean>(true);
   public notFound = signal<boolean>(false);
+  public slug = signal<string | null>(null);
 
   protected isAuthenticated = this.authService.isAuthenticated;
 
   async ngOnInit(): Promise<void> {
     this.route.params.subscribe(async (params) => {
       const slug = params['slug'];
+      this.slug.set(slug ?? null);
       if (slug) {
         await this.loadPageContent(slug);
       } else {
