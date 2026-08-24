@@ -45,7 +45,7 @@ export class ProductCard {
 
   goToProductDetails(): void {
     if (this.product().es_por_gramos) {
-      void this.router.navigate(['/marketplace/product-details', this.product().id]);
+      void this.router.navigate(['/seleccion/product-details', this.product().id]);
     }
   }
 }

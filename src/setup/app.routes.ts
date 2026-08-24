@@ -7,6 +7,12 @@ import { roleGuard } from '@src/app/core/guards/role-guard';
 import { authGuard } from '@src/app/core/guards/auth-guard';
 
 export const routes: Routes = [
+  // TEMPORAL: laboratorio de experimentos visuales — borrar/ocultar antes de producción
+  {
+    path: 'lab',
+    title: 'Laboratorio Visual',
+    loadComponent: () => import('@src/app/features/lab/lab').then((m) => m.Lab),
+  },
   {
     path: '',
     component: MainLayout,

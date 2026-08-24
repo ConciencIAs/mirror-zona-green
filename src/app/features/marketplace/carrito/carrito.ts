@@ -101,7 +101,7 @@ export class CarritoComponent {
 
   protected goToCheckout(): void {
     if (this.cartItems().length > 0) {
-      this.router.navigate(['/marketplace/checkout']);
+      this.router.navigate(['/seleccion/checkout']);
     } else {
       this.toastService.error('Tu carrito está vacío.');
     }

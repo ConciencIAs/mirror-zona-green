@@ -1,0 +1,840 @@
+<div class="min-h-screen bg-[#0a150a] text-white py-12 px-4 sm:px-8">
+  <div class="max-w-[1100px] mx-auto space-y-16">
+
+    <header class="space-y-2">
+      <p class="text-[11px] uppercase tracking-[0.2em] text-[#f0a000] font-bold">⚠ Sección temporal — laboratorio de
+        experimentos, no forma parte del diseño final</p>
+      <h1 class="font-heading font-black text-3xl sm:text-4xl">Laboratorio Visual</h1>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Todo lo de acá se construye por código a partir de una sola fórmula
+        matemática (distancia de Manhattan dentro de una casilla), no son imágenes. La idea es ver qué piezas sirven
+        para integrarlas al diseño real.</p>
+    </header>
+
+    <!-- ───────────── A. El módulo simple ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">A · El módulo base</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Una casilla de {{ tileSize }}×{{ tileSize }} "píxeles": una celda se
+        pinta si <code class="text-[#bff0c4]">|col − centro| + |fila − centro| ≤ radio</code>. Repetido, arma la
+        cadena de diamantes. El mismo cálculo sirve para tira o para anillo.</p>
+      <app-regen-button (regen)="replay('A')" />
+      <div class="bg-[#102614] rounded-2xl p-6 overflow-x-auto">
+        @if (isVisible('A')) {
+        <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight">
+          @for (cell of stripOutline; track cell.x + '-' + cell.y) {
+          <rect [attr.x]="cell.x" [attr.y]="cell.y" [attr.width]="cellPx" [attr.height]="cellPx" fill="#6bc767" />
+          }
+        </svg>
+        }
+      </div>
+    </section>
+
+    <!-- ───────────── B. Construcción animada (líneas blancas sobre verde) ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">B · Borde que se construye</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Cada celda aparece en orden de izquierda a derecha. Recargá la
+        página (o mirá de nuevo esta sección) para verla dibujarse.</p>
+      <app-regen-button (regen)="replay('B')" />
+      <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-6 overflow-x-auto">
+        @if (isVisible('B')) {
+        <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight">
+          @for (cell of stripOutline; track cell.x + '-' + cell.y) {
+          <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+            [attr.width]="cellPx" [attr.height]="cellPx" fill="white" />
+          }
+        </svg>
+        }
+      </div>
+    </section>
+
+    <!-- ───────────── B2. Construcción en líneas, con luz líder + velocidad ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">B2 · Líneas lideradas por un haz de luz</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Cada diamante es una sola línea que se dibuja a sí misma; un punto
+        brillante recorre el trazo justo en la punta, como si lo fuera dibujando. Ajustá la velocidad y volvé a
+        generarla para verla desde cero.</p>
+
+      <div class="flex flex-wrap items-center gap-4 bg-[#102614] rounded-xl px-4 py-3">
+        <label class="flex items-center gap-3 text-[12px] text-[#a0b899]">
+          Velocidad
+          <input type="range" min="250" max="2200" step="50" [value]="drawSpeedMs()" (input)="onSpeedInput($event)"
+            class="accent-[#3cb038]" />
+          <span class="text-white font-mono w-14">{{ drawSpeedMs() }}ms</span>
+        </label>
+        <button type="button" (click)="replayB2()"
+          class="px-4 py-1.5 rounded-lg bg-[#20a038] hover:bg-[#167f2b] text-white text-[12px] font-bold transition-colors">
+          ↻ Regenerar
+        </button>
+      </div>
+
+      <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-6 overflow-x-auto">
+        @if (b2Visible()) {
+        <svg [attr.width]="lineDiamondsWidth" [attr.height]="lineDiamondsHeight"
+          [attr.viewBox]="'0 0 ' + lineDiamondsWidth + ' ' + lineDiamondsHeight">
+          @for (d of lineDiamonds(); track d.index) {
+          <path class="draw-path" [attr.d]="d.path" [style.--len.px]="d.perim" [style.--draw-dur.ms]="drawSpeedMs()"
+            [style.--draw-delay.ms]="d.index * (drawSpeedMs() * 0.35)" fill="none" stroke="white" stroke-width="2"
+            stroke-linejoin="round" />
+          <circle r="4" fill="#bff0c4">
+            <animateMotion [attr.dur]="drawSpeedMs() + 'ms'" [attr.begin]="(d.index * drawSpeedMs() * 0.35) + 'ms'"
+              fill="freeze" [attr.path]="d.path" />
+          </circle>
+          }
+        </svg>
+        }
+      </div>
+    </section>
+
+    <!-- ───────────── C. Primero el contorno, luego se rellena ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">C · Contorno → relleno</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Primero se dibuja solo el borde de cada diamante; después se llena
+        el interior.</p>
+      <app-regen-button (regen)="replay('C')" />
+      <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-6 overflow-x-auto">
+        @if (isVisible('C')) {
+        <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight">
+          @for (cell of stripOutline; track cell.x + '-' + cell.y) {
+          <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+            [attr.width]="cellPx" [attr.height]="cellPx" fill="white" />
+          }
+          @for (cell of stripInteriorOnly; track cell.x + '-' + cell.y) {
+          <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+            [attr.width]="cellPx" [attr.height]="cellPx" fill="#6bc767" />
+          }
+        </svg>
+        }
+      </div>
+    </section>
+
+    <!-- ───────────── D. Mosaico interactivo (mouse = multicolor) ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">D · Recorré el mosaico con el mouse</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Pasá el cursor por encima: las celdas cercanas cambian a un color
+        distinto según ángulo y distancia al puntero.</p>
+      <app-regen-button (regen)="replay('D')" />
+      <div class="bg-[#102614] rounded-2xl p-6 overflow-x-auto">
+        @if (isVisible('D')) {
+        <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight"
+          (mousemove)="onMultiMove($event)" (mouseleave)="onMultiLeave()" class="cursor-crosshair">
+          @for (cell of stripFilled; track cell.x + '-' + cell.y) {
+          <rect [attr.x]="cell.x" [attr.y]="cell.y" [attr.width]="cellPx" [attr.height]="cellPx"
+            [attr.fill]="colorFor(cell)" style="transition: fill 0.15s ease" />
+          }
+        </svg>
+        }
+      </div>
+    </section>
+
+    <!-- ───────────── E. Menú de tarjetas con el módulo ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">E · Menú de tarjetas</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Borde hecho con el mismo módulo, recorrido constantemente por un
+        haz de luz. Tocá una tarjeta para que gire y revele el subtítulo (info real del ecosistema).</p>
+      <app-regen-button (regen)="replay('E'); flippedCard.set(null)" />
+      @if (isVisible('E')) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (card of cards; track card.title; let i = $index) {
+        <div class="flip-card h-[220px]" (click)="toggleCard(i)" role="button" tabindex="0">
+          <div class="flip-inner" [class.is-flipped]="flippedCard() === i">
+
+            <!-- Frente -->
+            <div class="flip-face rounded-2xl bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] overflow-hidden cursor-pointer flex flex-col">
+              <div class="relative h-[42px] overflow-hidden shrink-0">
+                <svg [attr.width]="cardBorderWidth" height="42" [attr.viewBox]="'0 0 ' + cardBorderWidth + ' 42'"
+                  class="w-full h-full">
+                  @for (cell of cardBorder; track cell.x + '-' + cell.y) {
+                  <rect [attr.x]="cell.x" [attr.y]="cell.y" [attr.width]="cellPx" [attr.height]="cellPx"
+                    fill="white" fill-opacity="0.85" />
+                  }
+                </svg>
+                <div class="lab-sweep"></div>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-center gap-3 px-4 text-center">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round"
+                  stroke-linejoin="round" class="w-8 h-8 opacity-90">
+                  @switch (card.icon) {
+                  @case ('territorio') {
+                  <path d="M12 21s-7-7.5-7-12a7 7 0 1114 0c0 4.5-7 12-7 12z" />
+                  <circle cx="12" cy="9" r="2.5" />
+                  }
+                  @case ('salud') {
+                  <path d="M12 21s-8-4.5-8-11a5 5 0 019-3 5 5 0 019 3c0 6.5-8 11-8 11z" />
+                  }
+                  @case ('conocimiento') {
+                  <circle cx="10" cy="10" r="6" />
+                  <line x1="21" y1="21" x2="14.65" y2="14.65" />
+                  }
+                  @case ('operacion') {
+                  <rect x="4" y="4" width="16" height="16" rx="3" />
+                  <path d="M8 12l3 3 5-6" />
+                  }
+                  @case ('infraestructura') {
+                  <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
+                  }
+                  }
+                </svg>
+                <span class="text-white text-[13px] font-bold uppercase tracking-wide leading-tight">{{ card.title
+                  }}</span>
+              </div>
+            </div>
+
+            <!-- Dorso -->
+            <div
+              class="flip-face flip-back rounded-2xl bg-white p-5 flex items-center justify-center text-center cursor-pointer">
+              <p class="text-[#1d1d1b] text-[13px] leading-relaxed">{{ card.subtitle }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </section>
+
+    <!-- ───────────── F. Del rectángulo al círculo ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">F · La misma tira, enrollada</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Es exactamente el mismo cálculo de la sección A — acá cada columna
+        se ubica según un ángulo en vez de una posición en X.</p>
+      <app-regen-button (regen)="replay('F')" />
+      @if (isVisible('F')) {
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-[#102614] rounded-2xl p-6 flex items-center justify-center">
+          <svg width="320" height="320" viewBox="-160 -160 320 320">
+            @for (cell of ringOutline; track cell.x + '-' + cell.y) {
+            <rect [attr.x]="cell.x - cell.size / 2" [attr.y]="cell.y - cell.size / 2" [attr.width]="cell.size"
+              [attr.height]="cell.size" [attr.transform]="'rotate(' + cell.rot + ' ' + cell.x + ' ' + cell.y + ')'"
+              fill="#6bc767" />
+            }
+          </svg>
+        </div>
+        <div class="bg-[#102614] rounded-2xl p-6 flex items-center justify-center">
+          <svg width="320" height="320" viewBox="-160 -160 320 320">
+            @for (cell of ringFilled; track cell.x + '-' + cell.y) {
+            <rect [attr.x]="cell.x - cell.size / 2" [attr.y]="cell.y - cell.size / 2" [attr.width]="cell.size"
+              [attr.height]="cell.size" [attr.transform]="'rotate(' + cell.rot + ' ' + cell.x + ' ' + cell.y + ')'"
+              fill="white" />
+            }
+          </svg>
+        </div>
+      </div>
+      }
+    </section>
+
+    <!-- ───────────── G. Anillos animados ───────────── -->
+    <section class="space-y-4 pb-8">
+      <h2 class="font-heading font-black text-xl">G · Variaciones de animación</h2>
+      <app-regen-button (regen)="replay('G')" />
+      @if (isVisible('G')) {
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4 flex flex-col items-center gap-2">
+          <svg width="240" height="240" viewBox="-160 -160 320 320">
+            <g class="ring-spin-cw">
+              @for (cell of ringFilled; track cell.x + '-' + cell.y) {
+              <rect [attr.x]="cell.x - cell.size / 2" [attr.y]="cell.y - cell.size / 2" [attr.width]="cell.size"
+                [attr.height]="cell.size"
+                [attr.transform]="'rotate(' + cell.rot + ' ' + cell.x + ' ' + cell.y + ')'" fill="white" />
+              }
+            </g>
+          </svg>
+          <span class="text-[12px] text-[#a0b899]">Rotación simple</span>
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4 flex flex-col items-center gap-2">
+          <svg width="240" height="240" viewBox="-160 -160 320 320">
+            <g class="ring-spin-cw">
+              @for (cell of ringFilled; track cell.x + '-' + cell.y) {
+              <rect [attr.x]="cell.x - cell.size / 2" [attr.y]="cell.y - cell.size / 2" [attr.width]="cell.size"
+                [attr.height]="cell.size"
+                [attr.transform]="'rotate(' + cell.rot + ' ' + cell.x + ' ' + cell.y + ')'" fill="white"
+                fill-opacity="0.55" />
+              }
+            </g>
+            <g class="ring-spin-ccw">
+              @for (cell of ring2Filled; track cell.x + '-' + cell.y) {
+              <rect [attr.x]="cell.x - cell.size / 2" [attr.y]="cell.y - cell.size / 2" [attr.width]="cell.size"
+                [attr.height]="cell.size"
+                [attr.transform]="'rotate(' + cell.rot + ' ' + cell.x + ' ' + cell.y + ')'" fill="#bff0c4" />
+              }
+            </g>
+          </svg>
+          <span class="text-[12px] text-[#a0b899]">Doble anillo contra-rotante</span>
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4 flex flex-col items-center gap-2">
+          <svg width="240" height="240" viewBox="-160 -160 320 320">
+            <g class="ring-pulse">
+              @for (cell of ringFilled; track cell.x + '-' + cell.y) {
+              <rect [attr.x]="cell.x - cell.size / 2" [attr.y]="cell.y - cell.size / 2" [attr.width]="cell.size"
+                [attr.height]="cell.size"
+                [attr.transform]="'rotate(' + cell.rot + ' ' + cell.x + ' ' + cell.y + ')'" fill="white" />
+              }
+            </g>
+          </svg>
+          <span class="text-[12px] text-[#a0b899]">Pulso / respiración</span>
+        </div>
+
+      </div>
+      }
+    </section>
+
+    <!-- ───────────── H. Menú "megapixel" — clic revela un vecino ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">H · Menú de tarjetas "megapixel"</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Módulos grandes ("megapixeles") unidos por dos tramos del mismo
+        mosaico, todo en líneas. Tocá un título: aparece un pixel nuevo a su derecha, con fondo de color, con la
+        explicación.</p>
+
+      <div class="bg-[#0a150a] rounded-2xl p-6 overflow-x-auto">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-[11px] uppercase tracking-widest text-[#6bc767] font-bold">Variante 1 — inserta un vecino</p>
+          <app-regen-button (regen)="replay('H1'); megaOpenH1.set(null)" />
+        </div>
+        @if (isVisible('H1')) {
+        <div class="flex items-center">
+          @for (card of megaCards; track card.title; let i = $index) {
+          <button type="button" (click)="toggleMegaH1(i)"
+            class="w-[84px] h-[84px] border-2 border-white/60 hover:border-white flex items-center justify-center text-center shrink-0 bg-transparent cursor-pointer transition-colors">
+            <span class="text-white text-[11px] font-bold px-1 leading-tight">{{ card.title }}</span>
+          </button>
+          @if (i < megaCards.length - 1) {
+          <svg [attr.width]="jointWidth" [attr.height]="jointHeight" class="shrink-0">
+            @for (cell of jointCells; track cell.x + '-' + cell.y) {
+            <rect [attr.x]="cell.x" [attr.y]="cell.y" width="4" height="4" fill="white" fill-opacity="0.55" />
+            }
+          </svg>
+          }
+          @if (megaOpenH1() === i) {
+          <div class="w-[110px] h-[84px] flex items-center justify-center text-center p-2 shrink-0 animate-fade-in"
+            [style.background]="megaColor(i)">
+            <p class="text-white text-[10px] leading-tight">{{ card.detail }}</p>
+          </div>
+          }
+          }
+        </div>
+        }
+      </div>
+
+      <div class="bg-[#0a150a] rounded-2xl p-6 overflow-x-auto">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-[11px] uppercase tracking-widest text-[#6bc767] font-bold">Variante 2 — el mismo pixel se
+            expande</p>
+          <app-regen-button (regen)="replay('H2'); megaOpenH2.set(null)" />
+        </div>
+        @if (isVisible('H2')) {
+        <div class="flex items-center gap-3">
+          @for (card of megaCards; track card.title; let i = $index) {
+          <button type="button" (click)="toggleMegaH2(i)"
+            class="h-[84px] border-2 border-white/60 flex items-center justify-center text-center overflow-hidden shrink-0 cursor-pointer transition-all duration-500"
+            [style.width.px]="megaOpenH2() === i ? 260 : 84"
+            [style.background]="megaOpenH2() === i ? megaColor(i) : 'transparent'">
+            @if (megaOpenH2() !== i) {
+            <span class="text-white text-[11px] font-bold px-1 leading-tight">{{ card.title }}</span>
+            } @else {
+            <p class="text-white text-[11px] leading-tight px-3">{{ card.detail }}</p>
+            }
+          </button>
+          }
+        </div>
+        }
+      </div>
+    </section>
+
+    <!-- ───────────── I. Fondos generativos ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">I · Fondos generativos (estilo Processing)</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Mismos elementos, más artísticos: un campo pseudo-aleatorio (suma
+        de senos, sin librerías externas) modula tamaño, ángulo y opacidad de cada punto o línea.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">Campo de nodos</p>
+            <app-regen-button (regen)="replay('I1', regenBgNoise.bind(this))" />
+          </div>
+          @if (isVisible('I1')) {
+          <svg [attr.width]="bgWidth" [attr.height]="bgHeight" [attr.viewBox]="'0 0 ' + bgWidth + ' ' + bgHeight"
+            class="w-full h-auto">
+            <rect [attr.width]="bgWidth" [attr.height]="bgHeight" fill="#0f1e0f" />
+            @for (p of bgNoiseField(); track p.x + '-' + p.y) {
+            <circle [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="p.r" fill="#6bc767" [attr.fill-opacity]="p.o" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">Campo de flujo</p>
+            <app-regen-button (regen)="replay('I2', regenBgFlow.bind(this))" />
+          </div>
+          @if (isVisible('I2')) {
+          <svg [attr.width]="bgWidth" [attr.height]="bgHeight" [attr.viewBox]="'0 0 ' + bgWidth + ' ' + bgHeight"
+            class="w-full h-auto">
+            <rect [attr.width]="bgWidth" [attr.height]="bgHeight" fill="#0f1e0f" />
+            @for (l of bgFlowField(); track l.x1 + '-' + l.y1) {
+            <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="#bff0c4"
+              [attr.stroke-opacity]="l.o" stroke-width="1.4" stroke-linecap="round" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">Partículas orgánicas</p>
+            <app-regen-button (regen)="replay('I3', regenBgOrganic.bind(this))" />
+          </div>
+          @if (isVisible('I3')) {
+          <svg [attr.width]="bgWidth" [attr.height]="bgHeight" [attr.viewBox]="'0 0 ' + bgWidth + ' ' + bgHeight"
+            class="w-full h-auto">
+            <rect [attr.width]="bgWidth" [attr.height]="bgHeight" fill="#0f1e0f" />
+            @for (p of bgNoiseField(); track p.x + '-' + p.y) {
+            <circle class="drift-dot" [style.animation-delay.ms]="p.delay" [attr.cx]="p.x" [attr.cy]="p.y"
+              [attr.r]="p.r" fill="#6bc767" [attr.fill-opacity]="p.o" />
+            }
+          </svg>
+          }
+        </div>
+      </div>
+
+      <p class="text-[11px] uppercase tracking-widest text-[#f0a000] font-bold pt-4">9 técnicas nuevas de arte
+        generativo</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- P1: Truchet tiles -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P1 · Truchet tiles</p>
+            <app-regen-button (regen)="replay('P1', regenTruchet.bind(this))" />
+          </div>
+          @if (isVisible('P1')) {
+          <svg [attr.width]="truchetWidth" [attr.height]="truchetHeight"
+            [attr.viewBox]="'0 0 ' + truchetWidth + ' ' + truchetHeight" class="w-full h-auto">
+            <rect [attr.width]="truchetWidth" [attr.height]="truchetHeight" fill="#0f1e0f" />
+            @for (t of truchetTiles(); track t.x + '-' + t.y) {
+            <g [attr.transform]="'translate(' + t.x + ',' + t.y + ')'">
+              <path [attr.d]="truchetPath(t)" fill="none" stroke="#6bc767" stroke-width="2" class="truchet-flow" />
+            </g>
+            }
+          </svg>
+          }
+        </div>
+
+        <!-- P2: Phyllotaxis -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P2 · Filotaxis (girasol)</p>
+            <app-regen-button (regen)="replay('P2', regenPhyllo.bind(this))" />
+          </div>
+          @if (isVisible('P2')) {
+          <svg width="100%" height="200" viewBox="-100 -100 200 200">
+            <g class="ring-spin-cw" style="animation-duration: 60s;">
+              @for (d of phyllo(); track d.x + '-' + d.y) {
+              <circle [attr.cx]="d.x" [attr.cy]="d.y" [attr.r]="d.r" [attr.fill]="'hsl(' + d.hue + ',65%,55%)'" />
+              }
+            </g>
+          </svg>
+          }
+        </div>
+
+        <!-- P3: Circle packing -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P3 · Empaquetado de círculos</p>
+            <app-regen-button (regen)="replay('P3', regenPacked.bind(this))" />
+          </div>
+          @if (isVisible('P3')) {
+          <svg [attr.width]="packWidth" [attr.height]="packHeight" [attr.viewBox]="'0 0 ' + packWidth + ' ' + packHeight"
+            class="w-full h-auto">
+            <rect [attr.width]="packWidth" [attr.height]="packHeight" fill="#0f1e0f" />
+            @for (c of packed(); track c.x + '-' + c.y) {
+            <circle class="pixel-pop" [style.animation-delay.ms]="c.delay" [attr.cx]="c.x" [attr.cy]="c.y"
+              [attr.r]="c.r" fill="none" stroke="#6bc767" stroke-width="1.4" />
+            }
+          </svg>
+          }
+        </div>
+
+        <!-- P4: Constellation -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P4 · Constelación</p>
+            <app-regen-button (regen)="replay('P4', regenConstellation.bind(this))" />
+          </div>
+          @if (isVisible('P4')) {
+          <svg [attr.width]="constWidth" [attr.height]="constHeight"
+            [attr.viewBox]="'0 0 ' + constWidth + ' ' + constHeight" class="w-full h-auto">
+            <rect [attr.width]="constWidth" [attr.height]="constHeight" fill="#0f1e0f" />
+            @for (e of constData().edges; track e.x1 + '-' + e.y1 + '-' + e.x2) {
+            <line [attr.x1]="e.x1" [attr.y1]="e.y1" [attr.x2]="e.x2" [attr.y2]="e.y2" stroke="#6bc767"
+              [attr.stroke-opacity]="e.o * 0.6" stroke-width="1" />
+            }
+            @for (p of constData().pts; track p.x + '-' + p.y) {
+            <circle class="drift-dot" [attr.cx]="p.x" [attr.cy]="p.y" r="2.4" fill="#bff0c4" />
+            }
+          </svg>
+          }
+        </div>
+
+        <!-- P5: Moiré -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P5 · Interferencia Moiré</p>
+            <app-regen-button (regen)="replay('P5')" />
+          </div>
+          @if (isVisible('P5')) {
+          <svg width="100%" height="200" viewBox="-100 -100 200 200">
+            <g>
+              @for (r of moireRings; track r) {
+              <circle cx="0" cy="0" [attr.r]="r" fill="none" stroke="#6bc767" stroke-opacity="0.55" stroke-width="1" />
+              }
+            </g>
+            <g class="moire-drift">
+              @for (r of moireRings; track r) {
+              <circle cx="18" cy="6" [attr.r]="r" fill="none" stroke="#bff0c4" stroke-opacity="0.55" stroke-width="1" />
+              }
+            </g>
+          </svg>
+          }
+        </div>
+
+        <!-- P6: Recursive subdivision -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P6 · Subdivisión recursiva</p>
+            <app-regen-button (regen)="replay('P6', regenSubdivision.bind(this))" />
+          </div>
+          @if (isVisible('P6')) {
+          <svg [attr.width]="subdivWidth" [attr.height]="subdivHeight"
+            [attr.viewBox]="'0 0 ' + subdivWidth + ' ' + subdivHeight" class="w-full h-auto">
+            @for (b of subdivBlocks(); track b.x + '-' + b.y + '-' + b.w) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="b.delay" [attr.x]="b.x + 1" [attr.y]="b.y + 1"
+              [attr.width]="b.w - 2" [attr.height]="b.h - 2" [attr.fill]="b.color" />
+            }
+          </svg>
+          }
+        </div>
+
+        <!-- P7: Lissajous -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P7 · Lissajous / armonógrafo</p>
+            <app-regen-button (regen)="replay('P7', regenLissajous.bind(this))" />
+          </div>
+          @if (isVisible('P7')) {
+          <svg width="100%" height="200" viewBox="-160 -110 320 220">
+            <path class="draw-path" [attr.d]="lissajous().d" [style.--len.px]="lissajous().len"
+              [style.--draw-dur.ms]="2400" fill="none" stroke="#bff0c4" stroke-width="2" />
+          </svg>
+          }
+        </div>
+
+        <!-- P8: Curl traces -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P8 · Trazos guiados por ruido</p>
+            <app-regen-button (regen)="replay('P8', regenCurl.bind(this))" />
+          </div>
+          @if (isVisible('P8')) {
+          <svg [attr.width]="curlWidth" [attr.height]="curlHeight" [attr.viewBox]="'0 0 ' + curlWidth + ' ' + curlHeight"
+            class="w-full h-auto">
+            <rect [attr.width]="curlWidth" [attr.height]="curlHeight" fill="#0f1e0f" />
+            @for (p of curlPaths(); track p.d; let i = $index) {
+            <path class="draw-path" [attr.d]="p.d" [style.--len.px]="p.len" [style.--draw-dur.ms]="1400"
+              [style.--draw-delay.ms]="i * 80" fill="none" stroke="#6bc767" stroke-width="1.6"
+              stroke-linecap="round" />
+            }
+          </svg>
+          }
+        </div>
+
+        <!-- P9: Sunburst -->
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">P9 · Ráfaga radial</p>
+            <app-regen-button (regen)="replay('P9', regenBurst.bind(this))" />
+          </div>
+          @if (isVisible('P9')) {
+          <svg width="100%" height="200" viewBox="-100 -100 200 200">
+            <g class="ring-spin-cw" style="animation-duration: 30s;">
+              @for (r of burstRays(); track r.x2 + '-' + r.y2) {
+              <line [attr.x1]="r.x1" [attr.y1]="r.y1" [attr.x2]="r.x2" [attr.y2]="r.y2" stroke="#bff0c4"
+                [attr.stroke-opacity]="r.o" stroke-width="1.6" stroke-linecap="round" />
+              }
+            </g>
+          </svg>
+          }
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───────────── J. Súper módulos + datos "decode" ───────────── -->
+    <section class="space-y-4 pb-8">
+      <h2 class="font-heading font-black text-xl">J · Súper módulos con datos en decodificación</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Bandas más grandes del mismo módulo, mezcladas con pequeños
+        lectores de datos (coordenadas, SKU, caracteres occidentales y chinos) que se decodifican constantemente,
+        como una terminal.</p>
+      <app-regen-button (regen)="replay('J')" />
+
+      @if (isVisible('J')) {
+      <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-6 space-y-4 overflow-x-auto">
+        <svg [attr.width]="superBand1Width" [attr.height]="superBand1Height"
+          [attr.viewBox]="'0 0 ' + superBand1Width + ' ' + superBand1Height">
+          @for (cell of superBand1; track cell.x + '-' + cell.y) {
+          <rect [attr.x]="cell.x" [attr.y]="cell.y" [attr.width]="15" [attr.height]="15" fill="white"
+            fill-opacity="0.9" />
+          }
+        </svg>
+        <svg [attr.width]="superBand2Width" [attr.height]="superBand2Height"
+          [attr.viewBox]="'0 0 ' + superBand2Width + ' ' + superBand2Height">
+          @for (cell of superBand2; track cell.x + '-' + cell.y) {
+          <rect [attr.x]="cell.x" [attr.y]="cell.y" [attr.width]="12" [attr.height]="12" fill="#6bc767" />
+          }
+        </svg>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          @for (r of readouts(); track $index) {
+          <span
+            class="font-mono text-[11px] text-[#bff0c4] bg-black/40 border border-[#20a038]/40 px-2.5 py-1.5 rounded">{{
+            r.current }}</span>
+          }
+        </div>
+      </div>
+      }
+    </section>
+
+    <!-- ───────────── K. Versión Processing de cada ejemplo ───────────── -->
+    <section class="space-y-4">
+      <h2 class="font-heading font-black text-xl">K · Una versión "Processing" de cada ejemplo anterior</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Mismos datos de A a J, reinterpretados con ruido/aleatoriedad en
+        vez de una regla fija — para comparar la versión "de diseño" contra la versión "generativa" una al lado de
+        la otra.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">A → opacidad por ruido</p>
+            <app-regen-button (regen)="replay('KA')" />
+          </div>
+          @if (isVisible('KA')) {
+          <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight"
+            class="w-full h-auto">
+            @for (cell of stripFilled; track cell.x + '-' + cell.y) {
+            <rect [attr.x]="cell.x" [attr.y]="cell.y" [attr.width]="cellPx" [attr.height]="cellPx" fill="#6bc767"
+              [attr.fill-opacity]="0.35 + (noiseAt(cell.x, cell.y) + 1) * 0.3" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">B → orden de aparición al azar</p>
+            <app-regen-button (regen)="replay('KB', regenShuffleDelays.bind(this))" />
+          </div>
+          @if (isVisible('KB')) {
+          <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight"
+            class="w-full h-auto">
+            @for (cell of shuffledStrip(); track cell.x + '-' + cell.y) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+              [attr.width]="cellPx" [attr.height]="cellPx" fill="white" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">C → relleno por cercanía al centro</p>
+            <app-regen-button (regen)="replay('KC')" />
+          </div>
+          @if (isVisible('KC')) {
+          <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight"
+            class="w-full h-auto">
+            @for (cell of stripOutline; track cell.x + '-' + cell.y) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+              [attr.width]="cellPx" [attr.height]="cellPx" fill="white" />
+            }
+            @for (cell of stripInteriorOnly; track cell.x + '-' + cell.y) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="radialDelay(cell)" [attr.x]="cell.x"
+              [attr.y]="cell.y" [attr.width]="cellPx" [attr.height]="cellPx" fill="#6bc767" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">D → onda automática (sin mouse)</p>
+            <app-regen-button (regen)="replay('KD')" />
+          </div>
+          @if (isVisible('KD')) {
+          <svg [attr.width]="stripWidth" [attr.height]="stripHeight" [attr.viewBox]="'0 0 ' + stripWidth + ' ' + stripHeight"
+            class="w-full h-auto">
+            @for (cell of stripFilled; track cell.x + '-' + cell.y; let i = $index) {
+            <rect class="wave-cell" [style.animation-delay.ms]="-(i * 40)" [attr.x]="cell.x" [attr.y]="cell.y"
+              [attr.width]="cellPx" [attr.height]="cellPx" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">E → textura de ruido en la tarjeta</p>
+            <app-regen-button (regen)="replay('KE', regenKeNoise.bind(this))" />
+          </div>
+          @if (isVisible('KE')) {
+          <div class="rounded-xl overflow-hidden h-[110px] relative bg-[#0f1e0f]">
+            <svg [attr.width]="bgWidth" [attr.height]="bgHeight" [attr.viewBox]="'0 0 ' + bgWidth + ' ' + bgHeight"
+              class="absolute inset-0 w-full h-full">
+              @for (p of keNoise(); track p.x + '-' + p.y) {
+              <circle [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="p.r * 0.6" fill="#20a038" [attr.fill-opacity]="p.o" />
+              }
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-white text-[13px] font-bold uppercase tracking-wide bg-black/30 px-3 py-1 rounded">Salud</span>
+            </div>
+          </div>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">F/G → anillo con radio ruidoso</p>
+            <app-regen-button (regen)="replay('KF', regenNoisyRing.bind(this))" />
+          </div>
+          @if (isVisible('KF')) {
+          <svg width="100%" height="200" viewBox="-160 -160 320 320">
+            <g class="ring-spin-cw">
+              @for (c of noisyRing(); track c.x + '-' + c.y) {
+              <rect [attr.x]="c.x - c.size / 2" [attr.y]="c.y - c.size / 2" [attr.width]="c.size"
+                [attr.height]="c.size" [attr.transform]="'rotate(' + c.rot + ' ' + c.x + ' ' + c.y + ')'"
+                fill="white" />
+              }
+            </g>
+          </svg>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4 sm:col-span-2 lg:col-span-1">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">H → fondo de detalle con ruido</p>
+            <app-regen-button (regen)="replay('KH')" />
+          </div>
+          @if (isVisible('KH')) {
+          <div class="flex items-center gap-2">
+            <div class="w-[70px] h-[70px] border-2 border-white/60 flex items-center justify-center shrink-0">
+              <span class="text-white text-[10px] font-bold">NODO</span>
+            </div>
+            <div class="w-[100px] h-[70px] relative overflow-hidden rounded shrink-0">
+              <svg width="100" height="70" viewBox="0 0 100 70" class="absolute inset-0">
+                @for (l of keFlow; track l.x1 + '-' + l.y1) {
+                <line [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" stroke="white"
+                  [attr.stroke-opacity]="l.o" stroke-width="1" />
+                }
+              </svg>
+            </div>
+          </div>
+          }
+        </div>
+
+        <div class="bg-[#0a150a] rounded-2xl p-4 sm:col-span-2 lg:col-span-2">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">J → banda orgánica (tamaño por ruido)</p>
+            <app-regen-button (regen)="replay('KJ', regenOrganicBand.bind(this))" />
+          </div>
+          @if (isVisible('KJ')) {
+          <svg [attr.width]="superBand1Width" height="130" [attr.viewBox]="'0 0 ' + superBand1Width + ' 130'"
+            class="w-full h-auto">
+            @for (c of organicBand(); track c.x + '-' + c.y) {
+            <circle [attr.cx]="c.x + 7" [attr.cy]="c.y + 7" [attr.r]="c.r" fill="#6bc767" [attr.fill-opacity]="c.o" />
+            }
+          </svg>
+          }
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ───────────── Apéndice. Patrones precolombinos por código ───────────── -->
+    <section class="space-y-4 pb-8">
+      <h2 class="font-heading font-black text-xl">Apéndice · Patrones precolombinos hechos por código</h2>
+      <p class="text-[#a0b899] text-sm max-w-2xl">Misma caja de herramientas (distancia de Manhattan / coordenadas
+        polares), aplicada a motivos geométricos de tradición andina — como el que ya bordea el logo.</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">K1 · Cadena de rombos (escala grande)</p>
+            <app-regen-button (regen)="replay('K1', regenK1.bind(this))" />
+          </div>
+          @if (isVisible('K1')) {
+          <svg [attr.width]="k1Width" [attr.height]="k1Height" [attr.viewBox]="'0 0 ' + k1Width + ' ' + k1Height"
+            class="w-full h-auto">
+            @for (cell of k1Cells(); track cell.x + '-' + cell.y) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+              width="13" height="13" fill="white" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-[11px] text-[#6bc767] font-bold">K2 · Greca escalonada (meandro andino)</p>
+            <app-regen-button (regen)="replay('K2', regenGreca.bind(this))" />
+          </div>
+          @if (isVisible('K2')) {
+          <svg [attr.width]="k2Width" [attr.height]="k2Height" [attr.viewBox]="'0 0 ' + k2Width + ' ' + k2Height"
+            class="w-full h-auto">
+            @for (cell of k2Cells(); track cell.x + '-' + cell.y) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+              width="12" height="12" fill="white" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4 flex flex-col items-center">
+          <div class="flex items-center justify-between mb-2 w-full">
+            <p class="text-[11px] text-[#6bc767] font-bold">K3 · Cuadrados concéntricos escalonados</p>
+            <app-regen-button (regen)="replay('K3', regenChakana.bind(this))" />
+          </div>
+          @if (isVisible('K3')) {
+          <svg [attr.width]="k3Width" [attr.height]="k3Height" [attr.viewBox]="'0 0 ' + k3Width + ' ' + k3Height">
+            @for (cell of k3Cells(); track cell.x + '-' + cell.y) {
+            <rect class="pixel-pop" [style.animation-delay.ms]="cell.delay" [attr.x]="cell.x" [attr.y]="cell.y"
+              [attr.width]="k3Px" [attr.height]="k3Px" fill="white" />
+            }
+          </svg>
+          }
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0f1e0f] via-[#1a3a1a] to-[#0f2a0f] rounded-2xl p-4 flex flex-col items-center">
+          <div class="flex items-center justify-between mb-2 w-full">
+            <p class="text-[11px] text-[#6bc767] font-bold">K4 · Medallón de rombos concéntricos</p>
+            <app-regen-button (regen)="replay('K4')" />
+          </div>
+          @if (isVisible('K4')) {
+          <svg width="260" height="260" viewBox="-140 -140 280 280">
+            <g class="ring-spin-cw" style="animation-duration: 40s;">
+              @for (layer of k4Layers; track layer) {
+              <path [attr.d]="k4Path(layer)" fill="none" stroke="white" stroke-width="1.4"
+                [attr.stroke-opacity]="0.35 + layer * 0.08" />
+              }
+            </g>
+          </svg>
+          }
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>

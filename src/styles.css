@@ -5,6 +5,10 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* 🔤 Tipografía de marca */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Libre Franklin', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
   /* 🟢 Primary */
   --color-primary-50: #ecf7ed;
   --color-primary-100: #cfeecd;
@@ -33,6 +37,16 @@
 }
 
 @layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+  }
+
   :root {
     /* PrimeNG Semantic Colors */
     --p-primary-color: var(--color-primary-500);
@@ -68,6 +82,73 @@
 
   }
 
+}
+
+/* ── Auth pages: animated border-trace card frame ── */
+.auth-card-frame {
+  position: relative;
+  border-radius: 1.5rem;
+  padding: 2px;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.auth-card-frame::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  z-index: 0;
+  background: conic-gradient(from 0turn,
+      transparent 0turn,
+      transparent 0.74turn,
+      rgba(191, 240, 196, 0) 0.78turn,
+      #6bc767 0.82turn,
+      #20a038 0.85turn,
+      #6bc767 0.88turn,
+      rgba(191, 240, 196, 0) 0.92turn,
+      transparent 1turn);
+  animation: auth-border-trace 8s linear infinite;
+}
+
+@keyframes auth-border-trace {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* ── Auth pages: "INGRESA" / "REGÍSTRATE" heading pulse ── */
+.auth-heading-glow {
+  animation: auth-heading-pulse 8s ease-in-out infinite;
+}
+
+@keyframes auth-heading-pulse {
+
+  0%,
+  100% {
+    text-shadow: 0 0 0px rgba(32, 160, 56, 0);
+    letter-spacing: 0.08em;
+  }
+
+  50% {
+    text-shadow: 0 0 22px rgba(107, 199, 103, 0.85), 0 0 8px rgba(191, 240, 196, 0.9);
+    letter-spacing: 0.11em;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .p-listbox-list {

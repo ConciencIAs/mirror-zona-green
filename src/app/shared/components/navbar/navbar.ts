@@ -21,11 +21,6 @@ import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { FormsModule } from '@angular/forms';
 
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
-import {
-  NavbarConfig,
-  SettingsConfig,
-  AdvertisingBannerConfig,
-} from '@src/app/shared/models/interfaces/page-config.interface';
 import { AdvertisingBannerComponent } from '@src/app/shared/components/advertising-banner/advertising-banner';
 
 const LS_KEY = 'zg-dark';
@@ -60,10 +55,12 @@ export class Navbar implements OnInit {
 
   totalCartItems = this.cartStore.totalItems;
 
-  // Reactive state for configuration
-  protected readonly settingsConfig = signal<SettingsConfig | null>(null);
-  protected readonly navBarConfig = signal<NavbarConfig | null>(null);
-  protected readonly advertisingBannerConfig = signal<AdvertisingBannerConfig>({ items: [] });
+  // Reactive state for configuration — computed() en vez de una copia
+  // única para que se actualice solo cuando el store termina de cargar
+  // la config real (antes se congelaba con el valor por defecto).
+  protected readonly settingsConfig = computed(() => this.appConfigStore.settingsConfig());
+  protected readonly navBarConfig = computed(() => this.appConfigStore.navbarConfig());
+  protected readonly advertisingBannerConfig = computed(() => this.appConfigStore.advertisingConfig());
 
   visibleNavSections = computed(() => {
     return (
@@ -78,20 +75,6 @@ export class Navbar implements OnInit {
     if (saved === 'true') {
       this.applyDark(true);
       this.isDark.set(true);
-    }
-    this.loadAppConfig();
-  }
-
-  async loadAppConfig() {
-    try {
-      let navbarConfig = this.appConfigStore.navbarConfig();
-      let settingsConfig = this.appConfigStore.settingsConfig();
-      let advertisingBannerConfig = this.appConfigStore.advertisingConfig();
-      this.navBarConfig.set(navbarConfig);
-      this.settingsConfig.set(settingsConfig);
-      this.advertisingBannerConfig.set(advertisingBannerConfig);
-    } catch (err) {
-      console.error('Error loading navbar config:', err);
     }
   }
 
@@ -136,7 +119,7 @@ export class Navbar implements OnInit {
 
     if (!query.trim()) return;
 
-    this.router.navigate(['/marketplace'], {
+    this.router.navigate(['/seleccion'], {
       queryParams: { q: query.trim() },
     });
   }

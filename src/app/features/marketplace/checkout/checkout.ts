@@ -48,7 +48,7 @@ export class Checkout implements OnInit {
   ngOnInit(): void {
     if (this.cartItems().length === 0) {
       this.toastService.error('El carrito está vacío.');
-      this.router.navigate(['/marketplace/carrito']);
+      this.router.navigate(['/seleccion/carrito']);
     }
   }
 

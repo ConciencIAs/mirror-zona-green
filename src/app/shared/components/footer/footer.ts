@@ -1,11 +1,7 @@
-import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
-import {
-  SettingsConfig,
-  FooterConfig,
-} from '@src/app/shared/models/interfaces/page-config.interface';
 
 @Component({
   selector: 'app-footer',
@@ -13,24 +9,14 @@ import {
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './footer.html',
 })
-export class Footer implements OnInit {
+export class Footer {
   private readonly userStore = inject(UserStore);
   private readonly appConfigStore = inject(AppConfigStore);
 
   protected isAuthenticated = this.userStore.isAuthenticated;
 
-  // Reactive state for footer configuration
-  protected readonly settingsConfig = signal<FooterConfig | null>(null);
-  protected readonly appSettingsConfig = signal<SettingsConfig | null>(null);
-
-  ngOnInit() {
-    this.loadAppConfig();
-  }
-
-  async loadAppConfig() {
-    let footerConfig = this.appConfigStore.footerConfig();
-    let appConfig = this.appConfigStore.settingsConfig();
-    this.settingsConfig.set(footerConfig);
-    this.appSettingsConfig.set(appConfig);
-  }
+  // Reactive state for footer configuration — computed() para que se
+  // actualice solo cuando el store termina de cargar la config real.
+  protected readonly settingsConfig = computed(() => this.appConfigStore.footerConfig());
+  protected readonly appSettingsConfig = computed(() => this.appConfigStore.settingsConfig());
 }
