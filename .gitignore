@@ -44,3 +44,7 @@ __screenshots__/
 Thumbs.db
 
 .github/workflows/mirror.yml
+
+# Design source assets / working notes (not part of the app)
+/Mickups VLado/
+/pendientes/
