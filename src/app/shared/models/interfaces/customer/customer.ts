@@ -8,4 +8,5 @@ export interface CustomerData {
   ubicacion: string;
   acepta_terminos: boolean;
   acepta_politica_privacidad: boolean;
+  codigo_referido?: string;
 }

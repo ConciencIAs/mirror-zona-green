@@ -1,127 +1,312 @@
-<!-- Header -->
-<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pt-12">
+<!-- ═══════════ HEADER ═══════════ -->
+<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pt-16 mx-2">
   <div>
-    <h1 class="text-3xl font-semibold text-slate-900">Gestión de Usuarios</h1>
+    <h1 class="text-3xl font-semibold text-slate-900">Gestión de Usuarios y Referidos</h1>
     <p class="mt-1 text-sm text-slate-500">
-      Administra roles y estados de acceso de los usuarios registrados.
+      Administra roles, estados de acceso, códigos de invitación y referidos.
     </p>
   </div>
 
-  <!-- Search -->
-  <div class="relative w-full md:w-72">
-    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-      </svg>
-    </span>
-    <input id="user-search" type="text" placeholder="Buscar por nombre, correo o rol..."
-      class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-slate-700 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
-      [value]="searchTerm()" (input)="onSearchChange($event)" />
+  <!-- Filtros -->
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+    <!-- Filtro por estado -->
+    <p-select
+      [options]="statusFilterOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="statusFilter()"
+      (ngModelChange)="onStatusFilterChange($event)"
+      placeholder="Filtrar por estado"
+      class="text-sm"
+      styleClass="min-w-44"
+    />
+
+    <!-- Buscador global -->
+    <div class="relative w-full sm:w-72">
+      <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+      </span>
+      <input
+        id="user-search"
+        type="text"
+        placeholder="Buscar por nombre, correo o código..."
+        class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-4 text-sm text-slate-700 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+        [value]="searchTerm()"
+        (input)="onSearchChange($event)"
+      />
+    </div>
   </div>
 </div>
 
-<!-- Table -->
+<!-- ═══════════ TABLE ═══════════ -->
 <section class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
 
   @if (loading()) {
-  <div class="rounded-3xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-    Cargando usuarios...
-  </div>
+    <div class="rounded-3xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+      <svg class="mx-auto h-8 w-8 animate-spin text-emerald-500 mb-3" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+      </svg>
+      Cargando usuarios...
+    </div>
   } @else {
-  @if (filteredProfiles.length === 0) {
-  <div class="rounded-3xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
-    No se encontraron usuarios.
-  </div>
-  } @else {
-  <div class="overflow-x-auto">
-    <table class="min-w-full text-left text-sm text-slate-600">
-      <thead class="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-400">
-        <tr>
-          <th class="px-4 py-3">Usuario</th>
-          <th class="px-4 py-3">Correo</th>
-          <th class="px-4 py-3">Teléfono</th>
-          <th class="px-4 py-3">Estado</th>
-          <th class="px-4 py-3">Rol</th>
-          <th class="px-4 py-3 text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-100">
 
-        @for (profile of filteredProfiles; track profile.id) {
-        <tr class="transition hover:bg-slate-50" [class.opacity-60]="saving() === profile.id">
+    @if (perfiles().length === 0) {
+      <div class="rounded-3xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+        No se encontraron usuarios con los filtros seleccionados.
+      </div>
+    } @else {
 
-          <!-- Avatar + nombre -->
-          <td class="px-4 py-4">
-            <div class="flex items-center gap-3">
-              <div
-                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
-                {{ (profile.full_name ?? profile.correo).charAt(0).toUpperCase() }}
+      <p-table
+        [value]="perfiles()"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
+        [globalFilterFields]="['full_name', 'correo', 'codigo_invitacion', 'referido_por']"
+        styleClass="p-datatable-sm p-datatable-striped"
+        responsiveLayout="scroll"
+      >
+        <!-- Header de la tabla -->
+        <ng-template #header>
+          <tr>
+            <th pSortableColumn="full_name" class="!font-semibold">
+              Nombre
+              <p-sortIcon field="full_name" />
+            </th>
+            <th pSortableColumn="correo" class="!font-semibold">
+              Correo
+              <p-sortIcon field="correo" />
+            </th>
+            <th pSortableColumn="status" class="!font-semibold">
+              Estado
+              <p-sortIcon field="status" />
+            </th>
+            <th pSortableColumn="rol" class="!font-semibold">
+              Rol
+              <p-sortIcon field="rol" />
+            </th>
+            <th class="!font-semibold">Origen Autorización</th>
+            <th class="!font-semibold">Código Invitación</th>
+            <th class="!font-semibold text-center">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template #body let-profile>
+          <tr [class.opacity-50]="saving() === profile.id">
+
+            <!-- Nombre + icono referido -->
+            <td class="!py-3">
+              <div class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+                  {{ (profile.full_name ?? profile.correo).charAt(0).toUpperCase() }}
+                </div>
+                <span class="font-medium text-slate-900">
+                  {{ profile.full_name ?? '—' }}
+                </span>
+
+                <!-- Icono de referido con tooltip -->
+                @if (profile.referido_por) {
+                  <span
+                    class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-100 text-blue-600 cursor-help"
+                    [pTooltip]="'Referido por: ' + profile.referido_por"
+                    tooltipPosition="top"
+                  >
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </span>
+                }
               </div>
-              <span class="font-medium text-slate-900">
-                {{ profile.full_name ?? '—' }}
+            </td>
+
+            <!-- Correo -->
+            <td class="!py-3 text-slate-500">{{ profile.correo }}</td>
+
+            <!-- Estado + Dropdown para cambiar status directamente -->
+            <td class="!py-3">
+              <div class="flex items-center gap-2">
+                <p-select
+                  [options]="statusSelectOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  [ngModel]="profile.status"
+                  (ngModelChange)="updateStatus(profile, $event)"
+                  [disabled]="saving() === profile.id"
+                  placeholder="Estado"
+                  styleClass="text-xs"
+                />
+              </div>
+            </td>
+
+            <!-- Rol + Dropdown para cambiar rol directamente -->
+            <td class="!py-3">
+              <p-select
+                [options]="rolOptions"
+                optionLabel="label"
+                optionValue="value"
+                [ngModel]="profile.rol"
+                (ngModelChange)="updateRol(profile, $event)"
+                [disabled]="saving() === profile.id"
+                placeholder="Rol"
+                styleClass="text-xs"
+              />
+            </td>
+
+            <!-- Origen Autorización -->
+            <td class="!py-3">
+              <span class="text-sm text-slate-600">
+                {{ profile.origen_autorizacion ?? '—' }}
               </span>
-            </div>
-          </td>
+            </td>
 
-          <!-- Correo -->
-          <td class="px-4 py-4 text-slate-500">{{ profile.correo }}</td>
-
-          <!-- Teléfono -->
-          <td class="px-4 py-4 text-slate-500">{{ profile.telefono ?? '—' }}</td>
-
-          <!-- Estado actual + badge -->
-          <td class="px-4 py-4">
-            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
-              [class]="getStatusClass(profile.status)">
-              {{ profile.status ?? 'sin estado' }}
-            </span>
-          </td>
-
-          <!-- Rol actual + badge -->
-          <td class="px-4 py-4">
-            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold" [class]="getRolClass(profile.rol)">
-              {{ profile.rol }}
-            </span>
-          </td>
-
-          <!-- Acciones -->
-          <td class="px-4 py-4">
-            <div class="flex flex-wrap items-center justify-center gap-2">
-
-              <!-- Cambiar estado -->
-              <p-select [inputId]="'status-' + profile.id" [options]="statusOptions" optionLabel="label"
-                optionValue="value" [ngModel]="profile.status" (ngModelChange)="updateStatus(profile, $event)"
-                [disabled]="saving() === profile.id" placeholder="Estado" class="text-xs" />
-
-              <!-- Cambiar rol -->
-              <p-select [inputId]="'rol-' + profile.id" [options]="rolOptions" optionLabel="label" optionValue="value"
-                [ngModel]="profile.rol" (ngModelChange)="updateRol(profile, $event)"
-                [disabled]="saving() === profile.id" placeholder="Rol" class="text-xs" />
-
-              <!-- Spinner cuando guarda -->
-              @if (saving() === profile.id) {
-              <svg class="h-4 w-4 animate-spin text-emerald-600" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-              </svg>
+            <!-- Código Invitación -->
+            <td class="!py-3">
+              @if (profile.codigo_invitacion) {
+                <code class="rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-mono font-semibold text-emerald-700 border border-emerald-200">
+                  {{ profile.codigo_invitacion }}
+                </code>
+              } @else {
+                <span class="text-sm text-slate-400">—</span>
               }
+            </td>
 
-            </div>
-          </td>
+            <!-- Acciones dinámicas -->
+            <td class="!py-3">
+              <div class="flex flex-wrap items-center justify-center gap-2">
 
-        </tr>
-        }
+                @if (saving() === profile.id) {
+                  <svg class="h-5 w-5 animate-spin text-emerald-600" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                  </svg>
+                } @else {
 
-      </tbody>
-    </table>
-  </div>
+                  <!-- Si está INACTIVO → Autorizar -->
+                  @if (profile.status === 'inactivo') {
+                    <button
+                      class="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-600 active:scale-95 shadow-sm"
+                      (click)="abrirModalAutorizacion(profile)"
+                    >
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Autorizar
+                      </span>
+                    </button>
+                  }
 
-  <!-- Footer count -->
-  <p class="mt-4 text-right text-xs text-slate-400">
-    Mostrando {{ filteredProfiles.length }} de {{ profiles().length }} usuarios
-  </p>
+                  <!-- Si está ACTIVO pero NO tiene código → Generar Código -->
+                  @if (profile.status === 'activo' && !profile.codigo_invitacion) {
+                    <button
+                      class="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-600 active:scale-95 shadow-sm"
+                      (click)="generarCodigo(profile)"
+                    >
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg>
+                        Generar Código
+                      </span>
+                    </button>
+                  }
+
+                  <!-- Si YA tiene código → Revocar -->
+                  @if (profile.codigo_invitacion) {
+                    <button
+                      class="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-200 active:scale-95"
+                      (click)="revocarCodigo(profile)"
+                    >
+                      <span class="flex items-center gap-1">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                        Revocar Código
+                      </span>
+                    </button>
+                  }
+
+                }
+              </div>
+            </td>
+
+          </tr>
+        </ng-template>
+
+        <!-- Empty message -->
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="7" class="text-center text-slate-400 py-8">
+              No se encontraron usuarios.
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+      <!-- Footer count -->
+      <p class="mt-4 text-right text-xs text-slate-400">
+        Total: {{ totalPerfiles() }} usuarios registrados
+      </p>
+    }
   }
-  }
-
 </section>
+
+<!-- ═══════════ MODAL AUTORIZACIÓN ═══════════ -->
+<p-dialog
+  header="Autorizar Usuario"
+  [(visible)]="showAuthModal"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="w-full max-w-md"
+  (onHide)="cancelarAutorizacion()"
+>
+  @if (selectedProfile()) {
+    <div class="space-y-4">
+      <p class="text-sm text-slate-600">
+        Vas a autorizar a
+        <strong class="text-slate-900">{{ selectedProfile()!.full_name ?? selectedProfile()!.correo }}</strong>
+        como usuario activo.
+      </p>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-2">
+          Origen de autorización
+        </label>
+        <p-select
+          [options]="origenOptions"
+          optionLabel="label"
+          optionValue="value"
+          [ngModel]="selectedOrigen()"
+          (ngModelChange)="selectedOrigen.set($event)"
+          placeholder="Selecciona el origen..."
+          styleClass="w-full"
+        />
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button
+          class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200"
+          (click)="cancelarAutorizacion()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="!selectedOrigen()"
+          (click)="confirmarAutorizacion()"
+        >
+          Confirmar Autorización
+        </button>
+      </div>
+    </div>
+  }
+</p-dialog>

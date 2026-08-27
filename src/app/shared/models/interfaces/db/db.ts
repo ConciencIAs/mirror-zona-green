@@ -64,6 +64,9 @@ export interface Perfil {
     ubicacion: string | null;
     updated_at: string | null;
     status?: EstadoUsuario;
+    codigo_invitacion: string | null;
+    referido_por: string | null;
+    origen_autorizacion: string | null;
 }
 
 

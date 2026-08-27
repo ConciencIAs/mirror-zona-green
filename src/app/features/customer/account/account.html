@@ -1,10 +1,10 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 py-10 px-4">
-  <div class="max-w-2xl mx-auto">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 py-10 pt-16 px-4">
+  <div class="max-w-2xl mx-auto space-y-6">
 
     <!-- ==============================
          HEADER
     =============================== -->
-    <div class="mb-8">
+    <div>
       <div class="flex items-center gap-3 mb-1">
         <!-- Ícono de usuario -->
         <div class="w-12 h-12 rounded-2xl bg-primary-500 flex items-center justify-center shadow-md">
@@ -15,13 +15,73 @@
         </div>
         <div>
           <h1 class="text-2xl font-bold text-slate-900">Mi cuenta</h1>
-          <p class="text-sm text-slate-500">Administra tu información personal</p>
+          <p class="text-sm text-slate-500">Administra tu información personal y código de referido</p>
         </div>
       </div>
     </div>
 
     <!-- ==============================
-         CARD PRINCIPAL
+         CARD: CÓDIGO DE REFERIDO
+    =============================== -->
+    <div
+      class="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 p-6 text-white shadow-xl shadow-slate-300 relative overflow-hidden">
+      <!-- Decoración de fondo -->
+      <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none">
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span
+              class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-emerald-500/20 text-emerald-400">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Programa de Referidos</span>
+          </div>
+          <h2 class="text-lg font-bold text-white">Mi Código de Referido</h2>
+          <p class="text-xs text-slate-300 mt-0.5">
+            Comparte tu código con nuevos usuarios para invitarlos a registrarse.
+          </p>
+        </div>
+
+        @if (codigoInvitacion()) {
+        <div
+          class="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-2.5 sm:pl-4">
+          <code class="text-xl font-mono font-bold tracking-widest text-emerald-300">
+              {{ codigoInvitacion() }}
+            </code>
+
+          <button id="btn-copiar-codigo" type="button"
+            class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3.5 py-2 text-xs font-semibold text-slate-950 transition hover:bg-emerald-400 active:scale-95 shadow-sm"
+            [class.bg-emerald-300]="copiedCode()" (click)="copiarCodigo()">
+            @if (copiedCode()) {
+            <svg class="h-4 w-4 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>¡Copiado!</span>
+            } @else {
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <span>Copiar</span>
+            }
+          </button>
+        </div>
+        } @else {
+        <div class="rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-xs text-slate-300 italic">
+          Sin código de referido asignado
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- ==============================
+         CARD PRINCIPAL: DATOS Y EDICIÓN
     =============================== -->
     <div class="rounded-3xl bg-white shadow-lg shadow-slate-200 overflow-hidden">
 
