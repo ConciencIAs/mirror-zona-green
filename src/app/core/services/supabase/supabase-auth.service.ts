@@ -38,6 +38,20 @@ export class SupabaseAuthService {
     });
   }
 
+  /**
+   * Envía un Magic Link con metadatos opcionales (ej. código de referido).
+   * El backend lee `raw_user_meta_data->>'referido_por'` en el trigger `handle_new_user`.
+   */
+  sendMagicLink(email: string, redirectUrl: string, metadata?: Record<string, unknown>) {
+    return this.supabaseClient.supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectUrl,
+        ...(metadata && Object.keys(metadata).length > 0 ? { data: metadata } : {}),
+      },
+    });
+  }
+
   signOut() {
     return this.supabaseClient.supabase.auth.signOut();
   }

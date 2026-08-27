@@ -33,6 +33,10 @@ const DEFAULT_PROFILE: Perfil = {
     tipo_documento: null,
     ubicacion: null,
     updated_at: null,
+    status: 'inactivo',
+    codigo_invitacion: null,
+    referido_por: null,
+    origen_autorizacion: null,
 };
 
 const getInitialState = (): UserState => {

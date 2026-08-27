@@ -39,6 +39,10 @@ export class Account implements OnInit {
   private readonly toastService = inject(ToastService);
 
   readonly loading = signal(false);
+  readonly copiedCode = signal(false);
+
+  /** Código de invitación / referido propio del usuario */
+  readonly codigoInvitacion = computed(() => this.userStore.perfil().codigo_invitacion);
 
   /** Opciones de tipo de documento */
   readonly documentTypeOptions: SelectOption[] = [
@@ -81,7 +85,6 @@ export class Account implements OnInit {
   ngOnInit(): void {
     const perfil = this.userStore.perfil();
 
-    // Construimos la fecha de nacimiento: si existe en DB la parseamos, sino hoy
     let fechaNacimiento: Date;
     if (perfil.fecha_nacimiento) {
       const parsed = new Date(perfil.fecha_nacimiento);
@@ -90,7 +93,6 @@ export class Account implements OnInit {
       fechaNacimiento = new Date();
     }
 
-    // Cargamos los datos del store en el modelo del formulario
     this.formModel.set({
       full_name: perfil.full_name ?? '',
       telefono: perfil.telefono ?? '',
@@ -99,6 +101,21 @@ export class Account implements OnInit {
       fecha_nacimiento: fechaNacimiento,
       ubicacion: perfil.ubicacion ?? '',
     });
+  }
+
+  /** Copiar código de referido al portapapeles */
+  async copiarCodigo(): Promise<void> {
+    const code = this.codigoInvitacion();
+    if (!code) return;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      this.copiedCode.set(true);
+      this.toastService.success('¡Código de referido copiado al portapapeles!');
+      setTimeout(() => this.copiedCode.set(false), 2500);
+    } catch {
+      this.toastService.error('No se pudo copiar el código.');
+    }
   }
 
   async submit(event: Event): Promise<void> {
@@ -115,7 +132,6 @@ export class Account implements OnInit {
       const data = this.formModel();
       const userId = this.userStore.perfil().id;
 
-      // Convertimos fecha_nacimiento a string ISO para Supabase
       const payload: Record<string, unknown> = {
         full_name: data.full_name.trim(),
         telefono: data.telefono.trim(),
@@ -135,7 +151,6 @@ export class Account implements OnInit {
         return;
       }
 
-      // Actualizamos el store local con los nuevos datos
       this.userStore.updatePerfil({
         full_name: data.full_name.trim(),
         telefono: data.telefono.trim(),

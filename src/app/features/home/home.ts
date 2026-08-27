@@ -1,9 +1,10 @@
-import { Component, inject, signal, HostListener, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
 
 @Component({
   selector: 'app-customer-home',
@@ -15,12 +16,13 @@ export class CustomerHome {
   private readonly authService = inject(SupabaseAuthService);
   private contentDbService = inject(ContentDbService);
   private sanitizer = inject(DomSanitizer);
+  private userState = inject(UserStore);
 
   private toastService = inject(ToastService);
 
   public renderHtml = signal<SafeHtml | undefined>(undefined);
   public renderCss = signal<SafeHtml | undefined>(undefined);
-  protected isAuthenticated = this.authService.isAuthenticated;
+  protected isAuthenticated = computed(() => this.authService.isAuthenticated() && this.userState.perfil().status === 'activo');
 
   async ngOnInit(): Promise<void> {
     const { data, error } = await this.contentDbService.getContentHome();

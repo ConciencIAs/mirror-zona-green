@@ -677,3 +677,105 @@ ON public.productos
 FROM anon;
 
 
+-- 2. Actualizar la tabla perfiles
+ALTER TABLE public.perfiles 
+ADD COLUMN codigo_invitacion text UNIQUE,
+ADD COLUMN referido_por text,
+ADD COLUMN origen_autorizacion text;
+
+-- 3. Crear tabla de Base de Confianza
+CREATE TABLE public.base_confianza (
+    correo text PRIMARY KEY,
+    agregado_el timestamptz DEFAULT now(),
+    agregado_por uuid REFERENCES public.perfiles(id) ON DELETE SET NULL
+);
+
+-- Políticas para la base de confianza (Solo Admin)
+ALTER TABLE public.base_confianza ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Base Confianza - Admin" ON public.base_confianza FOR ALL USING (public.auth_user_role() = 'admin');
+
+CREATE OR REPLACE FUNCTION public.proteger_campos_perfil()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'UPDATE') THEN
+        -- Si el que actualiza NO es admin, ni es el sistema interno
+        IF (public.auth_user_role() != 'admin' AND auth.role() != 'service_role') THEN
+            -- Revertimos cualquier intento de cambiar estos campos críticos
+            NEW.rol = OLD.rol;
+            NEW.status = OLD.status;
+            NEW.codigo_invitacion = OLD.codigo_invitacion;
+            NEW.referido_por = OLD.referido_por;
+            NEW.origen_autorizacion = OLD.origen_autorizacion;
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Reemplazamos el trigger anterior
+DROP TRIGGER IF EXISTS tr_proteger_rol_perfil ON public.perfiles;
+CREATE TRIGGER tr_proteger_campos_perfil 
+BEFORE UPDATE ON public.perfiles 
+FOR EACH ROW EXECUTE FUNCTION public.proteger_campos_perfil();
+
+CREATE OR REPLACE FUNCTION public.validar_codigo_referido(codigo_prueba text)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER -- Ejecuta la función con permisos de admin, no del usuario público
+AS $$
+BEGIN
+    -- Retorna true si encuentra un perfil ACTIVO con ese código
+    RETURN EXISTS (
+        SELECT 1 FROM public.perfiles 
+        WHERE codigo_invitacion = codigo_prueba AND status = 'activo'
+    );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_status public.status_profile;
+    v_origen text;
+    v_referido_por text;
+BEGIN
+    v_status := 'inactivo';
+    v_origen := 'registro_web';
+    
+    -- Leemos el código que el usuario ingresó en el frontend
+    v_referido_por := NEW.raw_user_meta_data->>'referido_por';
+
+    -- Verificamos si existe en la base de confianza
+    IF EXISTS (SELECT 1 FROM public.base_confianza WHERE correo = NEW.email) THEN
+        v_status := 'activo';
+        v_origen := 'base_confianza';
+    END IF;
+
+    INSERT INTO public.perfiles (id, rol, correo, status, referido_por, origen_autorizacion, datos_adicionales)
+    VALUES (
+        NEW.id,
+        'customer'::public.rol_usuario,
+        NEW.email,
+        v_status,
+        v_referido_por,
+        v_origen,
+        jsonb_build_object('fecha_registro', NOW())
+    );
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Función para saber si el usuario actual está activo
+CREATE OR REPLACE FUNCTION public.is_active_user()
+RETURNS boolean
+LANGUAGE sql SECURITY DEFINER AS $$
+    SELECT status = 'activo' FROM public.perfiles WHERE id = auth.uid();
+$$;
+
+-- Actualizar política del carrito (Ejemplo)
+DROP POLICY IF EXISTS "Carrito - Inserción" ON public.carrito;
+CREATE POLICY "Carrito - Inserción" ON public.carrito 
+FOR INSERT WITH CHECK (auth.uid() = usuario_id AND public.is_active_user() = true);
+
+-- Repite esta validación de is_active_user() para crear órdenes
