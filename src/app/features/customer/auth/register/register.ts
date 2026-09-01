@@ -152,6 +152,7 @@ export class Register {
     if (codigoReferido) {
       metadata['referido_por'] = codigoReferido;
     }
+    metadata['telefono'] = datos.telefono?.toString();
 
     const { error } = await this.authService.sendMagicLink(
       datos.correo.trim().toLowerCase(),
