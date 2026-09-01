@@ -14,6 +14,7 @@ import { TagModule } from 'primeng/tag';
 
 // Service y tipos
 import { AdminUsersService } from '@src/app/core/services/admin/admin-users.service';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { Perfil, EstadoUsuario, RolUsuario } from '@src/app/shared/models/interfaces/db/db';
 import { SelectOption } from '@src/app/shared/components/form/form-select/form-select';
 
@@ -38,6 +39,7 @@ import { SelectOption } from '@src/app/shared/components/form/form-select/form-s
 })
 export class Customer {
   readonly adminUsersService = inject(AdminUsersService);
+  private readonly toastService = inject(ToastService);
 
   // Alias para mantener limpia la plantilla
   readonly perfiles = this.adminUsersService.filteredPerfiles;
@@ -103,6 +105,52 @@ export class Customer {
   async updateRol(profile: Perfil, newRol: RolUsuario): Promise<void> {
     if (newRol && newRol !== profile.rol) {
       await this.adminUsersService.cambiarRol(profile.id, newRol);
+    }
+  }
+
+  // ── Obtener datos del referente ──
+  getReferente(codigo: string | null | undefined): Perfil | null {
+    return this.adminUsersService.getReferente(codigo);
+  }
+
+  getTooltipReferente(codigoReferido: string): string {
+    const referente = this.getReferente(codigoReferido);
+    if (!referente) {
+      return `Referido por código: ${codigoReferido}`;
+    }
+
+    const nombre = referente.full_name || 'Sin nombre';
+    const tel = referente.telefono || 'Sin teléfono';
+    const correo = referente.correo || 'Sin correo';
+
+    return `Referido por: ${nombre} | Tel: ${tel} | Correo: ${correo} | Cód: ${codigoReferido} (Clic para copiar teléfono del referente)`;
+  }
+
+  // ── Copiar teléfono al portapapeles ──
+  async copiarTelefono(telefono: string | null | undefined, etiqueta = 'del usuario'): Promise<void> {
+    if (!telefono) {
+      this.toastService.warn('Este usuario no tiene teléfono registrado.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(telefono);
+      this.toastService.success(`Teléfono ${etiqueta} copiado: ${telefono}`);
+    } catch {
+      this.toastService.error('No se pudo copiar el teléfono.');
+    }
+  }
+
+  // ── Copiar teléfono del referente ──
+  async copiarTelefonoReferente(codigoReferido: string): Promise<void> {
+    const referente = this.getReferente(codigoReferido);
+    if (referente && referente.telefono) {
+      const nombre = referente.full_name || referente.correo;
+      await this.copiarTelefono(referente.telefono, `del referente (${nombre})`);
+    } else if (referente) {
+      this.toastService.warn(`El referente (${referente.full_name || referente.correo}) no tiene teléfono registrado.`);
+    } else {
+      this.toastService.warn(`Código de referido: ${codigoReferido}`);
     }
   }
 

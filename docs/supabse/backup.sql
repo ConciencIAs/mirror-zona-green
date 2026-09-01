@@ -735,18 +735,29 @@ $$;
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
-    v_status public.status_profile;
+    v_status public.status_profile; -- O public.status_profile según cómo lo nombraste
     v_origen text;
     v_referido_por text;
+    v_telefono_raw text;
+    v_telefono_limpio text;
 BEGIN
     v_status := 'inactivo';
     v_origen := 'registro_web';
     
-    -- Leemos el código que el usuario ingresó en el frontend
+    -- Leemos los metadatos que enviaste desde Angular
     v_referido_por := NEW.raw_user_meta_data->>'referido_por';
+    v_telefono_raw := NEW.raw_user_meta_data->>'telefono';
 
-    -- Verificamos si existe en la base de confianza
-    IF EXISTS (SELECT 1 FROM public.base_confianza WHERE correo = NEW.email) THEN
+    -- Normalizar teléfono entrante (Ej: '+57 300 123 4567' -> '3001234567')
+    IF v_telefono_raw IS NOT NULL THEN
+        v_telefono_limpio := RIGHT(regexp_replace(v_telefono_raw, '\D', '', 'g'), 10);
+    END IF;
+
+    -- Verificamos si existe en la base de confianza (normalizando también el dato de la tabla por seguridad)
+    IF v_telefono_limpio IS NOT NULL AND EXISTS (
+        SELECT 1 FROM public.base_confianza 
+        WHERE RIGHT(regexp_replace(telefono, '\D', '', 'g'), 10) = v_telefono_limpio
+    ) THEN
         v_status := 'activo';
         v_origen := 'base_confianza';
     END IF;

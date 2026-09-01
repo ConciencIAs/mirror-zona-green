@@ -50,6 +50,21 @@ export class AdminUsersService {
     return list;
   });
 
+  readonly perfilesByCodigo = computed(() => {
+    const map = new Map<string, Perfil>();
+    for (const p of this.perfiles()) {
+      if (p.codigo_invitacion) {
+        map.set(p.codigo_invitacion.trim().toUpperCase(), p);
+      }
+    }
+    return map;
+  });
+
+  getReferente(codigoReferido: string | null | undefined): Perfil | null {
+    if (!codigoReferido) return null;
+    return this.perfilesByCodigo().get(codigoReferido.trim().toUpperCase()) ?? null;
+  }
+
   readonly totalPerfiles = computed(() => this.perfiles().length);
 
   setStatusFilter(filter: StatusFilter): void {
