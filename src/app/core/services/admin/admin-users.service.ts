@@ -215,16 +215,16 @@ export class AdminUsersService {
     this.saving.set(null);
   }
 
-  async cargarBaseConfianza(correos: string[]): Promise<{ success: boolean }> {
-    if (!correos.length) {
-      this.toastService.warn('No se encontraron correos para cargar.');
+  async cargarBaseConfianza(telefonos: string[]): Promise<{ success: boolean }> {
+    if (!telefonos.length) {
+      this.toastService.warn('No se encontraron teléfonos para cargar.');
       return { success: false };
     }
 
     this.loading.set(true);
 
-    const registros = correos.map((correo) => ({
-      correo: correo.trim().toLowerCase(),
+    const registros = telefonos.map((telefono) => ({
+      telefono: telefono.trim(),
     }));
 
     const { error } = await this.dbService.insert(TableName.BASE_CONFIANZA, registros);
@@ -232,11 +232,11 @@ export class AdminUsersService {
 
     if (error) {
       console.error('AdminUsersService: Error al cargar base de confianza', error);
-      this.toastService.error(`Error al cargar correos: ${error.message}`);
+      this.toastService.error(`Error al cargar teléfonos: ${error.message}`);
       return { success: false };
     }
 
-    this.toastService.success(`${correos.length} correos cargados a la base de confianza.`);
+    this.toastService.success(`${telefonos.length} teléfonos cargados a la base de confianza.`);
     return { success: true };
   }
 }

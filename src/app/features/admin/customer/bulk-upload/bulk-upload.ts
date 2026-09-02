@@ -9,6 +9,46 @@ import { TagModule } from 'primeng/tag';
 import { AdminUsersService } from '@src/app/core/services/admin/admin-users.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 
+/**
+ * Normaliza un número telefónico:
+ * - Remueve caracteres no numéricos dejando '+' si estaba presente.
+ * - Si es celular de Colombia (10 dígitos iniciando por 3), le antepone '+57'.
+ * - Si ya incluye '573...' sin '+', le antepone '+'.
+ * - Si es internacional (con o sin '+'), preserva el código indicativo de país.
+ */
+export function normalizarTelefono(raw: string | number | null | undefined): string | null {
+  if (raw === null || raw === undefined) return null;
+  const str = String(raw).trim();
+  if (!str) return null;
+
+  const hasPlus = str.startsWith('+');
+  const digitsOnly = str.replace(/\D/g, '');
+  if (!digitsOnly) return null;
+
+  // Si ya tenía el signo '+' inicial, preservar con sus dígitos
+  if (hasPlus) {
+    return '+' + digitsOnly;
+  }
+
+  // Celular de Colombia de 10 dígitos (empieza por 3)
+  if (digitsOnly.length === 10 && digitsOnly.startsWith('3')) {
+    return '+57' + digitsOnly;
+  }
+
+  // Número colombiano de 12 dígitos que ya tiene '573...' sin el '+'
+  if (digitsOnly.length === 12 && digitsOnly.startsWith('573')) {
+    return '+' + digitsOnly;
+  }
+
+  // Número internacional sin '+' (11 o más dígitos)
+  if (digitsOnly.length >= 11) {
+    return '+' + digitsOnly;
+  }
+
+  // Fallback si es un número más corto o formato local
+  return digitsOnly;
+}
+
 @Component({
   selector: 'app-bulk-upload',
   standalone: true,
@@ -18,10 +58,10 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
 
       <!-- Header -->
       <div>
-        <h2 class="text-2xl font-semibold text-slate-900">Carga Masiva — Base de Confianza</h2>
+        <h2 class="text-2xl font-semibold text-slate-900">Carga Masiva — Base de Confianza (Por Teléfono)</h2>
         <p class="mt-1 text-sm text-slate-500">
-          Sube un archivo Excel (.xlsx) con una columna de correos electrónicos.
-          Los correos se agregarán a la base de confianza para auto-aprobación automática en su registro.
+          Sube un archivo Excel (.xlsx) con los números telefónicos de los usuarios de confianza.
+          Los números se normalizarán automáticamente (añadiendo +57 a celulares colombianos o respetando el indicativo internacional) para auto-aprobación en su registro.
         </p>
       </div>
 
@@ -35,15 +75,15 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
               </svg>
               Estructura requerida del archivo Excel
             </span>
-            <h3 class="text-base font-semibold text-slate-900">Ejemplo del formato de carga</h3>
+            <h3 class="text-base font-semibold text-slate-900">Ejemplo del formato por teléfono</h3>
             <p class="text-xs text-slate-600">
-              El archivo debe ser un archivo <strong>.xlsx</strong> o <strong>.xls</strong>. Puede contener una columna llamada <code class="bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-emerald-800 font-mono">correo</code> o simplemente listar los correos electrónicos en la primera columna.
+              El archivo debe ser un archivo <strong>.xlsx</strong> o <strong>.xls</strong>. Puede contener una columna llamada <code class="bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-emerald-800 font-mono">telefono</code> o listar los números telefónicos en la primera columna.
             </p>
           </div>
 
           <button
             type="button"
-            class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95 flex-shrink-0"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95 flex-shrink-0 cursor-pointer"
             (click)="descargarPlantillaEjemplo()"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -58,26 +98,26 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-100 font-mono text-slate-700 uppercase border-b border-slate-200">
               <tr>
-                <th class="px-4 py-2">Columna A (correo)</th>
-                <th class="px-4 py-2 text-slate-400 font-normal italic">Columna B (opcional/ignorado)</th>
+                <th class="px-4 py-2">Columna A (telefono)</th>
+                <th class="px-4 py-2 text-slate-400 font-normal italic">Formato Normalizado Resultante</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 font-mono text-slate-600">
               <tr class="bg-white">
-                <td class="px-4 py-2 font-bold text-slate-800">correo</td>
-                <td class="px-4 py-2 text-slate-400 italic">Nombre (opcional)</td>
+                <td class="px-4 py-2 font-bold text-slate-800">telefono</td>
+                <td class="px-4 py-2 text-slate-400 italic">Formato final</td>
               </tr>
               <tr class="bg-slate-50/50">
-                <td class="px-4 py-2 text-emerald-700">usuario1&#64;ejemplo.com</td>
-                <td class="px-4 py-2 text-slate-400">Juan Pérez</td>
+                <td class="px-4 py-2 text-emerald-700">3001234567</td>
+                <td class="px-4 py-2 text-slate-700 font-semibold">+573001234567 (Colombia)</td>
               </tr>
               <tr class="bg-white">
-                <td class="px-4 py-2 text-emerald-700">maria.gomez&#64;dominio.co</td>
-                <td class="px-4 py-2 text-slate-400">María Gómez</td>
+                <td class="px-4 py-2 text-emerald-700">+573019876543</td>
+                <td class="px-4 py-2 text-slate-700 font-semibold">+573019876543 (Colombia)</td>
               </tr>
               <tr class="bg-slate-50/50">
-                <td class="px-4 py-2 text-emerald-700">cliente.confianza&#64;empresa.org</td>
-                <td class="px-4 py-2 text-slate-400">Carlos Ruiz</td>
+                <td class="px-4 py-2 text-emerald-700">+13051234567</td>
+                <td class="px-4 py-2 text-slate-700 font-semibold">+13051234567 (Internacional / USA)</td>
               </tr>
             </tbody>
           </table>
@@ -107,7 +147,7 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
             <div class="flex flex-col items-center justify-center py-6 text-slate-400">
               <svg class="h-12 w-12 mb-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
               </svg>
               <p class="text-sm font-medium text-slate-700">Arrastra tu archivo .xlsx aquí</p>
               <p class="text-xs mt-1 text-slate-400">o haz clic en "Seleccionar archivo Excel" (máx. 5MB)</p>
@@ -117,20 +157,20 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
       </div>
 
       <!-- Resultados del parseo -->
-      @if (parsedEmails().length > 0) {
+      @if (parsedPhones().length > 0) {
         <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-slate-800">
-              Correos extraídos
+              Teléfonos extraídos y normalizados
             </h3>
-            <p-tag [value]="parsedEmails().length + ' correos'" severity="info" [rounded]="true" />
+            <p-tag [value]="parsedPhones().length + ' números'" severity="info" [rounded]="true" />
           </div>
 
           <div class="max-h-60 overflow-auto rounded-xl bg-slate-50 p-4 space-y-1">
-            @for (email of parsedEmails(); track email) {
-              <p class="text-sm text-slate-600 font-mono flex items-center gap-2">
+            @for (phone of parsedPhones(); track phone) {
+              <p class="text-sm text-slate-700 font-mono flex items-center gap-2">
                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                {{ email }}
+                {{ phone }}
               </p>
             }
           </div>
@@ -143,10 +183,10 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
               [class.text-red-700]="uploadResult() === 'error'"
             >
               @if (uploadResult() === 'success') {
-                ✅ {{ parsedEmails().length }} correos cargados exitosamente a la base de confianza.
+                ✅ {{ parsedPhones().length }} números telefónicos cargados exitosamente a la base de confianza.
               }
               @if (uploadResult() === 'error') {
-                ❌ Ocurrió un error al cargar los correos. Revisa la consola o intenta de nuevo.
+                ❌ Ocurrió un error al cargar los teléfonos. Revisa el formato o intenta de nuevo.
               }
             </div>
           }
@@ -160,7 +200,7 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
           </svg>
-          Procesando archivo y registrando en la base de confianza...
+          Procesando y normalizando teléfonos para la base de confianza...
         </div>
       }
     </div>
@@ -171,29 +211,29 @@ export class BulkUpload {
   private readonly adminUsersService = inject(AdminUsersService);
   private readonly toastService = inject(ToastService);
 
-  readonly parsedEmails = signal<string[]>([]);
+  readonly parsedPhones = signal<string[]>([]);
   readonly processing = signal(false);
   readonly uploadResult = signal<'success' | 'error' | null>(null);
 
   /**
-   * Genera y descarga dinámicamente un archivo plantilla .xlsx de ejemplo
+   * Genera y descarga dinámicamente un archivo plantilla .xlsx de ejemplo con teléfonos
    */
   async descargarPlantillaEjemplo(): Promise<void> {
     try {
       const XLSX = await import('xlsx');
 
       const data = [
-        ['correo', 'nombre'],
-        ['usuario1@ejemplo.com', 'Juan Pérez'],
-        ['maria.gomez@dominio.co', 'María Gómez'],
-        ['cliente.confianza@empresa.org', 'Carlos Ruiz'],
+        ['telefono', 'nombre'],
+        ['3001234567', 'Juan Pérez (Colombia)'],
+        ['+573019876543', 'María Gómez (Colombia)'],
+        ['+13051234567', 'Carlos Ruiz (Internacional / USA)'],
       ];
 
       const worksheet = XLSX.utils.aoa_to_sheet(data);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'BaseConfianza');
 
-      XLSX.writeFile(workbook, 'plantilla_base_confianza.xlsx');
+      XLSX.writeFile(workbook, 'plantilla_base_confianza_telefonos.xlsx');
       this.toastService.success('Plantilla de ejemplo descargada.');
     } catch (err) {
       console.error('Error al generar la plantilla de ejemplo:', err);
@@ -207,7 +247,7 @@ export class BulkUpload {
 
     this.processing.set(true);
     this.uploadResult.set(null);
-    this.parsedEmails.set([]);
+    this.parsedPhones.set([]);
 
     try {
       const XLSX = await import('xlsx');
@@ -218,30 +258,37 @@ export class BulkUpload {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
 
-      const rows: string[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const rows: unknown[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const correos: string[] = [];
+      const telefonosNormalizados: string[] = [];
 
       for (const row of rows) {
+        if (!Array.isArray(row)) continue;
         for (const cell of row) {
-          const val = String(cell ?? '').trim().toLowerCase();
-          if (emailRegex.test(val)) {
-            correos.push(val);
+          const val = String(cell ?? '').trim();
+          // Ignorar encabezados como "telefono", "phone", etc.
+          if (/^(telefono|phone|teléfono|contacto|celular|nombre|name)$/i.test(val)) {
+            continue;
+          }
+
+          const norm = normalizarTelefono(val);
+          // Validar que la cadena normalizada tenga al menos 7 dígitos numéricos
+          if (norm && norm.replace(/\D/g, '').length >= 7) {
+            telefonosNormalizados.push(norm);
           }
         }
       }
 
-      const correosUnicos = [...new Set(correos)];
-      this.parsedEmails.set(correosUnicos);
+      const telefonosUnicos = [...new Set(telefonosNormalizados)];
+      this.parsedPhones.set(telefonosUnicos);
 
-      if (correosUnicos.length === 0) {
-        this.toastService.warn('No se encontraron correos válidos en el archivo.');
+      if (telefonosUnicos.length === 0) {
+        this.toastService.warn('No se encontraron teléfonos válidos en el archivo.');
         this.processing.set(false);
         return;
       }
 
-      const { success } = await this.adminUsersService.cargarBaseConfianza(correosUnicos);
+      const { success } = await this.adminUsersService.cargarBaseConfianza(telefonosUnicos);
       this.uploadResult.set(success ? 'success' : 'error');
     } catch (err) {
       console.error('Error al procesar archivo Excel:', err);
