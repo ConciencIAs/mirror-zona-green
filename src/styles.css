@@ -227,3 +227,866 @@
 .icon-aura {
   animation: icon-aura-pulse 4s ease-in-out infinite;
 }
+
+
+[data-cheyn-page="ecosistema"] [hidden] {
+  display: none !important;
+}
+
+[data-cheyn-page="ecosistema"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="ecosistema"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 70s linear infinite;
+}
+
+[data-cheyn-page="ecosistema"] .ring-spin-seal {
+  animation: cheyn-ring-spin-ccw 23s linear infinite;
+}
+
+@keyframes cheyn-band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="ecosistema"] .band-img-a {
+  animation: cheyn-band-crossfade-a 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="ecosistema"] .band-img-b {
+  animation: cheyn-band-crossfade-b 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-icon-aura-pulse {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.08);
+  }
+}
+
+[data-cheyn-page="ecosistema"] .icon-aura {
+  animation: cheyn-icon-aura-pulse 4s ease-in-out infinite;
+}
+
+@keyframes cheyn-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-cheyn-page="ecosistema"] .cheyn-fade-in {
+  animation: cheyn-fade-in 0.35s ease;
+}
+
+[data-cheyn-page="ecosistema"] [data-eco-node][aria-pressed="true"] [data-eco-node-badge] {
+  --tw-ring-color: #6bc767;
+  transform: scale(1.1);
+}
+
+[data-cheyn-page="armonizacion-territorial"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="armonizacion-territorial"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 70s linear infinite;
+}
+
+@keyframes cheyn-band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="armonizacion-territorial"] .band-img-a {
+  animation: cheyn-band-crossfade-a 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="armonizacion-territorial"] .band-img-b {
+  animation: cheyn-band-crossfade-b 24s ease-in-out infinite;
+}
+
+[data-cheyn-page="faq"] [hidden] {
+  display: none !important;
+}
+
+[data-cheyn-page="faq"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="faq"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 70s linear infinite;
+}
+
+@keyframes cheyn-band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="faq"] .band-img-a {
+  animation: cheyn-band-crossfade-a 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="faq"] .band-img-b {
+  animation: cheyn-band-crossfade-b 24s ease-in-out infinite;
+}
+
+[data-cheyn-page="medicos-especializados"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="medicos-especializados"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 70s linear infinite;
+}
+
+@keyframes cheyn-band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="medicos-especializados"] .band-img-a {
+  animation: cheyn-band-crossfade-a 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="medicos-especializados"] .band-img-b {
+  animation: cheyn-band-crossfade-b 24s ease-in-out infinite;
+}
+
+[data-cheyn-page="rrd"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="rrd"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 70s linear infinite;
+}
+
+@keyframes cheyn-particle-dust {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translateY(45vh) translateX(14px);
+  }
+
+  90% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(90vh) translateX(-6px);
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="rrd"] .particle-dust {
+  position: absolute;
+  top: -5%;
+  border-radius: 9999px;
+  background: currentColor;
+  animation-name: cheyn-particle-dust;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+[data-cheyn-page="rrd"] .flip-card-scene {
+  perspective: 1200px;
+}
+
+[data-cheyn-page="rrd"] .flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+[data-cheyn-page="rrd"] .flip-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+[data-cheyn-page="rrd"] .flip-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+[data-cheyn-page="rrd"] .flip-card-face.back {
+  transform: rotateY(180deg);
+}
+
+@keyframes cheyn-closing-crossfade-1 {
+
+  0%,
+  29.762%,
+  100% {
+    opacity: 0;
+  }
+
+  2.381%,
+  27.381% {
+    opacity: 0.19;
+  }
+}
+
+[data-cheyn-page="rrd"] .closing-img-1 {
+  animation: cheyn-closing-crossfade-1 42s ease-in-out infinite;
+}
+
+@keyframes cheyn-closing-crossfade-2 {
+
+  0%,
+  33.333%,
+  63.095%,
+  100% {
+    opacity: 0;
+  }
+
+  35.714%,
+  60.714% {
+    opacity: 0.15;
+  }
+}
+
+[data-cheyn-page="rrd"] .closing-img-2 {
+  animation: cheyn-closing-crossfade-2 42s ease-in-out infinite;
+}
+
+@keyframes cheyn-closing-crossfade-3 {
+
+  0%,
+  66.667%,
+  96.429%,
+  100% {
+    opacity: 0;
+  }
+
+  69.048%,
+  94.048% {
+    opacity: 0.19;
+  }
+}
+
+[data-cheyn-page="rrd"] .closing-img-3 {
+  animation: cheyn-closing-crossfade-3 42s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="rrd"] .band-img-a {
+  animation: cheyn-band-crossfade-a 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="rrd"] .band-img-b {
+  animation: cheyn-band-crossfade-b 24s ease-in-out infinite;
+}
+
+[data-cheyn-page="teminos-y-condiciones"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="teminos-y-condiciones"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 70s linear infinite;
+}
+
+@keyframes cheyn-band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="teminos-y-condiciones"] .band-img-a {
+  animation: cheyn-band-crossfade-a 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+[data-cheyn-page="teminos-y-condiciones"] .band-img-b {
+  animation: cheyn-band-crossfade-b 24s ease-in-out infinite;
+}
+
+@keyframes cheyn-icon-float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .icon-float {
+  animation: cheyn-icon-float 4s ease-in-out infinite;
+}
+
+@keyframes cheyn-icon-aura-pulse {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.08);
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .icon-aura {
+  animation: cheyn-icon-aura-pulse 4s ease-in-out infinite;
+}
+
+/* Carrusel de beneficios — fade simple, reinicia solo porque cada
+     actualización reemplaza el nodo (ver script). */
+@keyframes cheyn-benefit-cycle {
+  0% {
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .benefit-item {
+  animation: cheyn-benefit-cycle 7.5s ease-in-out forwards;
+}
+
+/* Brillo del botón "Regístrate ahora" — one-shot, disparado por JS. */
+@keyframes cheyn-cta-shine-sweep {
+  0% {
+    transform: translateX(-220%) skewX(-20deg);
+  }
+
+  100% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .cta-shine-sweep {
+  animation: cheyn-cta-shine-sweep 2.2s ease-in-out forwards;
+}
+
+/* Aro girando — reemplaza la animación CSS de <app-logo-ring> (120s, sentido antihorario). */
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .ring-spin-slow {
+  animation: cheyn-ring-spin-ccw 120s linear infinite;
+}
+
+/* Imágenes ambientales — hero (48s, 4 tramos de 12s con bordes solapados). */
+@keyframes cheyn-ambient-crossfade-1 {
+
+  0%,
+  25%,
+  100% {
+    opacity: 0.3;
+  }
+
+  28%,
+  97% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-1 {
+  animation: cheyn-ambient-crossfade-1 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-2 {
+
+  0%,
+  22%,
+  53%,
+  100% {
+    opacity: 0;
+  }
+
+  25%,
+  50% {
+    opacity: 0.16;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-2 {
+  animation: cheyn-ambient-crossfade-2 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-3 {
+
+  0%,
+  47%,
+  78%,
+  100% {
+    opacity: 0;
+  }
+
+  50%,
+  75% {
+    opacity: 0.14;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-3 {
+  animation: cheyn-ambient-crossfade-3 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-4 {
+
+  0%,
+  75%,
+  100% {
+    opacity: 0.16;
+  }
+
+  3%,
+  72% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-4 {
+  animation: cheyn-ambient-crossfade-4 48s ease-in-out infinite;
+}
+
+/* Imágenes ambientales — cierre (42s, 3 tramos de 14s). */
+@keyframes cheyn-closing-crossfade-1 {
+
+  0%,
+  33.333%,
+  100% {
+    opacity: 0.19;
+  }
+
+  37.333%,
+  96% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .closing-img-1 {
+  animation: cheyn-closing-crossfade-1 42s ease-in-out infinite;
+}
+
+@keyframes cheyn-closing-crossfade-2 {
+
+  0%,
+  29.333%,
+  70.667%,
+  100% {
+    opacity: 0;
+  }
+
+  33.333%,
+  66.667% {
+    opacity: 0.15;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .closing-img-2 {
+  animation: cheyn-closing-crossfade-2 42s ease-in-out infinite;
+}
+
+@keyframes cheyn-closing-crossfade-3 {
+
+  0%,
+  66.667%,
+  100% {
+    opacity: 0.19;
+  }
+
+  4%,
+  62.667% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-anonimo"] .closing-img-3 {
+  animation: cheyn-closing-crossfade-3 42s ease-in-out infinite;
+}
+
+/* Franja aztec (28px) */
+[data-cheyn-page="home-anonimo"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+[data-cheyn-page="home-registrado"] .pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+@keyframes cheyn-aztec-hue-cycle {
+
+  0%,
+  100% {
+    filter: hue-rotate(0deg);
+  }
+
+  50% {
+    filter: hue-rotate(28deg);
+  }
+}
+
+[data-cheyn-page="home-registrado"] .pattern-aztec--hue-cycle {
+  animation: cheyn-aztec-hue-cycle 12s ease-in-out infinite;
+}
+
+@keyframes cheyn-ring-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+[data-cheyn-page="home-registrado"] .ring-spin {
+  animation: cheyn-ring-spin-ccw 60s linear infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-1 {
+
+  0%,
+  25%,
+  100% {
+    opacity: 0.3;
+  }
+
+  28%,
+  97% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-registrado"] .ambient-img-1 {
+  animation: cheyn-ambient-crossfade-1 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-2 {
+
+  0%,
+  22%,
+  53%,
+  100% {
+    opacity: 0;
+  }
+
+  25%,
+  50% {
+    opacity: 0.16;
+  }
+}
+
+[data-cheyn-page="home-registrado"] .ambient-img-2 {
+  animation: cheyn-ambient-crossfade-2 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-3 {
+
+  0%,
+  47%,
+  78%,
+  100% {
+    opacity: 0;
+  }
+
+  50%,
+  75% {
+    opacity: 0.14;
+  }
+}
+
+[data-cheyn-page="home-registrado"] .ambient-img-3 {
+  animation: cheyn-ambient-crossfade-3 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-ambient-crossfade-4 {
+
+  0%,
+  75%,
+  100% {
+    opacity: 0.16;
+  }
+
+  3%,
+  72% {
+    opacity: 0;
+  }
+}
+
+[data-cheyn-page="home-registrado"] .ambient-img-4 {
+  animation: cheyn-ambient-crossfade-4 48s ease-in-out infinite;
+}
+
+@keyframes cheyn-cta-shine-sweep {
+  0% {
+    transform: translateX(-220%) skewX(-20deg);
+  }
+
+  100% {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+[data-cheyn-page="home-registrado"] .cta-shine-sweep {
+  animation: cheyn-cta-shine-sweep 2.2s ease-in-out forwards;
+}

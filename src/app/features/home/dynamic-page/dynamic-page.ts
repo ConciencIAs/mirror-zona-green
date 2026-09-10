@@ -1,26 +1,29 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy, Inject, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
-import { EcosystemDiagram } from '@src/app/shared/components/ecosystem-diagram/ecosystem-diagram';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-page',
-  imports: [EcosystemDiagram],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './dynamic-page.html',
 })
-export class DynamicPage implements OnInit {
+export class DynamicPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(SupabaseAuthService);
   private readonly contentDbService = inject(ContentDbService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly toastService = inject(ToastService);
+  constructor(@Inject(DOCUMENT) private document: Document) { }
+
+  private styleElement: HTMLStyleElement | null = null;
+  private scriptElement: HTMLScriptElement | null = null;
 
   public renderHtml = signal<SafeHtml | undefined>(undefined);
-  public renderCss = signal<SafeHtml | undefined>(undefined);
   public loading = signal<boolean>(true);
   public notFound = signal<boolean>(false);
   public slug = signal<string | null>(null);
@@ -44,7 +47,6 @@ export class DynamicPage implements OnInit {
     this.loading.set(true);
     this.notFound.set(false);
     this.renderHtml.set(undefined);
-    this.renderCss.set(undefined);
 
     try {
       const { data, error } = await this.contentDbService.getContentBySlug(slug);
@@ -62,6 +64,7 @@ export class DynamicPage implements OnInit {
 
       const html = data.html_content;
       const css = data.css_content;
+      const js = data.js_content;
 
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = html;
@@ -77,13 +80,46 @@ export class DynamicPage implements OnInit {
         }
       });
 
-      this.renderCss.set(this.sanitizer.bypassSecurityTrustHtml(css));
       this.renderHtml.set(this.sanitizer.bypassSecurityTrustHtml(tempDiv.innerHTML));
+      const style = this.document.createElement('style');
+      style.className = 'content-css'
+      style.textContent = css;
+      this.document.head.appendChild(style);
+      this.styleElement = style
+      if (this.document) {
+        const script = this.document.createElement('script');
+        script.type = 'text/javascript';
+
+        // Encapsular dentro de una IIFE para evitar colisiones de variables
+        script.textContent = `
+        (function() {
+          try {
+            ${js}
+          } catch (err) {
+            console.error('Error de ejecución en el script inyectado:', err);
+          }
+        })();
+      `;
+
+        this.scriptElement = script
+
+        this.document.head.appendChild(script);
+
+        // La confirmación se coloca después de insertar el nodo
+        console.log('Script inyectado y ejecutado exitosamente');
+
+      }
     } catch (err) {
       console.error('Unexpected error loading page content:', err);
       this.notFound.set(true);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  ngOnDestroy() {
+    // Limpieza al destruir el componente
+    this.styleElement?.remove();
+    this.scriptElement?.remove();
   }
 }
