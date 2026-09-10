@@ -37,6 +37,7 @@
 }
 
 @layer base {
+
   h1,
   h2,
   h3,
@@ -159,4 +160,70 @@
 .p-listbox-list-container {
   max-height: none !important;
   min-height: none !important;
+}
+
+.pattern-aztec {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  image-rendering: pixelated;
+}
+
+/* Franja de imagen de ancho completo (400px), copiada tal cual del
+   tratamiento de /simulacion/rrd — 2 imágenes ambientales reales,
+   crossfade lento alternado, tope duro de 40% de opacidad. */
+@keyframes band-crossfade-a {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  12.5%,
+  37.5% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes band-crossfade-b {
+
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+
+  62.5%,
+  87.5% {
+    opacity: 0.4;
+  }
+}
+
+.band-img-a {
+  animation: band-crossfade-a 24s ease-in-out infinite;
+}
+
+.band-img-b {
+  animation: band-crossfade-b 24s ease-in-out infinite;
+}
+
+/* Aura detrás de los íconos grandes de las tarjetas de "Soportes
+   jurídicos" (mismo tratamiento de home-registrado/rrd), solo en oscuro. */
+@keyframes icon-aura-pulse {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.08);
+  }
+}
+
+.icon-aura {
+  animation: icon-aura-pulse 4s ease-in-out infinite;
 }

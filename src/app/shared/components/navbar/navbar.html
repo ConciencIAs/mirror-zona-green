@@ -9,7 +9,8 @@
   class="fixed inset-y-0 right-0 w-[min(300px,85vw)] bg-[#0f1f0f] text-[#e0ead4] z-50 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-y-auto"
   [class.translate-x-full]="!sidebarOpen()" [class.translate-x-0]="sidebarOpen()" aria-label="Menú de navegación">
   <div class="flex items-center justify-between p-[18px_16px_18px_20px] border-b border-white/7 shrink-0">
-    <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green.svg'" alt="Cheyn Verde." class="h-[52px] w-auto object-contain">
+    <img [src]="settingsConfig()?.logo_url || '/images/logo-cheyn-verde.png'" alt="Cheyn Verde."
+      class="h-[52px] w-auto object-contain">
     <button
       class="w-9 h-9 flex items-center justify-center cursor-pointer rounded-lg bg-none border-none relative shrink-0 transition-colors duration-200 hover:bg-white/7"
       (click)="closeSidebar()" aria-label="Cerrar menú">
@@ -62,10 +63,12 @@
 
     <!-- Logo -->
     <a routerLink="/customer/home" class="flex items-center shrink-0 no-underline" aria-label="Cheyn Verde. — Inicio">
-      <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green.svg'" alt="Cheyn Verde."
-        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain block" [class.hidden]="isDark()" [class.block]="!isDark()">
+      <img [src]="settingsConfig()?.logo_url || '/images/logo-cheyn-verde.png'" alt="Cheyn Verde."
+        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain block" [class.hidden]="isDark()"
+        [class.block]="!isDark()">
       <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green-blanco.svg'" alt="Cheyn Verde."
-        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain" [class.block]="isDark()" [class.hidden]="!isDark()">
+        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain" [class.block]="isDark()"
+        [class.hidden]="!isDark()">
     </a>
 
     <div class="flex-grow"></div>
@@ -136,12 +139,14 @@
     </button>
 
     @if (isAuthenticated()) {
+    @if (searchBarEnabled) {
     <p-inputgroup>
       <input pInputText [(ngModel)]="searchQuery" placeholder="Search" (keyup.enter)="onSearch()" />
       <p-inputgroup-addon>
         <p-button icon="pi pi-search" severity="secondary" variant="text" />
       </p-inputgroup-addon>
     </p-inputgroup>
+    }
     <div class="shrink-0">
       <app-profile-menu />
     </div>

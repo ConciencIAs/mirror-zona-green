@@ -12,6 +12,6 @@ export class Layout {
   private readonly appConfigStore = inject(AppConfigStore);
 
   protected readonly logoUrl = computed(
-    () => this.appConfigStore.settingsConfig()?.logo_url || '/images/logo-zona-green-blanco.svg',
+    () => this.appConfigStore.settingsConfig()?.logo_url || '/images/logo-cheyn-verde.png',
   );
 }
