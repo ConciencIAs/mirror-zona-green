@@ -62,6 +62,8 @@ export class Navbar implements OnInit {
   protected readonly navBarConfig = computed(() => this.appConfigStore.navbarConfig());
   protected readonly advertisingBannerConfig = computed(() => this.appConfigStore.advertisingConfig());
 
+  public searchBarEnabled = false
+
   visibleNavSections = computed(() => {
     return (
       this.navBarConfig()?.sections.filter(

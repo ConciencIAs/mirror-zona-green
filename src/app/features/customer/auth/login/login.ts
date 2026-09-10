@@ -56,9 +56,11 @@ export class Login {
     if (error) {
       console.error('Error al validar correo:', error.message);
       this.toastService.error('Error al validar el correo. Intenta de nuevo.');
+      this.loading.set(false);
       return;
     }
     if (!data) {
+      this.loading.set(false);
       this.confirmationModalService.confirm({
         message: 'No se encontró una cuenta con este correo. ¿Deseas crear una nueva cuenta?',
         accept: () => this.router.navigate(['/auth/register'], { queryParams: { email } }),
