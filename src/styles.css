@@ -1090,3 +1090,7 @@
 [data-cheyn-page="home-registrado"] .cta-shine-sweep {
   animation: cheyn-cta-shine-sweep 2.2s ease-in-out forwards;
 }
+
+.gjs-cell {
+  height: unset !important;
+}
