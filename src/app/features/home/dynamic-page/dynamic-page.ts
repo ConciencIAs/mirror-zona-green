@@ -87,6 +87,7 @@ export class DynamicPage implements OnInit, OnDestroy {
         style.textContent = css;
         this.document.head.appendChild(style);
         this.styleElement = style
+
         const script = this.document.createElement('script');
         script.type = 'text/javascript';
 
