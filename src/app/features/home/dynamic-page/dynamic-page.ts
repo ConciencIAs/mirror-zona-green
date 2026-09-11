@@ -81,12 +81,12 @@ export class DynamicPage implements OnInit, OnDestroy {
       });
 
       this.renderHtml.set(this.sanitizer.bypassSecurityTrustHtml(tempDiv.innerHTML));
-      const style = this.document.createElement('style');
-      style.className = 'content-css'
-      style.textContent = css;
-      this.document.head.appendChild(style);
-      this.styleElement = style
       if (this.document) {
+        const style = this.document.createElement('style');
+        style.className = 'content-css'
+        style.textContent = css;
+        this.document.head.appendChild(style);
+        this.styleElement = style
         const script = this.document.createElement('script');
         script.type = 'text/javascript';
 
@@ -100,13 +100,11 @@ export class DynamicPage implements OnInit, OnDestroy {
           }
         })();
       `;
-
         this.scriptElement = script
+        setTimeout(() => {
 
-        this.document.head.appendChild(script);
-
-        // La confirmación se coloca después de insertar el nodo
-        console.log('Script inyectado y ejecutado exitosamente');
+          this.document.head.appendChild(script);
+        }, 2000)
 
       }
     } catch (err) {
