@@ -1,7 +1,7 @@
 import * as z from 'zod';
 
 export const presentationSchema = z.object({
-  gramos: z.number().min(1, 'Los gramos deben ser mayores a 0.'),
+  gramos: z.number().positive('La cantidad debe ser mayor a 0.'),
   precio: z.number().min(1, 'El precio debe ser mayor a 0.'),
   stock: z.number().min(0, 'El stock no puede ser negativo.'),
 });
@@ -15,6 +15,7 @@ export const productSchema = z.object({
   stock_total: z.number().min(0, 'El stock total no puede ser negativo.'),
   status: z.enum(['activo', 'inactivo']),
   es_por_gramos: z.boolean(),
+  presentacion_venta: z.enum(['und', 'gr', 'mg']),
   presentaciones: z.array(presentationSchema).default([]),
   tags: z.array(z.string()).optional(),
   urls_imagenes: z.array(z.string()).min(1, 'Debes agregar al menos una imagen.'),

@@ -5,6 +5,7 @@ import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Producto } from '@src/app/shared/models/interfaces/db/db';
+import { fromGramsToSaleUnit, getSaleUnitLabel } from '@src/app/shared/utils/helpers';
 
 
 import { ButtonModule, ButtonSeverity } from 'primeng/button';
@@ -43,6 +44,10 @@ export class ProductsList {
   readonly detailsDialogVisible = signal(false);
   readonly selectedProductDetails = signal<ProductDetailRow[]>([]);
   readonly selectedProductName = signal<string>('');
+  readonly selectedProductSaleUnit = signal<'g' | 'mg'>('g');
+
+  protected readonly formatSaleAmount = fromGramsToSaleUnit;
+  protected readonly saleUnitLabel = getSaleUnitLabel;
 
   constructor() {
     this.loadInitialData();
@@ -112,6 +117,7 @@ export class ProductsList {
 
   showDetails(product: Producto) {
     this.selectedProductName.set(product.nombre);
+    this.selectedProductSaleUnit.set(product.presentacion_venta === 'mg' ? 'mg' : 'g');
     
     let rows: ProductDetailRow[] = [];
     
@@ -119,7 +125,7 @@ export class ProductsList {
       rows = product.presentaciones.map(p => ({
         sku: p.sku,
         precio: p.precio,
-        gramos: p.gramos,
+        gramos: fromGramsToSaleUnit(p.gramos, product.presentacion_venta),
         stock: p.stock
       }));
     } else {

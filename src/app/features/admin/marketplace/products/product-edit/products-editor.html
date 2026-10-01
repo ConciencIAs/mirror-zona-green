@@ -47,6 +47,13 @@
         placeholder="Selecciona estado" />
     </div>
 
+    @if (productModel().es_por_gramos) {
+    <div class="grid gap-4 md:grid-cols-2">
+      <app-form-select [control]="productForm.presentacion_venta()" label="Unidad de venta"
+        [options]="salePresentationOptions" placeholder="Selecciona unidad" />
+    </div>
+    }
+
     <app-form-input [control]="productForm.costo()" label="Costo" type="number" placeholder="0.00" />
     @if (!productModel().es_por_gramos) {
     <div class="grid gap-4 md:grid-cols-2">
@@ -75,10 +82,11 @@
 
       <div class="grid gap-4 md:grid-cols-3">
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Gramos</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">{{ saleUnitName() }}</label>
           <input type="number"
             class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500"
-            [value]="newPresentation().gramos" (change)="setNewPresentationField('gramos', $any($event.target).value)"
+            [value]="formatSaleAmount(newPresentation().gramos, productModel().presentacion_venta)"
+            (change)="setNewPresentationField('gramos', $any($event.target).value)"
             placeholder="Ej. 10" />
         </div>
         <div>
@@ -122,7 +130,9 @@
         <div class="rounded-2xl border border-slate-200 bg-white p-4">
           <div class="flex items-center justify-between gap-4">
             <div>
-              <p class="font-semibold text-slate-900">{{ pres.gramos }}g</p>
+              <p class="font-semibold text-slate-900">
+                {{ formatSaleAmount(pres.gramos, productModel().presentacion_venta) }}{{ saleUnitLabel() }}
+              </p>
               <p class="text-sm text-slate-500">Precio: ${{ pres.precio }} · Stock: {{ pres.stock }}</p>
             </div>
             <div class="flex gap-2">

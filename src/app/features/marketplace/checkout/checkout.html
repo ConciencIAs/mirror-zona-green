@@ -49,8 +49,7 @@
         }
 
         <div class="space-y-2">
-          <label for="comentarios" class="block text-sm font-semibold text-[#34492c]">Comentarios e Instrucciones <span
-              class="text-red-500">*</span></label>
+          <label for="comentarios" class="block text-sm font-semibold text-[#34492c]">Comentarios e Instrucciones (opcional) </label>
           <textarea id="comentarios" formControlName="comentarios" rows="4"
             placeholder="Ej: Horario de disponibilidad, indicaciones adicionales, etc."
             class="w-full rounded-2xl border border-[#d7dfc7] p-4 text-sm focus:border-[#1f6c2f] focus:outline-none focus:ring-1 focus:ring-[#1f6c2f]"></textarea>
@@ -72,7 +71,10 @@
             <div>
               <p class="font-semibold">{{ item.producto?.nombre }}</p>
               <p class="text-xs text-[#5f6c4f]">Cant: {{ item.cartLine.cantidad }}
-                @if(item.producto?.es_por_gramos){ | {{ item.cartLine.paquete_gramos }}g }
+                @if(item.producto?.es_por_gramos){
+                | {{ formatSaleAmount(item.cartLine.paquete_gramos, item.producto.presentacion_venta) }}
+                {{ saleUnitLabel(item.producto.presentacion_venta) }}
+                }
               </p>
             </div>
             <div class="font-bold text-[#1f6c2f]">{{ item.subtotal | moneda }}</div>

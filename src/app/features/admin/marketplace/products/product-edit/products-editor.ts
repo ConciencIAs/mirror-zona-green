@@ -29,6 +29,12 @@ import { ImageModule } from 'primeng/image';
 import { ButtonModule } from 'primeng/button';
 
 import { ProductFormModel } from '@src/app/shared/models/interfaces/productos/marketplace.interface';
+import {
+  fromGramsToSaleUnit,
+  getSaleUnitLabel,
+  getSaleUnitName,
+  toGramsFromSaleUnit,
+} from '@src/app/shared/utils/helpers';
 
 @Component({
   selector: 'app-products-editor',
@@ -69,6 +75,7 @@ export class ProductsEditor implements OnInit {
     stock_total: 0,
     status: 'activo',
     es_por_gramos: false,
+    presentacion_venta: 'gr',
     presentaciones: [],
     tags: [],
     urls_imagenes: [],
@@ -101,10 +108,17 @@ export class ProductsEditor implements OnInit {
   readonly totalStockFromPresentations = computed(() =>
     this.presentations().reduce((sum, p) => sum + (p.stock * p.gramos), 0)
   );
+  readonly saleUnitLabel = computed(() => getSaleUnitLabel(this.productModel().presentacion_venta));
+  readonly saleUnitName = computed(() => getSaleUnitName(this.productModel().presentacion_venta));
+  protected readonly formatSaleAmount = fromGramsToSaleUnit;
 
   readonly statusOptions: SelectOption[] = [
     { value: 'activo', label: 'Activo' },
     { value: 'inactivo', label: 'Inactivo' },
+  ];
+  readonly salePresentationOptions: SelectOption[] = [
+    { value: 'gr', label: 'Gramos (gr)' },
+    { value: 'mg', label: 'Miligramos (mg)' },
   ];
 
   ngOnInit() {
@@ -120,7 +134,13 @@ export class ProductsEditor implements OnInit {
       this.toastService.error('No se pudo cargar las etiquetas.');
       this.tags.set([]);
     } else {
-      this.tags.set((tagsRes.data as unknown as Tag[]) ?? []);
+      this.tags.set(
+        [...((tagsRes.data as unknown as Tag[]) ?? [])].sort(
+          (a, b) =>
+            (a.orden ?? Number.MAX_SAFE_INTEGER) - (b.orden ?? Number.MAX_SAFE_INTEGER) ||
+            a.nombre.localeCompare(b.nombre),
+        ),
+      );
     }
 
     const productId = this.route.snapshot.paramMap.get('id');
@@ -158,6 +178,7 @@ export class ProductsEditor implements OnInit {
       stock_total: product.stock_total ?? 0,
       status: product.status,
       es_por_gramos: product.es_por_gramos ?? false,
+      presentacion_venta: product.presentacion_venta ?? (product.es_por_gramos ? 'gr' : 'und'),
       presentaciones: product.presentaciones ?? [],
       tags: product.tags ?? [],
       urls_imagenes: product.urls_imagenes ?? [],
@@ -175,6 +196,8 @@ export class ProductsEditor implements OnInit {
     this.productModel.update((current) => ({
       ...current,
       es_por_gramos: esPorGramos,
+      presentacion_venta:
+        esPorGramos && current.presentacion_venta === 'und' ? 'gr' : current.presentacion_venta,
     }));
   }
 
@@ -216,6 +239,7 @@ export class ProductsEditor implements OnInit {
       tags: this.selectedTagNames(),
       urls_imagenes: this.productImages(),
       es_por_gramos: isGrams,
+      presentacion_venta: isGrams ? model.presentacion_venta : 'und',
       presentaciones: isGrams ? currentPresentations : [],
     };
 
@@ -264,16 +288,21 @@ export class ProductsEditor implements OnInit {
   }
 
   setNewPresentationField(field: keyof PresentacionProducto, value: string | number) {
+    const numericValue = Number(value) || 0;
+    const fieldValue = field === 'gramos'
+      ? toGramsFromSaleUnit(numericValue, this.productModel().presentacion_venta)
+      : numericValue;
+
     this.newPresentation.update((current) => ({
       ...current,
-      [field]: Number(value) || 0,
+      [field]: fieldValue,
     }));
   }
 
   addPresentation() {
     const pres = this.newPresentation();
     if (pres.gramos <= 0) {
-      this.toastService.warn('Los gramos deben ser mayores a 0.');
+      this.toastService.warn(`La cantidad en ${this.saleUnitName()} debe ser mayor a 0.`);
       return;
     }
     if (pres.precio <= 0) {
@@ -287,7 +316,9 @@ export class ProductsEditor implements OnInit {
 
     const existsIndex = this.presentations().findIndex((p) => p.gramos === pres.gramos);
     if (existsIndex !== -1 && existsIndex !== this.editingPresentationIndex()) {
-      this.toastService.warn(`Ya existe una presentación para ${pres.gramos} gramos.`);
+      this.toastService.warn(
+        `Ya existe una presentación para ${fromGramsToSaleUnit(pres.gramos, this.productModel().presentacion_venta)} ${this.saleUnitName()}.`,
+      );
       return;
     }
 
@@ -458,6 +489,6 @@ export class ProductsEditor implements OnInit {
   }
 
   private generateRandomSku(): string {
-    return crypto.randomUUID().toUpperCase();
+    return crypto.randomUUID().toUpperCase().split('-')[0]; // Use the first segment of the UUID as SKU
   }
 }

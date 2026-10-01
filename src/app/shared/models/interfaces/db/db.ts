@@ -26,6 +26,8 @@ export type RolUsuario = 'admin' | 'customer' | 'agente' | 'anonymous';
 
 export type TipoDoc = 'CC' | 'CE' | 'NIT' | 'Pasaporte';
 
+export type PresentacionesProducto = 'und' | 'gr' | 'mg';
+
 // ==========================================
 // INTERFACES (MODELOS DE BASE DE DATOS)
 // ==========================================
@@ -86,6 +88,7 @@ export interface Rol {
 export interface Tag {
     id: string;
     nombre: string;
+    orden: number;
 }
 
 export interface UsuarioPublico {
@@ -120,6 +123,7 @@ export interface Producto {
     reservado?: number;
     rating_average?: number;
     rating_count?: number;
+    presentacion_venta: PresentacionesProducto;
 }
 
 export interface ProductReview {

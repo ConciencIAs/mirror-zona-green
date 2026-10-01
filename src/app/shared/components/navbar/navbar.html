@@ -62,10 +62,9 @@
     class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 w-full h-[72px] sm:h-[80px] lg:h-[88px] flex items-center gap-[10px]">
 
     <!-- Logo -->
-    <a routerLink="/customer/home" class="flex items-center shrink-0 no-underline" aria-label="Cheyn Verde. — Inicio">
-      <img [src]="settingsConfig()?.logo_url || '/images/logo-cheyn-verde.png'" alt="Cheyn Verde."
-        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain block" [class.hidden]="isDark()"
-        [class.block]="!isDark()">
+    <a routerLink="/home" class="flex items-center shrink-0 no-underline" aria-label="Cheyn Verde. — Inicio">
+      <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green.svg'" alt="Cheyn Verde."
+        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain block" [class.hidden]="isDark()" [class.block]="!isDark()">
       <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green-blanco.svg'" alt="Cheyn Verde."
         class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain" [class.block]="isDark()"
         [class.hidden]="!isDark()">

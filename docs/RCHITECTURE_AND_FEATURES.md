@@ -1,7 +1,7 @@
 
 # 🌿 Cheyn Verde. - Documento de Arquitectura y Funcionalidades Frontend (Angular)
 
-[cite_start]Este documento define la estructura técnica, lógica de negocio y flujos de interfaz que el equipo de desarrollo o el asistente de IA deben seguir para implementar el frontend de la plataforma **Cheyn Verde.** (www.zonagreen.co) [cite: 53] utilizando **Angular**.
+[cite_start]Este documento define la estructura técnica, lógica de negocio y flujos de interfaz que el equipo de desarrollo o el asistente de IA deben seguir para implementar el frontend de la plataforma **Cheyn Verde.** (www.cheynverde.com) [cite: 53] utilizando **Angular**.
 
 ---
 
@@ -95,7 +95,7 @@ Permite agrupar múltiples ítems [cite: 272], actualizar unidades, calcular de 
                          `📍 *Modo de Entrega:* ${tipoEntrega}\n` +
                          `🏠 *Dirección:* ${direccion || 'N/A'}\n` +
                          `💬 *Notas del Cliente:* ${observaciones || 'Sin observaciones'}\n\n` +
-                         `🔗 *Link de Gestión (Uso Exclusivo Staff):* \nhttps://www.zonagreen.co/administrador/ordenes/${orderId}`;
+                         `🔗 *Link de Gestión (Uso Exclusivo Staff):* \nhttps://www.cheynverde.com/administrador/ordenes/${orderId}`;
       ```
 
   4.  **Pantalla de Control de Orden (`/administrador/ordenes/:id`):**

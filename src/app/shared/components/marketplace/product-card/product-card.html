@@ -22,7 +22,11 @@
 
   <div class="flex flex-1 flex-col p-5">
     <div class="mb-2 flex items-center justify-between">
-      <h3 class="text-xl font-bold text-[#122011]">{{ product().nombre }}</h3>
+      <h3 class="text-xl font-bold text-[#122011]">
+        <a [routerLink]="['/seleccion/product-details', product().id]" class="hover:text-[#1f6c2f]">
+          {{ product().nombre }}
+        </a>
+      </h3>
       <span class="rounded-full bg-[#eef6df] px-3 py-0.5 text-[10px] uppercase tracking-wider font-bold text-[#1f6c2f]">
         {{ product().status }}
       </span>
@@ -69,7 +73,7 @@
     </p>
 
     <div class="mb-5 flex flex-wrap gap-1.5">
-      @for (tag of (product().tags ?? []).slice(0, 3); track tag) {
+      @for (tag of displayedTags(); track tag) {
       <span class="rounded-lg bg-[#f4f8ed] px-2.5 py-1 text-[10px] font-medium text-[#3f5634]">#{{ tag }}</span>
       }
     </div>
@@ -82,18 +86,22 @@
         @if (!product().es_por_gramos) {
         <p class="text-2xl font-extrabold text-[#1d2b16]">${{ product().precio | number:'1.0-0' }}</p>
         } @else {
-        <p class="text-sm font-medium text-[#55644d]">Seleccion informada</p>
+        <p class="text-sm font-medium text-[#55644d]">Venta por {{ saleUnitLabel(product().presentacion_venta) }}</p>
+        <p class="text-xs text-[#6b7c5e]">
+          {{ product().presentaciones.length }} presentaciones disponibles
+        </p>
         }
       </div>
 
-      @if (product().es_por_gramos) {
-      <a [routerLink]="['/seleccion/product-details', product().id]"
-        class="rounded-full bg-[#f4f8ed] px-4 py-2 text-sm font-semibold text-[#1f6c2f] transition hover:bg-[#eef6df]">
-        Ver opciones
-      </a>
-      } @else {
-      <app-cart-button [product]="product()"></app-cart-button>
-      }
+      <div class="flex flex-col items-end gap-2">
+        <a [routerLink]="['/seleccion/product-details', product().id]"
+          class="rounded-full bg-[#f4f8ed] px-4 py-2 text-sm font-semibold text-[#1f6c2f] transition hover:bg-[#eef6df]">
+          @if (product().es_por_gramos) { Ver opciones } @else { Ver detalles }
+        </a>
+        @if (!product().es_por_gramos) {
+        <app-cart-button [product]="product()"></app-cart-button>
+        }
+      </div>
     </div>
   </div>
 </div>

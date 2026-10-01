@@ -10,6 +10,7 @@ import { Producto } from '@src/app/shared/models/interfaces/db/db';
 import { MonedaPipe } from '@src/app/shared/pipes/moneda.pipe';
 import { ButtonModule } from 'primeng/button';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { fromGramsToSaleUnit, getSaleUnitLabel } from '@src/app/shared/utils/helpers';
 
 @Component({
   selector: 'app-checkout',
@@ -37,6 +38,8 @@ export class Checkout implements OnInit {
   protected readonly total = computed(() =>
     this.cartDetails().reduce((acc, item) => acc + item.subtotal, 0)
   );
+  protected readonly formatSaleAmount = fromGramsToSaleUnit;
+  protected readonly saleUnitLabel = getSaleUnitLabel;
 
   constructor() {
     this.initForm();
@@ -55,7 +58,7 @@ export class Checkout implements OnInit {
   private initForm(): void {
     this.checkoutForm = this.fb.group({
       tipoEntrega: ['', Validators.required],
-      comentarios: ['', [Validators.required, Validators.minLength(5)]],
+      comentarios: [''],
       direccion: [this.userStore.perfil().ubicacion, Validators.required]
     });
   }
@@ -155,7 +158,9 @@ export class Checkout implements OnInit {
       '*Detalles:*',
       ...this.cartDetails().map((item) => {
         const name = item.producto?.nombre || 'Producto';
-        const formato = item.producto?.es_por_gramos ? ` (${item.cartLine.paquete_gramos}g)` : '';
+        const formato = item.producto?.es_por_gramos
+          ? ` (${this.formatSaleAmount(item.cartLine.paquete_gramos, item.producto.presentacion_venta)} ${this.saleUnitLabel(item.producto.presentacion_venta)})`
+          : '';
         return `- ${item.cartLine.cantidad}x ${name}${formato}: ${this.formatPrice(item.subtotal)}`;
       }),
       '',
