@@ -1,6 +1,6 @@
 <div class="space-y-6 p-4 pt-12">
   <div>
-    <a routerLink="/seleccion" class="text-sm font-semibold text-[#1f6c2f] hover:underline">&larr; Volver a la seleccion informada</a>
+    <a routerLink="/seleccion" class="text-lg font-semibold text-[#1f6c2f] hover:underline">&larr; Volver a la seleccion informada</a>
   </div>
 
   @if (loading()) {
@@ -49,7 +49,9 @@
       <div>
         <p class="text-3xl font-bold text-[#1d341c]">{{ displayedPrice() | moneda }}</p>
         @if (product()!.es_por_gramos && selectedPresentation()) {
-        <p class="text-sm text-[#55644d] mt-1">Aporte por {{ selectedPresentation()!.gramos }}g</p>
+        <p class="text-sm text-[#55644d] mt-1">
+          Aporte por {{ formatSaleAmount(selectedPresentation()!.gramos) }}{{ saleUnitLabel() }}
+        </p>
         }
       </div>
 
@@ -59,7 +61,8 @@
         <label class="block text-sm font-semibold text-[#425137]">Seleccionar presentación</label>
         <div class="flex flex-wrap gap-2">
           @for (pres of product()!.presentaciones; track pres.gramos) {
-          <p-button type="button" [label]="pres.gramos + 'g - ' + (pres.precio | moneda)" [rounded]="true"
+          <p-button type="button"
+            [label]="formatSaleAmount(pres.gramos) + saleUnitLabel() + ' - ' + (pres.precio | moneda)" [rounded]="true"
             [severity]="selectedGrams() === pres.gramos ? 'success' : 'secondary'"
             [variant]="selectedGrams() === pres.gramos ? undefined : 'outlined'" (click)="selectGrams(pres.gramos)" />
           }
@@ -93,9 +96,9 @@
 
       <div class="flex gap-4">
         <p-button type="button" (click)="addToCart()" [disabled]="!canAdd() || adding()"
-          [label]="adding() ? 'Agregando...' : 'Selección informada'" icon="pi pi-shopping-cart" severity="success"
+          [label]="adding() ? 'Agregando...' : 'Reservar'" icon="pi pi-shopping-cart" severity="success"
           styleClass="flex-1" />
-        <p-button type="button" routerLink="/seleccion/carrito" label="Ver selección" severity="secondary"
+        <p-button type="button" routerLink="/seleccion/carrito" label="Ver Carrito" severity="secondary"
           variant="outlined" icon="pi pi-shopping-bag" />
       </div>
     </div>

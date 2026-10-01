@@ -5,6 +5,7 @@ import { MainLayout } from '@src/app/shared/layout/main-layout/main-layout';
 import { adminRoutes } from '@src/app/features/admin/admin.route';
 import { roleGuard } from '@src/app/core/guards/role-guard';
 import { authGuard } from '@src/app/core/guards/auth-guard';
+import { homeGuard } from '@src/app/core/guards/home-guard';
 
 export const routes: Routes = [
   // TEMPORAL: laboratorio de experimentos visuales — borrar/ocultar antes de producción
@@ -26,11 +27,7 @@ export const routes: Routes = [
         path: 'home',
         title: 'home',
         loadComponent: () => import('@src/app/features/home/home').then((m) => m.CustomerHome),
-      },
-      {
-        path: 'customer/home',
-        title: 'Customer Home',
-        loadComponent: () => import('@src/app/features/home/home').then((m) => m.CustomerHome),
+        canActivate: [homeGuard],
       },
       {
         path: 'customer/perfil',

@@ -8,6 +8,7 @@ import { MonedaPipe } from '@src/app/shared/pipes/moneda.pipe';
 import { CartButtonComponent } from '@src/app/shared/components/marketplace/button-card/button-card';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { ButtonModule } from 'primeng/button';
+import { fromGramsToSaleUnit, getSaleUnitLabel } from '@src/app/shared/utils/helpers';
 
 type CartProduct = {
   producto: Producto;
@@ -31,6 +32,8 @@ export class CarritoComponent {
 
   protected readonly loading = signal(true);
   protected readonly cartDetails = signal<CartProduct[]>([]);
+  protected readonly formatSaleAmount = fromGramsToSaleUnit;
+  protected readonly saleUnitLabel = getSaleUnitLabel;
 
   protected readonly cartItems = computed(() => this.cartStore.items());
   protected readonly total = computed(() =>

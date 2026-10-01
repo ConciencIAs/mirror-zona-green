@@ -25,6 +25,8 @@ export class Tags implements OnInit {
 
   editingTagName = signal('');
 
+  editingTagOrder = signal<number | null>(null);
+
   isLoading = signal(false);
 
   ngOnInit() {
@@ -37,7 +39,11 @@ export class Tags implements OnInit {
     try {
       const { data, error } = await this.dbService.select(TableName.TAGS);
       if (error) throw error;
-      this.tags.set((data as unknown as Tag[]) || []);
+      this.tags.set(
+        [...((data as unknown as Tag[]) || [])].sort(
+          (a, b) => a.orden - b.orden || a.nombre.localeCompare(b.nombre),
+        ),
+      );
     } catch (err) {
       this.toastService.error('Error al cargar tags', 'error');
     } finally {
@@ -54,7 +60,8 @@ export class Tags implements OnInit {
 
     this.isLoading.set(true);
     try {
-      const { error } = await this.dbService.insert(TableName.TAGS, { nombre });
+      const orden = this.nextTagOrder();
+      const { error } = await this.dbService.insert(TableName.TAGS, { nombre, orden });
       if (error) throw error;
 
       this.toastService.success('Tag creado exitosamente', 'success');
@@ -67,30 +74,42 @@ export class Tags implements OnInit {
     }
   }
 
+  nextTagOrder(): number {
+    return this.tags().reduce((max, tag) => Math.max(max, tag.orden ?? -1), -1) + 1;
+  }
+
   startEditTag(tag: Tag) {
     this.editingTagId.set(tag.id || null);
     this.editingTagName.set(tag.nombre);
+    this.editingTagOrder.set(tag.orden);
   }
 
   cancelEditTag() {
     this.editingTagId.set(null);
     this.editingTagName.set('');
+    this.editingTagOrder.set(null);
   }
 
   async updateTag(tag: Tag) {
     const nombre = this.editingTagName().trim();
+    const orden = this.editingTagOrder();
     if (!nombre) {
       this.toastService.error('El nombre del tag no puede estar vacío', 'error');
+      return;
+    }
+    if (orden === null || !Number.isInteger(orden) || orden < 0) {
+      this.toastService.error('El orden debe ser un número entero igual o mayor a 0', 'error');
       return;
     }
 
     this.isLoading.set(true);
     try {
-      const { error } = await this.dbService.update(TableName.TAGS, { nombre }, { id: tag.id });
+      const { error } = await this.dbService.update(TableName.TAGS, { nombre, orden }, { id: tag.id });
       if (error) throw error;
 
       this.toastService.success('Tag actualizado exitosamente', 'success');
       this.editingTagId.set(null);
+      this.editingTagOrder.set(null);
       await this.loadTags();
     } catch (err) {
       this.toastService.error('Error al actualizar tag', 'error');

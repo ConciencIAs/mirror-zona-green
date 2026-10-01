@@ -180,7 +180,7 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
     contact: {
       whatsapp_phone: '+57 300 123 4567',
       whatsapp_link: 'https://wa.me/573001234567',
-      email: 'hola@zonagreen.co',
+      email: 'hola@cheynverde.com',
       direccion: 'Bogotá, Colombia'
     },
     social: {

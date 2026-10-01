@@ -9,6 +9,11 @@ import { MonedaPipe } from '@src/app/shared/pipes';
 import { CarouselModule } from 'primeng/carousel';
 import { ImageModule } from 'primeng/image';
 import { ButtonModule } from 'primeng/button';
+import {
+  fromGramsToSaleUnit,
+  getSaleUnitLabel,
+  getSaleUnitName,
+} from '@src/app/shared/utils/helpers';
 
 @Component({
   selector: 'app-product-details',
@@ -31,6 +36,11 @@ export class ProductDetails {
   protected readonly quantity = signal(1);
   protected readonly adding = signal(false);
   protected readonly added = signal(false);
+  protected readonly saleUnitLabel = computed(() => getSaleUnitLabel(this.product()?.presentacion_venta));
+
+  protected formatSaleAmount(grams: number | null | undefined): number {
+    return fromGramsToSaleUnit(grams, this.product()?.presentacion_venta);
+  }
 
   /** La presentación seleccionada actualmente (solo para productos por gramos) */
   protected readonly selectedPresentation = computed<PresentacionProducto | null>(() => {
@@ -80,7 +90,8 @@ export class ProductDetails {
     if (!prod) return '';
     const reservado = prod.reservado ?? 0;
     if (prod.es_por_gramos) {
-      return `${reservado} gramos reservados (global)`;
+      const saleUnitAmount = fromGramsToSaleUnit(reservado, prod.presentacion_venta);
+      return `${saleUnitAmount} ${getSaleUnitName(prod.presentacion_venta)} reservados (global)`;
     } else {
       return `${reservado} unidades reservadas`;
     }
