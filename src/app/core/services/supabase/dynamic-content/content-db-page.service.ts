@@ -15,7 +15,7 @@ export class ContentDbService {
       .maybeSingle();
   }
 
-  async createContent(content: { name: string; slug: string; project_data: any, html_content: string, css_content: string }) {
+  async createContent(content: { name: string; slug: string; project_data: any, html_content: string, css_content: string, js_content: string }) {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
       .insert([content])
@@ -24,13 +24,14 @@ export class ContentDbService {
   }
 
   // Guardar/Actualizar una landing existente
-  async updateContent(id: string, payload: { html_content: string; css_content: string; project_data: any }) {
+  async updateContent(id: string, payload: { html_content: string; css_content: string; project_data: any, js_content: string }) {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
       .update({
         html_content: payload.html_content,
         css_content: payload.css_content,
         project_data: payload.project_data,
+        js_content: payload.js_content,
         updated_at: new Date()
       })
       .eq('id', id)
@@ -50,7 +51,7 @@ export class ContentDbService {
   async getContentBySlug(slug: string) {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
-      .select('html_content, css_content')
+      .select('html_content, css_content, js_content')
       .eq('slug', slug)
       .maybeSingle();
   }
@@ -58,7 +59,7 @@ export class ContentDbService {
   async getContentHome() {
     return await this.supabase
       .from(TableName.DYNAMIC_CONTENT)
-      .select('html_content, css_content')
+      .select('html_content, css_content, js_content')
       .eq('slug', 'home')
       .maybeSingle();
   }

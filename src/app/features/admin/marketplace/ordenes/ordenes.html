@@ -4,11 +4,12 @@
       <h1 class="text-3xl font-bold text-[#1d341c]">Órdenes de selección informada</h1>
       <p class="mt-2 text-sm text-[#4b5b44]">Administra y controla el estado de las órdenes</p>
     </div>
-    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">Total: {{
-      filteredOrders().length }}
-      orden(es)</span>
+    <span class="rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">
+      Total: {{ filteredOrders().length }} orden(es)
+    </span>
   </div>
 
+  <!-- Filtros -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
     <p-floatlabel variant="over">
       <label>Estado</label>
@@ -51,13 +52,33 @@
     <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="text-sm text-[#55644d]">Orden ID: <span class="font-semibold text-[#1d341c]">{{ order.id }}</span>
+          <p class="text-sm text-[#55644d]">
+            Orden ID: <span class="font-semibold text-[#1d341c]">{{ order.id }}</span>
           </p>
           <p class="text-sm text-[#55644d]">Fecha: {{ order.created_at | fechaFormato }}</p>
+          <p class="text-xs text-[#55644d] mt-1">
+            Cliente: <strong class="text-slate-800">{{ getNombreCliente(order) }}</strong> | Tel: <strong
+              class="text-slate-800">{{ getTelefonoCliente(order) }}</strong>
+          </p>
         </div>
-        <span class="inline-flex capitalize items-center rounded-full px-4 py-2 text-sm font-semibold"
-          [ngClass]="getStatusColor(order.status)">{{
-          order.status }}</span>
+        <div class="flex items-center gap-3">
+          <span class="inline-flex capitalize items-center rounded-full px-4 py-2 text-sm font-semibold"
+            [ngClass]="getStatusColor(order.status)">
+            {{ order.status }}
+          </span>
+
+          <!-- Botón para Abrir Modal / Imprimir Etiqueta -->
+          <button type="button"
+            class="inline-flex items-center gap-1.5 rounded-2xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95 cursor-pointer"
+            (click)="abrirModalImpresion(order)" pTooltip="Imprimir etiqueta de envío (10 x 15 cm)"
+            tooltipPosition="top">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Imprimir Etiqueta
+          </button>
+        </div>
       </div>
 
       <div class="mt-6 grid gap-4 md:grid-cols-[1fr_1fr]">
@@ -79,26 +100,39 @@
           <h2 class="mt-2 mb-2 font-bold text-xl"> Valor total: {{ order.precio_total | moneda }}</h2>
           <div class="mt-4 space-y-4 text-sm text-[#55644d]">
             <div class="flex flex-col gap-2">
-              <label class=" block text-sm font-semibold text-[#425137]">Estado</label>
+              <label class="block text-sm font-semibold text-[#425137]">Estado</label>
               <p-select [options]="updateStatusOptions" [(ngModel)]="order.status" placeholder="Seleccione Estado"
                 [editable]="false" optionLabel="label" optionValue="value" class="w-full md:w-56" />
             </div>
 
             <span> Tipo de entrega: <strong> {{ order.tipo_entrega }}</strong></span> <br>
-            @if (order?.direccion) {
-            <span>Dirección de entrega: <strong> {{ order.direccion }}</strong></span>
+            @if (getDireccionEntrega(order)) {
+            <span>Dirección de entrega: <strong> {{ getDireccionEntrega(order) }}</strong></span><br>
             }
+            <span>Teléfono contacto: <strong> {{ getTelefonoCliente(order) }}</strong></span>
 
             <p-iftalabel class="py-2">
               <label class="block text-sm font-semibold text-[#425137] mt-2">Comentario del usuario</label>
-              <textarea rows=" 4" disabled pTextarea [autoResize]="true"
-                class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]">{{
-                order.comentarios_usuario || 'Sin comentarios por el momento' }}</textarea>
+              <textarea rows="4" disabled pTextarea [autoResize]="true"
+                class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]">{{ order.comentarios_usuario || 'Sin comentarios por el momento' }}</textarea>
             </p-iftalabel>
 
-            <p-button type="button" [loading]="saving()" rounded="true" (click)="saveOrder(order)">
-              {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
-            </p-button>
+            <div class="flex items-center gap-3">
+              <p-button type="button" [loading]="saving()" rounded="true" (click)="saveOrder(order)">
+                {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+              </p-button>
+
+              <button type="button"
+                class="inline-flex items-center gap-2 rounded-full border border-emerald-600 bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100 cursor-pointer"
+                (click)="abrirModalImpresion(order)">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Imprimir Etiqueta (10x15 cm)
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -108,3 +142,93 @@
   }
   }
 </div>
+
+<!-- ═══════════ MODAL PREVIEW DE ETIQUETA (10 x 15 cm) ═══════════ -->
+<p-dialog header="Vista Previa de Etiqueta de Despacho (10 x 15 cm)" [(visible)]="showPrintModal" [modal]="true"
+  [closable]="true" [draggable]="false" [resizable]="false" styleClass="w-full max-w-lg">
+  @if (selectedOrderForPrint()) {
+  @let selected = selectedOrderForPrint()!;
+  <div class="space-y-4 pt-2">
+    <p class="text-xs text-slate-500">
+      Revisa los datos de envío antes de imprimir. La etiqueta está formateada a escala exacta de <strong>10 x 15
+        cm</strong>.
+    </p>
+
+    <!-- Previsualización visual estilo etiqueta 10x15cm -->
+    <div
+      class="mx-auto rounded-2xl border-2 border-dashed border-slate-400 bg-white p-5 shadow-inner max-w-xs space-y-3 font-sans text-xs">
+
+      <!-- Banner Header -->
+      <div class="flex items-center justify-between border-b-2 border-slate-900 pb-2">
+        <span class="font-extrabold text-sm uppercase tracking-wider text-slate-900">CHEIN VERDEN</span>
+        <span class="font-mono font-bold text-[10px] bg-slate-100 border border-slate-300 px-1.5 py-0.5 rounded">
+          #{{ selected.id.slice(0, 8) }}
+        </span>
+      </div>
+
+      <!-- Tabla Estructurada: PARA, DIRECCIÓN, CONTACTO -->
+      <table class="w-full border-collapse border border-slate-900 text-left text-xs">
+        <tbody>
+          <tr class="border-b border-slate-900">
+            <td class="bg-slate-100 font-bold uppercase w-1/4 p-2 border-r border-slate-900 text-[10px]">
+              PARA:
+            </td>
+            <td class="p-2 font-bold text-sm text-slate-900">
+              {{ getNombreCliente(selected) }}
+            </td>
+          </tr>
+          <tr class="border-b border-slate-900">
+            <td class="bg-slate-100 font-bold uppercase p-2 border-r border-slate-900 text-[10px]">
+              DIRECCIÓN:
+            </td>
+            <td class="p-2 font-medium text-slate-800">
+              {{ getDireccionEntrega(selected) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="bg-slate-100 font-bold uppercase p-2 border-r border-slate-900 text-[10px]">
+              CONTACTO:
+            </td>
+            <td class="p-2 font-semibold text-slate-800 font-mono">
+              {{ getTelefonoCliente(selected) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Espacio Grande de Observaciones -->
+      <div class="rounded-lg border-1.5 border-slate-900 p-2.5 min-h-[90px] flex flex-col justify-start">
+        <label class="text-[10px] font-bold uppercase border-b border-dashed border-slate-400 pb-1 mb-1 text-slate-700">
+          OBSERVACIONES:
+        </label>
+        <textarea rows="3"
+          class="w-full border-none bg-transparent text-xs text-slate-900 resize-none outline-none font-sans"
+          placeholder="Escribe observaciones adicionales para el transportador..." [ngModel]="customObservaciones()"
+          (ngModelChange)="customObservaciones.set($event)"></textarea>
+      </div>
+
+      <p class="text-[9px] text-center text-slate-400 border-t border-slate-200 pt-1">
+        Formato de Impresión: 100mm x 150mm (10x15cm)
+      </p>
+    </div>
+
+    <!-- Acciones del Modal -->
+    <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+      <button type="button"
+        class="rounded-xl bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200"
+        (click)="showPrintModal.set(false)">
+        Cancelar
+      </button>
+      <button type="button"
+        class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2 text-xs font-semibold text-white shadow transition hover:bg-emerald-700 active:scale-95"
+        (click)="imprimirEtiqueta(); showPrintModal.set(false)">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        Imprimir Ahora
+      </button>
+    </div>
+  </div>
+  }
+</p-dialog>

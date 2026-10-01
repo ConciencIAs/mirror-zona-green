@@ -18,9 +18,22 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'customer',
-        loadComponent: () => import('./customer/customer').then(m => m.Customer),
         data: { zone: 'admin' },
-        title: 'Customer'
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./customer/customer').then(m => m.Customer),
+            pathMatch: 'full',
+            data: { zone: 'admin' },
+            title: 'Gestión de Usuarios'
+          },
+          {
+            path: 'bulk-upload',
+            loadComponent: () => import('./customer/bulk-upload/bulk-upload').then(m => m.BulkUpload),
+            data: { zone: 'admin' },
+            title: 'Carga Masiva - Base de Confianza'
+          },
+        ]
       },
       {
         path: 'marketplace',

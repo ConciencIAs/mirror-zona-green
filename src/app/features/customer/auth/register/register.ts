@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 
@@ -18,6 +18,7 @@ import { FormInputCheckboxComponent } from '@src/app/shared/components/form/form
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 
 import { userSchemaRegister } from '@src/app/shared/models/schemas/auth.schema';
+import { environment } from '@src/environments/environment';
 
 type RegistrationFormModel = CustomerData & {
   password: string;
@@ -46,6 +47,12 @@ export class Register {
   readonly showErrorsModal = signal(false);
   readonly generalError = signal<string | null>(null);
 
+  // ── Validación async del código de referido ──
+  readonly referidoValidando = signal(false);
+  readonly referidoValido = signal<boolean | null>(null);
+  readonly referidoError = signal<string | null>(null);
+  private referidoDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
   readonly documentTypeOptions: SelectOption[] = [
     { value: 'CC', label: 'CC' },
     { value: 'CE', label: 'CE' },
@@ -65,11 +72,60 @@ export class Register {
     ubicacion: '',
     acepta_terminos: false,
     acepta_politica_privacidad: false,
+    codigo_referido: '',
   });
 
   readonly registerForm = form(this.formModel, (schemaPath) => {
     validateStandardSchema(schemaPath, userSchemaRegister);
   });
+
+  /**
+   * Validación asíncrona con debounce para el código de referido.
+   * Llama al RPC `validar_codigo_referido` en Supabase.
+   */
+  onReferidoInput(event: Event): void {
+    const valor = (event.target as HTMLInputElement).value.trim();
+    this.formModel.update((m) => ({ ...m, codigo_referido: valor }));
+
+    this.referidoValido.set(null);
+    this.referidoError.set(null);
+    if (this.referidoDebounceTimer) clearTimeout(this.referidoDebounceTimer);
+
+    if (!valor) {
+      this.referidoValidando.set(false);
+      return;
+    }
+
+    this.referidoValidando.set(true);
+
+    this.referidoDebounceTimer = setTimeout(async () => {
+      try {
+        const { data, error } = await this.dbService.rpc('validar_codigo_referido', {
+          codigo_prueba: valor,
+        });
+
+
+        if (error) {
+          this.referidoError.set('Error al validar el código de referido');
+          this.referidoValido.set(false);
+          return;
+        }
+
+        if (data === true) {
+          this.referidoValido.set(true);
+          this.referidoError.set(null);
+        } else {
+          this.referidoValido.set(false);
+          this.referidoError.set('El código de referido no es válido o no está activo');
+        }
+      } catch {
+        this.referidoError.set('Error de conexión al validar el código');
+        this.referidoValido.set(false);
+      } finally {
+        this.referidoValidando.set(false);
+      }
+    }, 600);
+  }
 
   async verificarSiExisteUsuario(correo: string): Promise<boolean> {
     const { data, error } = await this.dbService
@@ -125,6 +181,13 @@ export class Register {
       acepta_terminos: formData.acepta_terminos,
       acepta_politica_privacidad: formData.acepta_politica_privacidad,
     };
+
+    // Bloquea si el usuario escribió un código de referido inválido
+    if (currentData.codigo_referido?.trim() && this.referidoValido() === false) {
+      this.generalError.set('El código de referido ingresado no es válido.');
+      this.loading.set(false);
+      return;
+    }
 
     try {
       const exists = await this.verificarSiExisteUsuario(currentData.correo);

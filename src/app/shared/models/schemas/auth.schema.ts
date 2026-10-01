@@ -12,6 +12,11 @@ export const userSchemaRegister = z.object({
   fecha_nacimiento: z.date(),
   tipo_documento: z.string().default('CC'),
   ubicacion: z.string().min(2, 'La ubicación provista es demasiado corta'),
+  codigo_referido: z
+    .string()
+    .trim()
+    .optional()
+    .default(''),
   acepta_terminos: z.boolean().refine((v) => v === true, 'Debes aceptar los términos y condiciones'),
   acepta_politica_privacidad: z
     .boolean()
@@ -24,6 +29,7 @@ export const userSchemaRegister = z.object({
       path: ['confirmPassword'],
     });
   }
+
 });
 
 export const userSchemaLogin = z.object({

@@ -26,6 +26,10 @@ export class SupabaseDbService {
     return this.from(table).delete().match(match);
   }
 
+  rpc(fnName: string, params?: Record<string, unknown>) {
+    return this.supabaseClient.supabase.rpc(fnName, params);
+  }
+
   get tableNames() {
     return TableName;
   }
