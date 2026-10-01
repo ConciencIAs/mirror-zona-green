@@ -31,10 +31,19 @@ export class SupabaseAuthService {
     });
   }
 
-  signUpWithEmail(email: string, password: string) {
+  signUpWithEmail(
+    email: string,
+    password: string,
+    emailRedirectTo?: string,
+    userData?: Record<string, string | number | boolean>,
+  ) {
     return this.supabaseClient.supabase.auth.signUp({
       email,
       password,
+      options: {
+        ...(emailRedirectTo ? { emailRedirectTo } : {}),
+        ...(userData ? { data: userData } : {}),
+      },
     });
   }
 

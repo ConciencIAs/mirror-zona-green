@@ -18,6 +18,7 @@ export const productSchema = z.object({
   presentacion_venta: z.enum(['und', 'gr', 'mg']),
   presentaciones: z.array(presentationSchema).default([]),
   tags: z.array(z.string()).optional(),
+  ofertas: z.array(z.string()).default([]),
   urls_imagenes: z.array(z.string()).min(1, 'Debes agregar al menos una imagen.'),
 }).superRefine((data, ctx) => {
   if (data.es_por_gramos) {

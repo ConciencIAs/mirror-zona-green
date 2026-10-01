@@ -7,7 +7,24 @@
   <div class="auth-card-frame">
     <div class="relative z-[1] p-6 bg-white rounded-[calc(1.5rem-2px)]">
       <form (submit)="submit($event)" class="space-y-4">
+        <div class="grid grid-cols-2 rounded-xl bg-slate-100 p-1" role="group" aria-label="Método de inicio de sesión">
+          <button type="button" (click)="setLoginMode('password')"
+            [class]="loginMode() === 'password' ? 'rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm' : 'rounded-lg px-3 py-2 text-sm font-medium text-slate-600'">
+            Contraseña
+          </button>
+          <button type="button" (click)="setLoginMode('magic-link')"
+            [class]="loginMode() === 'magic-link' ? 'rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm' : 'rounded-lg px-3 py-2 text-sm font-medium text-slate-600'">
+            Enlace mágico
+          </button>
+        </div>
+
         <app-form-input [control]="loginForm.email()" label="Correo electrónico" placeholder="correo@ejemplo.com" />
+        @if (loginMode() === 'password') {
+        <app-form-input [control]="loginForm.password()" label="Contraseña" type="password"
+          placeholder="Ingresa tu contraseña" />
+        } @else {
+        <p class="text-sm text-slate-500">Te enviaremos un enlace para iniciar sesión sin contraseña.</p>
+        }
         <div class="flex justify-between items-center text-sm text-slate-500">
           <span>¿No tienes cuenta?</span>
           <a class="text-blue-600 hover:underline" routerLink="/auth/register">Regístrate</a>
@@ -15,11 +32,10 @@
 
         <button type="submit" [disabled]="loading()"
           class="w-full rounded-xl bg-primary-500 px-4 py-3 text-white font-semibold transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-slate-400">
-          @if (!loading()) {
-          <span>Iniciar sesión</span>
-          }
           @if (loading()) {
-          <span>Iniciando sesión...</span>
+          <span>{{ loginMode() === 'password' ? 'Iniciando sesión...' : 'Enviando enlace...' }}</span>
+          } @else {
+          <span>{{ loginMode() === 'password' ? 'Iniciar sesión' : 'Enviar enlace mágico' }}</span>
           }
         </button>
       </form>

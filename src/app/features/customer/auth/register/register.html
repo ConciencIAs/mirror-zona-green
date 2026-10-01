@@ -10,7 +10,7 @@
   <h2 class="text-3xl font-semibold mb-2 text-slate-900">Registro de cliente</h2>
 
   <p class="text-sm text-slate-500 mb-6">
-    Llena tus datos para recibir un enlace autorizado en tu correo y así continuar ya como usuario registrado.
+    Completa tus datos y crea una contraseña para tu cuenta.
   </p>
 
   <!-- FORM -->
@@ -20,6 +20,10 @@
 
     <!-- CORREO -->
     <app-form-input [control]="registerForm.correo()" label="Correo" placeholder="correo@ejemplo.com" />
+    <app-form-input [control]="registerForm.password()" type="password" label="Contraseña"
+      placeholder="Mínimo 8 caracteres" />
+    <app-form-input [control]="registerForm.confirmPassword()" type="password" label="Confirmar contraseña"
+      placeholder="Repite tu contraseña" />
 
     <!-- GRID -->
     <div class="grid grid-cols-2 gap-4">
@@ -127,11 +131,11 @@
         class="w-full rounded-xl bg-primary-500 px-4 py-3 text-white font-semibold transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-slate-400"
         [disabled]="loading()">
         @if (!loading()) {
-        <span>Enviar enlace</span>
+        <span>Crear cuenta</span>
         }
 
         @if (loading()) {
-        <span>Enviando...</span>
+        <span>Creando cuenta...</span>
         }
       </button>
     </div>
