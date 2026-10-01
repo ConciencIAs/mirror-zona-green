@@ -4,18 +4,40 @@
     <!-- ==============================
          HEADER
     =============================== -->
-    <div>
-      <div class="flex items-center gap-3 mb-1">
+    <div class="text-left">
+      <h1 class="text-2xl font-bold text-slate-900">Mi cuenta</h1>
+      <p class="text-sm text-slate-500">Administra tu información personal y código de referido</p>
+    </div>
+
+    <div
+      class="rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 p-6 text-white shadow-xl shadow-slate-300 relative overflow-hidden">
+      <!-- Decoración de fondo -->
+      <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none">
+      </div>
+      <div class="absolute -left-10 -top-10 w-32 h-32 bg-primary-500/10 rounded-full blur-2xl pointer-events-none">
+      </div>
+
+      <div class="relative z-10 flex items-center justify-between gap-4">
+        @if (fullName()) {
+        <div class="text-left min-w-0">
+          <p class="text-2xl font-bold text-white truncate">{{ fullName() }}</p>
+          <p class="text-xs text-slate-400">Usuario de Cheyn Verde</p>
+          <span
+            class="inline-flex items-center gap-1.5 mt-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+            <i class="pi pi-calendar text-[10px]"></i>
+            Miembro desde {{ createdAt() }}
+          </span>
+        </div>
+        } @else {
+        <span></span>
+        }
         <!-- Ícono de usuario -->
-        <div class="w-12 h-12 rounded-2xl bg-primary-500 flex items-center justify-center shadow-md">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <div
+          class="w-20 h-20 rounded-2xl bg-primary-500 flex items-center justify-center shadow-md shrink-0 ring-4 ring-emerald-400/20">
+          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
           </svg>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold text-slate-900">Mi cuenta</h1>
-          <p class="text-sm text-slate-500">Administra tu información personal y código de referido</p>
         </div>
       </div>
     </div>
@@ -105,29 +127,119 @@
       <!-- FORM -->
       <form (submit)="submit($event)" class="p-6 space-y-5">
 
-        <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Datos editables</p>
-
-        <!-- NOMBRE COMPLETO -->
-        <app-form-input [control]="profileForm.full_name()" label="Nombre completo" placeholder="Ej: Juan Pérez" />
-
-        <!-- TELÉFONO -->
-        <app-form-input [control]="profileForm.telefono()" label="Teléfono" placeholder="+573001234567" />
-
-        <!-- TIPO DOC + DOCUMENTO -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <app-form-select [control]="profileForm.tipo_documento()" label="Tipo de documento"
-            [options]="documentTypeOptions" placeholder="Selecciona" />
-          <app-form-input [control]="profileForm.documento()" label="Número de documento"
-            placeholder="Ej: 1234567890" />
+        <div class="mb-1">
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">Datos editables</p>
+          <p class="text-xs text-slate-400 mt-0.5">Toca un dato para editarlo.</p>
         </div>
 
+        <!-- NOMBRE COMPLETO -->
+        @if (editingField() === 'full_name') {
+        <div class="rounded-2xl border-2 border-primary-300 bg-primary-50/40 p-4 space-y-1">
+          <app-form-input [control]="profileForm.full_name()" label="Nombre completo" placeholder="Ej: Juan Pérez" />
+          <div class="flex justify-end">
+            <button type="button" (click)="toggleEdit('full_name')"
+              class="text-xs font-semibold text-primary-600 hover:text-primary-700">Listo</button>
+          </div>
+        </div>
+        } @else {
+        <button type="button" (click)="toggleEdit('full_name')"
+          class="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-left transition hover:border-primary-300 hover:bg-primary-50/50">
+          <div class="min-w-0">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Nombre completo</p>
+            <p class="text-sm font-semibold text-slate-800 truncate">{{ formModel().full_name || 'Sin definir' }}</p>
+          </div>
+          <i class="pi pi-pencil text-slate-400 shrink-0"></i>
+        </button>
+        }
+
+        <!-- TELÉFONO -->
+        @if (editingField() === 'telefono') {
+        <div class="rounded-2xl border-2 border-primary-300 bg-primary-50/40 p-4 space-y-1">
+          <app-form-input [control]="profileForm.telefono()" label="Teléfono" placeholder="+573001234567" />
+          <div class="flex justify-end">
+            <button type="button" (click)="toggleEdit('telefono')"
+              class="text-xs font-semibold text-primary-600 hover:text-primary-700">Listo</button>
+          </div>
+        </div>
+        } @else {
+        <button type="button" (click)="toggleEdit('telefono')"
+          class="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-left transition hover:border-primary-300 hover:bg-primary-50/50">
+          <div class="min-w-0">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Teléfono</p>
+            <p class="text-sm font-semibold text-slate-800 truncate">{{ formModel().telefono || 'Sin definir' }}</p>
+          </div>
+          <i class="pi pi-pencil text-slate-400 shrink-0"></i>
+        </button>
+        }
+
+        <!-- TIPO DOC + DOCUMENTO -->
+        @if (editingField() === 'documento') {
+        <div class="rounded-2xl border-2 border-primary-300 bg-primary-50/40 p-4 space-y-1">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <app-form-select [control]="profileForm.tipo_documento()" label="Tipo de documento"
+              [options]="documentTypeOptions" placeholder="Selecciona" />
+            <app-form-input [control]="profileForm.documento()" label="Número de documento"
+              placeholder="Ej: 1234567890" />
+          </div>
+          <div class="flex justify-end">
+            <button type="button" (click)="toggleEdit('documento')"
+              class="text-xs font-semibold text-primary-600 hover:text-primary-700">Listo</button>
+          </div>
+        </div>
+        } @else {
+        <button type="button" (click)="toggleEdit('documento')"
+          class="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-left transition hover:border-primary-300 hover:bg-primary-50/50">
+          <div class="min-w-0">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Documento</p>
+            <p class="text-sm font-semibold text-slate-800 truncate">
+              {{ formModel().documento ? (tipoDocumentoLabel + ' · ' + formModel().documento) : 'Sin definir' }}
+            </p>
+          </div>
+          <i class="pi pi-pencil text-slate-400 shrink-0"></i>
+        </button>
+        }
+
         <!-- FECHA DE NACIMIENTO -->
-        <app-form-datepicker [control]="profileForm.fecha_nacimiento()" label="Fecha de nacimiento" [maxDate]="maxDate"
-          placeholder="dd/mm/aaaa" />
+        @if (editingField() === 'fecha_nacimiento') {
+        <div class="rounded-2xl border-2 border-primary-300 bg-primary-50/40 p-4 space-y-1">
+          <app-form-datepicker [control]="profileForm.fecha_nacimiento()" label="Fecha de nacimiento"
+            [maxDate]="maxDate" placeholder="dd/mm/aaaa" />
+          <div class="flex justify-end">
+            <button type="button" (click)="toggleEdit('fecha_nacimiento')"
+              class="text-xs font-semibold text-primary-600 hover:text-primary-700">Listo</button>
+          </div>
+        </div>
+        } @else {
+        <button type="button" (click)="toggleEdit('fecha_nacimiento')"
+          class="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-left transition hover:border-primary-300 hover:bg-primary-50/50">
+          <div class="min-w-0">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Fecha de nacimiento</p>
+            <p class="text-sm font-semibold text-slate-800 truncate">{{ fechaNacimientoDisplay() }}</p>
+          </div>
+          <i class="pi pi-pencil text-slate-400 shrink-0"></i>
+        </button>
+        }
 
         <!-- UBICACIÓN -->
-        <app-form-input [control]="profileForm.ubicacion()" label="Dirección de envío"
-          placeholder="Dirección de envío" />
+        @if (editingField() === 'ubicacion') {
+        <div class="rounded-2xl border-2 border-primary-300 bg-primary-50/40 p-4 space-y-1">
+          <app-form-input [control]="profileForm.ubicacion()" label="Dirección de envío"
+            placeholder="Dirección de envío" />
+          <div class="flex justify-end">
+            <button type="button" (click)="toggleEdit('ubicacion')"
+              class="text-xs font-semibold text-primary-600 hover:text-primary-700">Listo</button>
+          </div>
+        </div>
+        } @else {
+        <button type="button" (click)="toggleEdit('ubicacion')"
+          class="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-left transition hover:border-primary-300 hover:bg-primary-50/50">
+          <div class="min-w-0">
+            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Dirección de envío</p>
+            <p class="text-sm font-semibold text-slate-800 truncate">{{ formModel().ubicacion || 'Sin definir' }}</p>
+          </div>
+          <i class="pi pi-pencil text-slate-400 shrink-0"></i>
+        </button>
+        }
 
         <!-- BOTÓN GUARDAR -->
         <div class="pt-2 flex justify-end">
@@ -158,6 +270,25 @@
       El correo electrónico no puede modificarse desde aquí.
       Si necesitas cambiarlo, contacta al soporte.
     </p>
+
+    <!-- ==============================
+         CERRAR SESIÓN
+    =============================== -->
+    <div class="flex justify-center pt-2">
+      <button id="btn-cerrar-sesion" type="button" (click)="signOut()" [disabled]="signingOut()"
+        class="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-white px-6 py-3 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60">
+        @if (signingOut()) {
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span>Cerrando sesión...</span>
+        } @else {
+        <i class="pi pi-sign-out"></i>
+        <span>Cerrar sesión</span>
+        }
+      </button>
+    </div>
 
   </div>
 </div>

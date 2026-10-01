@@ -25,6 +25,11 @@ export class ProfileMenu implements OnInit {
 
   labelAvater = this.userState.fullName().charAt(0).toUpperCase() || 'U';
 
+  get displayName(): string {
+    const name = this.userState.fullName();
+    return name ? name.split(' ')[0] : 'Mi perfil';
+  }
+
   ngOnInit() {
     this.items = [
       {

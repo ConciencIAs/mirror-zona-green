@@ -53,9 +53,6 @@
           <textarea id="comentarios" formControlName="comentarios" rows="4"
             placeholder="Ej: Horario de disponibilidad, indicaciones adicionales, etc."
             class="w-full rounded-2xl border border-[#d7dfc7] p-4 text-sm focus:border-[#1f6c2f] focus:outline-none focus:ring-1 focus:ring-[#1f6c2f]"></textarea>
-          @if (checkoutForm.get('comentarios')?.touched && checkoutForm.get('comentarios')?.invalid) {
-          <p class="text-xs text-red-500">Por favor, déjanos un comentario o instrucción válida (min. 5 letras).</p>
-          }
         </div>
       </form>
     </div>

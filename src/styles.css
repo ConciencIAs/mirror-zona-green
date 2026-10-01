@@ -394,6 +394,12 @@
   display: none !important;
 }
 
+/* Separación entre cada conjunto (título + sus acordeones) para que
+   se noten como grupos distintos, no como un bloque corrido. */
+[data-cheyn-page="faq"] [data-faq-sections] > section + section {
+  margin-top: 3.5rem;
+}
+
 [data-cheyn-page="faq"] .pattern-aztec {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 6 42 42'><rect x='18' y='6' width='6' height='6' fill='%239aa39a'/><rect x='12' y='12' width='6' height='6' fill='%239aa39a'/><rect x='24' y='12' width='6' height='6' fill='%239aa39a'/><rect x='6' y='18' width='6' height='6' fill='%239aa39a'/><rect x='30' y='18' width='6' height='6' fill='%239aa39a'/><rect x='0' y='24' width='6' height='6' fill='%239aa39a'/><rect x='18' y='24' width='6' height='6' fill='%239aa39a'/><rect x='36' y='24' width='6' height='6' fill='%239aa39a'/><rect x='6' y='30' width='6' height='6' fill='%239aa39a'/><rect x='30' y='30' width='6' height='6' fill='%239aa39a'/><rect x='12' y='36' width='6' height='6' fill='%239aa39a'/><rect x='24' y='36' width='6' height='6' fill='%239aa39a'/><rect x='18' y='42' width='6' height='6' fill='%239aa39a'/></svg>");
   background-repeat: repeat-x;
@@ -529,38 +535,8 @@
   animation: cheyn-ring-spin-ccw 70s linear infinite;
 }
 
-@keyframes cheyn-particle-dust {
-  0% {
-    transform: translateY(0) translateX(0);
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 0.8;
-  }
-
-  50% {
-    transform: translateY(45vh) translateX(14px);
-  }
-
-  90% {
-    opacity: 0.6;
-  }
-
-  100% {
-    transform: translateY(90vh) translateX(-6px);
-    opacity: 0;
-  }
-}
-
 [data-cheyn-page="rrd"] .particle-dust {
-  position: absolute;
-  top: -5%;
-  border-radius: 9999px;
-  background: currentColor;
-  animation-name: cheyn-particle-dust;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+  display: none;
 }
 
 [data-cheyn-page="rrd"] .flip-card-scene {
@@ -771,6 +747,64 @@
 
 [data-cheyn-page="home-anonimo"] .icon-aura {
   animation: cheyn-icon-aura-pulse 4s ease-in-out infinite;
+}
+
+/* "¿Cómo funciona?" — el grid de las 6 tarjetas de pasos solo se
+   activaba desde sm: (sm:grid), así que en mobile quedaban apiladas
+   como bloques simples sin separación (gap-6 no hace nada sin
+   display:grid). Se activa el grid también en mobile, a 1 columna. */
+[data-cheyn-page="home-anonimo"] .sm\:grid.grid-cols-3.gap-6 {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  [data-cheyn-page="home-anonimo"] .sm\:grid.grid-cols-3.gap-6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Fondos ambientales (hero y cierre): reemplaza las fotos jpg por
+   gradientes planos de 3 tonos de verde de marca, conservando el
+   mismo crossfade de opacidad que ya traían. */
+[data-cheyn-page="home-anonimo"] .ambient-img-1 {
+  content: linear-gradient(135deg, #11421d, #146424);
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-2 {
+  content: linear-gradient(135deg, #146424, #20a038);
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-3 {
+  content: linear-gradient(135deg, #20a038, #6bc767);
+}
+
+[data-cheyn-page="home-anonimo"] .ambient-img-4 {
+  content: linear-gradient(135deg, #11421d, #20a038);
+}
+
+/* .closing-img-N y .band-img-a/b se reutilizan igual en varias páginas
+   (home-anonimo, ecosistema, rrd, faq, médicos, armonización
+   territorial, términos) — regla global, no por página. */
+.closing-img-1 {
+  content: linear-gradient(135deg, #146424, #20a038);
+}
+
+.closing-img-2 {
+  content: linear-gradient(135deg, #20a038, #6bc767);
+}
+
+.closing-img-3 {
+  content: linear-gradient(135deg, #11421d, #146424);
+}
+
+.band-img-a {
+  content: linear-gradient(135deg, #11421d, #20a038);
+}
+
+.band-img-b {
+  content: linear-gradient(135deg, #146424, #6bc767);
 }
 
 /* Carrusel de beneficios — fade simple, reinicia solo porque cada
@@ -1093,4 +1127,21 @@
 
 .gjs-cell {
   height: unset !important;
+}
+
+/* ── Contraste en modo oscuro para contenido dinámico (Supabase) ──
+   1) Arreglo puntual: colores de bajo contraste ya detectados en
+      /content/ecosistema (párrafos y etiquetas de tarjetas con verde
+      apagado sobre fondo verde oscuro). Se fuerzan a blanco.
+   2) Red de seguridad: cualquier texto de contenido dinámico que no
+      traiga su propio color oscuro explícito cae en blanco por
+      defecto — especificidad mínima (:where), así que cualquier color
+      que el editor visual le asigne después sigue ganando. */
+.dark .text-\[\#9ab890\],
+.dark .text-\[\#a0b0a0\] {
+  color: #ffffff !important;
+}
+
+:where(.dark) :where([data-cheyn-page]) :where(p, li, span) {
+  color: #ffffff;
 }
