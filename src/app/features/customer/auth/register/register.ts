@@ -182,8 +182,13 @@ export class Register {
       acepta_politica_privacidad: formData.acepta_politica_privacidad,
     };
 
-    // Bloquea si el usuario escribió un código de referido inválido
-    if (currentData.codigo_referido?.trim() && this.referidoValido() === false) {
+    const codigoReferido = formData.codigo_referido?.trim() ?? '';
+    if (codigoReferido && this.referidoValidando()) {
+      this.generalError.set('Espera a que termine la validación del código de referido.');
+      this.loading.set(false);
+      return;
+    }
+    if (codigoReferido && this.referidoValido() !== true) {
       this.generalError.set('El código de referido ingresado no es válido.');
       this.loading.set(false);
       return;
@@ -211,6 +216,7 @@ export class Register {
             ubicacion: currentData.ubicacion,
             acepta_terminos: currentData.acepta_terminos,
             acepta_politica_privacidad: currentData.acepta_politica_privacidad,
+            ...(codigoReferido ? { referido_por: codigoReferido } : {}),
           },
         );
 
