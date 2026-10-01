@@ -14,12 +14,14 @@ import { SupabaseStorageService } from '@src/app/core/services/supabase/supabase
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import {
+  Offer,
   Producto,
   PresentacionProducto,
   Tag,
 } from '@src/app/shared/models/interfaces/db/db';
 import { productSchema } from '@src/app/shared/models/schemas/product.schema';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
+import { FormChipsComponent } from '@src/app/shared/components/form/form-chips/form-chips';
 import {
   FormSelectComponent,
   SelectOption,
@@ -41,6 +43,7 @@ import {
   standalone: true,
   imports: [
     FormInputComponent,
+    FormChipsComponent,
     FormSelectComponent,
     CarouselModule,
     ImageModule,
@@ -65,6 +68,8 @@ export class ProductsEditor implements OnInit {
   readonly generalError = signal<string | null>(null);
 
   readonly tags = signal<Tag[]>([]);
+  readonly offerOptions = ['Envío incluido en el valor'];
+  private readonly existingOffers = signal<Offer[]>([]);
 
   readonly productModel = signal<ProductFormModel>({
     nombre: '',
@@ -76,6 +81,7 @@ export class ProductsEditor implements OnInit {
     status: 'activo',
     es_por_gramos: false,
     presentacion_venta: 'gr',
+    ofertas: [],
     presentaciones: [],
     tags: [],
     urls_imagenes: [],
@@ -118,7 +124,7 @@ export class ProductsEditor implements OnInit {
   ];
   readonly salePresentationOptions: SelectOption[] = [
     { value: 'gr', label: 'Gramos (gr)' },
-    { value: 'mg', label: 'Miligramos (mg)' },
+    { value: 'und', label: 'Unidades (und)' },
   ];
 
   ngOnInit() {
@@ -179,6 +185,7 @@ export class ProductsEditor implements OnInit {
       status: product.status,
       es_por_gramos: product.es_por_gramos ?? false,
       presentacion_venta: product.presentacion_venta ?? (product.es_por_gramos ? 'gr' : 'und'),
+      ofertas: (product.ofertas ?? []).map((offer) => offer.name),
       presentaciones: product.presentaciones ?? [],
       tags: product.tags ?? [],
       urls_imagenes: product.urls_imagenes ?? [],
@@ -187,6 +194,7 @@ export class ProductsEditor implements OnInit {
     this.productImages.set(product.urls_imagenes ?? []);
     this.pendingImages.set([]);
     this.presentations.set(product.presentaciones ?? []);
+    this.existingOffers.set(product.ofertas ?? []);
 
     this.generalError.set(null);
     this.loading.set(false);
@@ -241,6 +249,9 @@ export class ProductsEditor implements OnInit {
       es_por_gramos: isGrams,
       presentacion_venta: isGrams ? model.presentacion_venta : 'und',
       presentaciones: isGrams ? currentPresentations : [],
+      ofertas: model.ofertas.map((name) =>
+        this.existingOffers().find((offer) => offer.name === name) ?? { name, description: null },
+      ),
     };
 
     const uploadedUrls = await this.uploadPendingImages();

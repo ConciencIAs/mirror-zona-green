@@ -20,6 +20,8 @@
     <app-form-input [control]="productForm.nombre()" label="Nombre" placeholder="Nombre del producto" />
     <app-form-input [control]="productForm.sku()" label="SKU" placeholder="Código único del producto" />
     <app-form-input [control]="productForm.descripcion()" label="Descripción" placeholder="Breve descripción" />
+    <app-form-chips [control]="productForm.ofertas()" [suggestions]="offerOptions" label="Ofertas"
+      placeholder="Selecciona una oferta" />
 
     <!-- Tipo de venta -->
     <div class="mb-4">

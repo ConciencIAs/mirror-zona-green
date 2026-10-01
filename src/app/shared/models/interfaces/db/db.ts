@@ -121,6 +121,16 @@ export interface Producto {
     rating_average?: number;
     rating_count?: number;
     presentacion_venta: PresentacionesProducto;
+    ofertas?: Offer[];
+}
+
+export interface Offer {
+    name: string;
+    discount_percentage?: number;
+    start_date?: string;
+    end_date?: string;
+    description: string | null; 
+    value_discount?: number;
 }
 
 export interface ProductReview {

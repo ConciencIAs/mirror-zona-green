@@ -1,13 +1,12 @@
 import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
+import { Router } from '@angular/router';
 
 import { CustomerData } from '@src/app/shared/models/interfaces/customer/customer';
-import { PENDING_DATA_KEY } from '@src/app/shared/models/constans/localstate/storage';
 
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
-import { LocalStorageStateService } from '@src/app/core/services/local-storage-state.service';
 
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import {
@@ -19,6 +18,11 @@ import { FormInputCheckboxComponent } from '@src/app/shared/components/form/form
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 
 import { userSchemaRegister } from '@src/app/shared/models/schemas/auth.schema';
+
+type RegistrationFormModel = CustomerData & {
+  password: string;
+  confirmPassword: string;
+};
 
 @Component({
   selector: 'app-register',
@@ -35,7 +39,7 @@ import { userSchemaRegister } from '@src/app/shared/models/schemas/auth.schema';
 export class Register {
   private readonly authService = inject(SupabaseAuthService);
   private readonly dbService = inject(SupabaseDbService);
-  private readonly localStorageState = inject(LocalStorageStateService);
+  private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
   readonly loading = signal(false);
@@ -49,9 +53,11 @@ export class Register {
     { value: 'Pasaporte', label: 'Pasaporte' },
   ];
 
-  readonly formModel = signal<CustomerData>({
+  readonly formModel = signal<RegistrationFormModel>({
     full_name: '',
     correo: '',
+    password: '',
+    confirmPassword: '',
     telefono: 0,
     documento: 0,
     fecha_nacimiento: new Date(),
@@ -79,15 +85,8 @@ export class Register {
     return !!data;
   }
 
-  async enviarMagicLink(
-    datos: CustomerData,
-    esNuevoUsuario: boolean,
-  ): Promise<{ success: boolean; error?: string }> {
-    if (esNuevoUsuario) {
-      // Guardamos temporalmente los datos en LocalStorage usando tu servicio reactivo
-      this.localStorageState.setState(PENDING_DATA_KEY, datos);
-    }
 
+  async enviarMagicLink(datos: CustomerData): Promise<{ success: boolean; error?: string }> {
     const { error } = await this.authService.auth.signInWithOtp({
       email: datos.correo.trim().toLowerCase(),
       options: {
@@ -114,24 +113,51 @@ export class Register {
       return;
     }
 
-    // Leemos la data consolidada de forma limpia
-    const currentData = this.formModel();
+    const formData = this.formModel();
+    const currentData: CustomerData = {
+      full_name: formData.full_name,
+      correo: formData.correo,
+      telefono: formData.telefono,
+      documento: formData.documento,
+      fecha_nacimiento: formData.fecha_nacimiento,
+      tipo_documento: formData.tipo_documento,
+      ubicacion: formData.ubicacion,
+      acepta_terminos: formData.acepta_terminos,
+      acepta_politica_privacidad: formData.acepta_politica_privacidad,
+    };
 
     try {
       const exists = await this.verificarSiExisteUsuario(currentData.correo);
-      const { success, error } = await this.enviarMagicLink(currentData, !exists);
-
-      if (exists)
+      if (exists) {
+        const { success, error } = await this.enviarMagicLink(currentData);
+        if (!success) throw new Error(error ?? 'Error al enviar enlace mágico.');
         this.toastService.info(
-          'Ya existe una cuenta con este correo. Se ha enviado un enlace mágico para iniciar sesión.',
+          'Ya existe una cuenta con este correo. Se envió un enlace mágico para iniciar sesión.',
+        );
+      } else {
+        const { data, error } = await this.authService.signUpWithEmail(
+          currentData.correo.trim().toLowerCase(),
+          formData.password,
+          `${window.location.origin}/auth/magik-link-callback`,
+          {
+            full_name: currentData.full_name,
+            telefono: currentData.telefono,
+            documento: currentData.documento,
+            tipo_documento: currentData.tipo_documento,
+            fecha_nacimiento: currentData.fecha_nacimiento.toISOString().slice(0, 10),
+            ubicacion: currentData.ubicacion,
+            acepta_terminos: currentData.acepta_terminos,
+            acepta_politica_privacidad: currentData.acepta_politica_privacidad,
+          },
         );
 
-      if (!success) {
-        const msgError = error ?? 'Error al enviar enlace mágico';
-        this.generalError.set(msgError);
-        this.toastService.error(msgError);
-      } else {
-        this.toastService.success('Revisa tu correo para continuar');
+        if (error) throw error;
+
+        if (data.session) {
+          await this.router.navigate(['/auth/magik-link-callback']);
+        } else {
+          this.toastService.success('Cuenta creada. Revisa tu correo para confirmar el registro.');
+        }
       }
     } catch (err: unknown) {
       console.error(err);

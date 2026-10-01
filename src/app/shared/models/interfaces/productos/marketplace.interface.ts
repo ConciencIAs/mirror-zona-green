@@ -4,7 +4,7 @@ import {
   PresentacionProducto,
 } from '@src/app/shared/models/interfaces/db/db';
 
-export interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id' | 'presentaciones' | 'tags' | 'urls_imagenes'> {
+export interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted_at' | 'updated_at' | 'id' | 'presentaciones' | 'tags' | 'urls_imagenes' | 'ofertas'> {
   nombre: string;
   descripcion: string;
   sku: string;
@@ -16,4 +16,5 @@ export interface ProductFormModel extends Omit<Producto, 'created_at' | 'deleted
   presentaciones: PresentacionProducto[];
   urls_imagenes: string[];
   tags: string[];
+  ofertas: string[];
 }

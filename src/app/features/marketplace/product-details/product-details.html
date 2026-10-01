@@ -45,13 +45,25 @@
 
       <p class="text-sm leading-6 text-[#55644d]">{{ product()!.descripcion || 'Sin descripción disponible' }}</p>
 
+      @if (product()!.ofertas?.length) {
+      <div class="flex flex-wrap gap-2">
+        @for (offer of product()!.ofertas; track offer.name) {
+        <span class="rounded-full border border-[#d6e3c1] bg-[#f4f8ed] px-3 py-1.5 text-sm font-semibold text-[#315b2b]">
+          {{ offer.name }}
+        </span>
+        }
+      </div>
+      }
+
       <!-- Precio -->
       <div>
         <p class="text-3xl font-bold text-[#1d341c]">{{ displayedPrice() | moneda }}</p>
         @if (product()!.es_por_gramos && selectedPresentation()) {
         <p class="text-sm text-[#55644d] mt-1">
-          Aporte por {{ formatSaleAmount(selectedPresentation()!.gramos) }}{{ saleUnitLabel() }}
+          Precio por unidad · presentación de {{ formatSaleAmount(selectedPresentation()!.gramos) }}{{ saleUnitLabel() }}
         </p>
+        } @else if (!product()!.es_por_gramos) {
+        <p class="text-sm text-[#55644d] mt-1">Precio por unidad</p>
         }
       </div>
 
@@ -62,7 +74,7 @@
         <div class="flex flex-wrap gap-2">
           @for (pres of product()!.presentaciones; track pres.gramos) {
           <p-button type="button"
-            [label]="formatSaleAmount(pres.gramos) + saleUnitLabel() + ' - ' + (pres.precio | moneda)" [rounded]="true"
+            [label]="formatSaleAmount(pres.gramos) + saleUnitLabel() + ' · ' + (pres.precio | moneda) + ' / unidad'" [rounded]="true"
             [severity]="selectedGrams() === pres.gramos ? 'success' : 'secondary'"
             [variant]="selectedGrams() === pres.gramos ? undefined : 'outlined'" (click)="selectGrams(pres.gramos)" />
           }
@@ -72,7 +84,7 @@
 
       <!-- Controles de cantidad -->
       <div class="space-y-4">
-        <label class="block text-sm font-semibold text-[#425137]">Cantidad</label>
+        <label class="block text-sm font-semibold text-[#425137]">Cantidad de unidades</label>
         <input type="number"
           class="w-full rounded-2xl border border-[#d7dfc7] bg-white px-4 py-3 text-sm text-[#1d341c]"
           [value]="quantity()" (change)="updateQuantity($any($event.target).value)" min="1" [max]="maxAvailableUnits()"

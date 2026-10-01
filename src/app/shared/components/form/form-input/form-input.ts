@@ -39,7 +39,7 @@ import { FormsModule } from '@angular/forms';
           [ngModel]="getControl().value()"
           (ngModelChange)="getControl().controlValue.set($event)"
           [placeholder]="placeholder()"
-          type="text"
+          [type]="type()"
           class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden"
           [class.border-red-500]="isInvalid()"
           [class.ring-2]="isInvalid()"
@@ -54,7 +54,7 @@ import { FormsModule } from '@angular/forms';
 export class FormInputComponent {
   control = input.required<FieldState<string | number>>();
   label = input<string>('');
-  type = input<'text' | 'number'>('text');
+  type = input<'text' | 'number' | 'password'>('text');
   placeholder = input<string>('');
 
   // para input tipo precio podemos usar la libreria prime ng el componente InputNumber

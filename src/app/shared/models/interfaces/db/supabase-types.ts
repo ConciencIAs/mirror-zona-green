@@ -39,30 +39,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      base_confianza: {
+        Row: {
+          agregado_el: string | null
+          agregado_por: string | null
+          id: string
+          telefono: string
+        }
+        Insert: {
+          agregado_el?: string | null
+          agregado_por?: string | null
+          id?: string
+          telefono: string
+        }
+        Update: {
+          agregado_el?: string | null
+          agregado_por?: string | null
+          id?: string
+          telefono?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "base_confianza_agregado_por_fkey"
+            columns: ["agregado_por"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       carrito: {
         Row: {
           cantidad: number
-          es_gramos: boolean
           id: string
+          paquete_gramos: number | null
           producto_id: string
           usuario_id: string
-          variante_id: string | null
         }
         Insert: {
           cantidad?: number
-          es_gramos?: boolean
           id?: string
+          paquete_gramos?: number | null
           producto_id: string
           usuario_id: string
-          variante_id?: string | null
         }
         Update: {
           cantidad?: number
-          es_gramos?: boolean
           id?: string
+          paquete_gramos?: number | null
           producto_id?: string
           usuario_id?: string
-          variante_id?: string | null
         }
         Relationships: [
           {
@@ -79,30 +105,41 @@ export type Database = {
             referencedRelation: "perfiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "carrito_variante_id_fkey"
-            columns: ["variante_id"]
-            isOneToOne: false
-            referencedRelation: "producto_variantes"
-            referencedColumns: ["id"]
-          },
         ]
       }
-      categorias: {
+      dynamic_components: {
         Row: {
-          deleted_at: string | null
+          created_at: string | null
+          css_content: string | null
+          html_content: string | null
           id: string
-          nombre: string
+          js_content: string | null
+          name: string | null
+          project_data: string | null
+          slug: string | null
+          updated_at: string | null
         }
         Insert: {
-          deleted_at?: string | null
+          created_at?: string | null
+          css_content?: string | null
+          html_content?: string | null
           id?: string
-          nombre: string
+          js_content?: string | null
+          name?: string | null
+          project_data?: string | null
+          slug?: string | null
+          updated_at?: string | null
         }
         Update: {
-          deleted_at?: string | null
+          created_at?: string | null
+          css_content?: string | null
+          html_content?: string | null
           id?: string
-          nombre?: string
+          js_content?: string | null
+          name?: string | null
+          project_data?: string | null
+          slug?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -116,7 +153,6 @@ export type Database = {
           motivo: string
           producto_id: string | null
           tipo_movimiento: string
-          variante_id: string | null
         }
         Insert: {
           admin_id?: string | null
@@ -127,7 +163,6 @@ export type Database = {
           motivo: string
           producto_id?: string | null
           tipo_movimiento: string
-          variante_id?: string | null
         }
         Update: {
           admin_id?: string | null
@@ -138,7 +173,6 @@ export type Database = {
           motivo?: string
           producto_id?: string | null
           tipo_movimiento?: string
-          variante_id?: string | null
         }
         Relationships: [
           {
@@ -155,46 +189,51 @@ export type Database = {
             referencedRelation: "productos"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "historial_inventario_variante_id_fkey"
-            columns: ["variante_id"]
-            isOneToOne: false
-            referencedRelation: "producto_variantes"
-            referencedColumns: ["id"]
-          },
         ]
       }
       ordenes: {
         Row: {
-          comentarios_agente: string | null
+          comentarios_usuario: string | null
+          correo_cliente: string | null
           created_at: string | null
+          direccion: string | null
           id: string
           lista_productos: Json
+          nombre_cliente: string | null
           precio_total: number
           status: Database["public"]["Enums"]["estado_orden"]
           tipo_entrega: string
+          tracking: Json | null
           updated_at: string | null
           usuario_id: string
         }
         Insert: {
-          comentarios_agente?: string | null
+          comentarios_usuario?: string | null
+          correo_cliente?: string | null
           created_at?: string | null
+          direccion?: string | null
           id?: string
           lista_productos: Json
+          nombre_cliente?: string | null
           precio_total: number
           status?: Database["public"]["Enums"]["estado_orden"]
           tipo_entrega?: string
+          tracking?: Json | null
           updated_at?: string | null
           usuario_id: string
         }
         Update: {
-          comentarios_agente?: string | null
+          comentarios_usuario?: string | null
+          correo_cliente?: string | null
           created_at?: string | null
+          direccion?: string | null
           id?: string
           lista_productos?: Json
+          nombre_cliente?: string | null
           precio_total?: number
           status?: Database["public"]["Enums"]["estado_orden"]
           tipo_entrega?: string
+          tracking?: Json | null
           updated_at?: string | null
           usuario_id?: string
         }
@@ -210,89 +249,25 @@ export type Database = {
       }
       page_config: {
         Row: {
-          franja_promocional: string | null
-          id: string
-          logo: string | null
-          nombre: string
-          telefono: string | null
-          url_legislacion: string | null
-          url_politica_datos: string | null
-          url_terminos: string | null
-        }
-        Insert: {
-          franja_promocional?: string | null
-          id?: string
-          logo?: string | null
-          nombre: string
-          telefono?: string | null
-          url_legislacion?: string | null
-          url_politica_datos?: string | null
-          url_terminos?: string | null
-        }
-        Update: {
-          franja_promocional?: string | null
-          id?: string
-          logo?: string | null
-          nombre?: string
-          telefono?: string | null
-          url_legislacion?: string | null
-          url_politica_datos?: string | null
-          url_terminos?: string | null
-        }
-        Relationships: []
-      }
-      page_documentos: {
-        Row: {
-          id: string
-          nombre: string
-          url_pdf: string
-        }
-        Insert: {
-          id?: string
-          nombre: string
-          url_pdf: string
-        }
-        Update: {
-          id?: string
-          nombre?: string
-          url_pdf?: string
-        }
-        Relationships: []
-      }
-      page_home: {
-        Row: {
-          admin_uid: string | null
-          banners: Json[]
-          component_type: string | null
+          config_name: string
           content: Json | null
           id: string
         }
         Insert: {
-          admin_uid?: string | null
-          banners?: Json[]
-          component_type?: string | null
+          config_name: string
           content?: Json | null
           id?: string
         }
         Update: {
-          admin_uid?: string | null
-          banners?: Json[]
-          component_type?: string | null
+          config_name?: string
           content?: Json | null
           id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "page_home_admin_uid_fkey"
-            columns: ["admin_uid"]
-            isOneToOne: false
-            referencedRelation: "perfiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       perfiles: {
         Row: {
+          codigo_invitacion: string | null
           correo: string
           created_at: string | null
           datos_adicionales: Json
@@ -301,13 +276,17 @@ export type Database = {
           fecha_nacimiento: string | null
           full_name: string | null
           id: string
+          origen_autorizacion: string | null
+          referido_por: string | null
           rol: Database["public"]["Enums"]["rol_usuario"]
+          status: Database["public"]["Enums"]["status_profile"] | null
           telefono: string | null
           tipo_documento: Database["public"]["Enums"]["tipo_doc"] | null
           ubicacion: string | null
           updated_at: string | null
         }
         Insert: {
+          codigo_invitacion?: string | null
           correo: string
           created_at?: string | null
           datos_adicionales?: Json
@@ -316,13 +295,17 @@ export type Database = {
           fecha_nacimiento?: string | null
           full_name?: string | null
           id: string
+          origen_autorizacion?: string | null
+          referido_por?: string | null
           rol?: Database["public"]["Enums"]["rol_usuario"]
+          status?: Database["public"]["Enums"]["status_profile"] | null
           telefono?: string | null
           tipo_documento?: Database["public"]["Enums"]["tipo_doc"] | null
           ubicacion?: string | null
           updated_at?: string | null
         }
         Update: {
+          codigo_invitacion?: string | null
           correo?: string
           created_at?: string | null
           datos_adicionales?: Json
@@ -331,7 +314,10 @@ export type Database = {
           fecha_nacimiento?: string | null
           full_name?: string | null
           id?: string
+          origen_autorizacion?: string | null
+          referido_por?: string | null
           rol?: Database["public"]["Enums"]["rol_usuario"]
+          status?: Database["public"]["Enums"]["status_profile"] | null
           telefono?: string | null
           tipo_documento?: Database["public"]["Enums"]["tipo_doc"] | null
           ubicacion?: string | null
@@ -339,65 +325,38 @@ export type Database = {
         }
         Relationships: []
       }
-      producto_variantes: {
+      product_reviews: {
         Row: {
-          cantidad_minima_venta: number | null
-          created_at: string | null
-          deleted_at: string | null
-          descripcion: string | null
-          fecha_llegada: string | null
-          gramos_disponibles: number | null
+          comment: string | null
+          created_at: string
           id: string
-          nombre: string
-          opciones_venta: number[] | null
-          precio: number
-          precio_minimo_venta: number | null
-          producto_id: string | null
-          status: Database["public"]["Enums"]["estado_producto"]
-          stock: number
-          updated_at: string | null
-          urls_imagenes: string[] | null
+          product_id: string
+          rating: number
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          cantidad_minima_venta?: number | null
-          created_at?: string | null
-          deleted_at?: string | null
-          descripcion?: string | null
-          fecha_llegada?: string | null
-          gramos_disponibles?: number | null
+          comment?: string | null
+          created_at?: string
           id?: string
-          nombre: string
-          opciones_venta?: number[] | null
-          precio?: number
-          precio_minimo_venta?: number | null
-          producto_id?: string | null
-          status?: Database["public"]["Enums"]["estado_producto"]
-          stock?: number
-          updated_at?: string | null
-          urls_imagenes?: string[] | null
+          product_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          cantidad_minima_venta?: number | null
-          created_at?: string | null
-          deleted_at?: string | null
-          descripcion?: string | null
-          fecha_llegada?: string | null
-          gramos_disponibles?: number | null
+          comment?: string | null
+          created_at?: string
           id?: string
-          nombre?: string
-          opciones_venta?: number[] | null
-          precio?: number
-          precio_minimo_venta?: number | null
-          producto_id?: string | null
-          status?: Database["public"]["Enums"]["estado_producto"]
-          stock?: number
-          updated_at?: string | null
-          urls_imagenes?: string[] | null
+          product_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "producto_variantes_producto_id_fkey"
-            columns: ["producto_id"]
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "productos"
             referencedColumns: ["id"]
@@ -406,14 +365,23 @@ export type Database = {
       }
       productos: {
         Row: {
-          categoria_id: string | null
           costo: number
           created_at: string | null
           deleted_at: string | null
           descripcion: string | null
+          es_por_gramos: boolean
+          has_product_variantes: boolean | null
           id: string
           nombre: string
+          ofertas: Json[] | null
           precio: number
+          presentacion_venta:
+            | Database["public"]["Enums"]["presentaciones_productos"]
+            | null
+          presentaciones: Json | null
+          rating_average: number
+          rating_count: number
+          reservado: number | null
           sku: string
           status: Database["public"]["Enums"]["estado_producto"]
           stock_total: number
@@ -422,14 +390,23 @@ export type Database = {
           urls_imagenes: string[] | null
         }
         Insert: {
-          categoria_id?: string | null
           costo?: number
           created_at?: string | null
           deleted_at?: string | null
           descripcion?: string | null
+          es_por_gramos?: boolean
+          has_product_variantes?: boolean | null
           id?: string
           nombre: string
+          ofertas?: Json[] | null
           precio?: number
+          presentacion_venta?:
+            | Database["public"]["Enums"]["presentaciones_productos"]
+            | null
+          presentaciones?: Json | null
+          rating_average?: number
+          rating_count?: number
+          reservado?: number | null
           sku: string
           status?: Database["public"]["Enums"]["estado_producto"]
           stock_total?: number
@@ -438,14 +415,23 @@ export type Database = {
           urls_imagenes?: string[] | null
         }
         Update: {
-          categoria_id?: string | null
           costo?: number
           created_at?: string | null
           deleted_at?: string | null
           descripcion?: string | null
+          es_por_gramos?: boolean
+          has_product_variantes?: boolean | null
           id?: string
           nombre?: string
+          ofertas?: Json[] | null
           precio?: number
+          presentacion_venta?:
+            | Database["public"]["Enums"]["presentaciones_productos"]
+            | null
+          presentaciones?: Json | null
+          rating_average?: number
+          rating_count?: number
+          reservado?: number | null
           sku?: string
           status?: Database["public"]["Enums"]["estado_producto"]
           stock_total?: number
@@ -453,15 +439,7 @@ export type Database = {
           updated_at?: string | null
           urls_imagenes?: string[] | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "productos_categoria_id_fkey"
-            columns: ["categoria_id"]
-            isOneToOne: false
-            referencedRelation: "categorias"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       roles: {
         Row: {
@@ -491,14 +469,17 @@ export type Database = {
         Row: {
           id: string
           nombre: string
+          orden: number | null
         }
         Insert: {
           id?: string
           nombre: string
+          orden?: number | null
         }
         Update: {
           id?: string
           nombre?: string
+          orden?: number | null
         }
         Relationships: []
       }
@@ -540,17 +521,40 @@ export type Database = {
         Args: never
         Returns: Database["public"]["Enums"]["rol_usuario"]
       }
+      is_active_user: { Args: never; Returns: boolean }
+      procesar_checkout: {
+        Args: {
+          p_comentarios?: string
+          p_direccion?: string
+          p_tipo_entrega?: string
+        }
+        Returns: Json
+      }
+      validar_codigo_referido: {
+        Args: { codigo_prueba: string }
+        Returns: boolean
+      }
     }
     Enums: {
       estado_orden:
-      | "pendiente"
-      | "pagado"
-      | "en_proceso"
-      | "enviado"
-      | "entregado"
-      | "cancelado"
+        | "pendiente"
+        | "pagado"
+        | "en_proceso"
+        | "enviado"
+        | "entregado"
+        | "cancelado"
+        | "aporte"
+        | "seleccion"
       estado_producto: "activo" | "inactivo"
-      rol_usuario: "admin" | "customer" | "agente" | "medico" | "anonymous"
+      presentaciones_productos: "und" | "gr" | "mg"
+      rol_usuario:
+        | "admin"
+        | "customer"
+        | "agente"
+        | "super"
+        | "medico"
+        | "anonymous"
+      status_profile: "activo" | "eliminado" | "bloqueado" | "inactivo"
       tipo_doc: "CC" | "CE" | "NIT" | "Pasaporte"
     }
     CompositeTypes: {
@@ -565,116 +569,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-  : never = never,
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-  ? R
-  : never
+    ? R
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-  ? R
-  : never
-  : never
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Update: infer U
-  }
-  ? U
-  : never
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Update: infer U
-  }
-  ? U
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-  | keyof DefaultSchema["Enums"]
-  | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-  | keyof DefaultSchema["CompositeTypes"]
-  | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   graphql_public: {
@@ -689,9 +693,20 @@ export const Constants = {
         "enviado",
         "entregado",
         "cancelado",
+        "aporte",
+        "seleccion",
       ],
       estado_producto: ["activo", "inactivo"],
-      rol_usuario: ["admin", "customer", "agente", "medico", "anonymous"],
+      presentaciones_productos: ["und", "gr", "mg"],
+      rol_usuario: [
+        "admin",
+        "customer",
+        "agente",
+        "super",
+        "medico",
+        "anonymous",
+      ],
+      status_profile: ["activo", "eliminado", "bloqueado", "inactivo"],
       tipo_doc: ["CC", "CE", "NIT", "Pasaporte"],
     },
   },
