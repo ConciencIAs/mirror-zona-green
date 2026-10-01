@@ -18,6 +18,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 import { CartStore } from '@src/app/core/state/card/card.state';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { FormsModule } from '@angular/forms';
 
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
@@ -46,6 +47,7 @@ export class Navbar implements OnInit {
   private readonly userStore = inject(UserStore);
   private readonly router = inject(Router);
   private readonly appConfigStore = inject(AppConfigStore);
+  private readonly authService = inject(SupabaseAuthService);
 
   searchQuery = signal<string>('');
 
@@ -137,6 +139,14 @@ export class Navbar implements OnInit {
   }
   closeSidebar(): void {
     this.sidebarOpen.set(false);
+  }
+
+  async signOut(): Promise<void> {
+    this.closeSidebar();
+    await this.authService.signOut();
+    this.userStore.clearPerfil();
+    this.cartStore.clearCart();
+    this.router.navigate(['/']);
   }
 
   @HostListener('document:click', ['$event'])

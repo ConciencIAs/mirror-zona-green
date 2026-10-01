@@ -81,7 +81,7 @@ export class App implements OnInit {
     if (!this.userSaysToBeLegalAge) {
       this.confirmationModalService.confirm({
         header: '!ATENCION¡',
-        message: 'Debes ser mayor de edad para acceder a zonagree.co',
+        message: 'Debes ser mayor de edad para acceder a cheynverde.com',
         reject: () => this.isLegalAge.set(false),
         acceptLabel: 'Sí, soy mayor de edad',
         rejectLabel: 'No, no soy mayor de edad',

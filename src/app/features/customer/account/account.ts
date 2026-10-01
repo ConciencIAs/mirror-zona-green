@@ -6,10 +6,13 @@ import {
   OnInit,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { form, validateStandardSchema } from '@angular/forms/signals';
 
 import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { CartStore } from '@src/app/core/state/card/card.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
+import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { TipoDoc } from '@src/app/shared/models/interfaces/db/db';
@@ -35,11 +38,39 @@ import { FormDatepickerComponent } from '@src/app/shared/components/form/form-da
 })
 export class Account implements OnInit {
   private readonly userStore = inject(UserStore);
+  private readonly cartStore = inject(CartStore);
   private readonly dbService = inject(SupabaseDbService);
+  private readonly authService = inject(SupabaseAuthService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly loading = signal(false);
   readonly copiedCode = signal(false);
+  readonly signingOut = signal(false);
+
+  /** Campo actualmente en edición (null = ninguno, todos mostrados como botones) */
+  readonly editingField = signal<string | null>(null);
+
+  toggleEdit(field: string): void {
+    this.editingField.update((current) => (current === field ? null : field));
+  }
+
+  /** Etiqueta legible del tipo de documento seleccionado, para la vista de resumen */
+  get tipoDocumentoLabel(): string {
+    const value = this.formModel().tipo_documento;
+    return this.documentTypeOptions.find((o) => o.value === value)?.label ?? value;
+  }
+
+  /** Fecha de nacimiento formateada, para la vista de resumen */
+  readonly fechaNacimientoDisplay = computed(() => {
+    const fecha = this.formModel().fecha_nacimiento;
+    if (!fecha) return 'Sin definir';
+    return new Date(fecha).toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  });
 
   /** Código de invitación / referido propio del usuario */
   readonly codigoInvitacion = computed(() => this.userStore.perfil().codigo_invitacion);
@@ -54,6 +85,7 @@ export class Account implements OnInit {
 
   /** Datos de solo lectura del perfil (no editables) */
   readonly correo = computed(() => this.userStore.perfil().correo);
+  readonly fullName = computed(() => this.userStore.perfil().full_name);
   readonly createdAt = computed(() => {
     const raw = this.userStore.perfil().created_at;
     if (!raw) return '—';
@@ -81,6 +113,18 @@ export class Account implements OnInit {
   readonly profileForm = form(this.formModel, (schemaPath) => {
     validateStandardSchema(schemaPath, profileUpdateSchema);
   });
+
+  async signOut(): Promise<void> {
+    this.signingOut.set(true);
+    try {
+      await this.authService.signOut();
+      this.userStore.clearPerfil();
+      this.cartStore.clearCart();
+      this.router.navigate(['/']);
+    } finally {
+      this.signingOut.set(false);
+    }
+  }
 
   ngOnInit(): void {
     const perfil = this.userStore.perfil();

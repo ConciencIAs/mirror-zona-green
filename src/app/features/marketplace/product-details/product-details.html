@@ -1,6 +1,7 @@
 <div class="space-y-6 p-4 pt-12">
   <div>
-    <a routerLink="/seleccion" class="text-lg font-semibold text-[#1f6c2f] hover:underline">&larr; Volver a la seleccion informada</a>
+    <p-button type="button" routerLink="/seleccion" label="Volver a la selección informada" icon="pi pi-arrow-left"
+      severity="success" styleClass="!bg-[#1f6c2f] !border-[#1f6c2f] hover:!bg-[#17532a] !text-[#fde047] !shadow-lg" />
   </div>
 
   @if (loading()) {
@@ -106,12 +107,15 @@
       </div>
       }
 
-      <div class="flex gap-4">
+      <div class="flex flex-wrap gap-4">
         <p-button type="button" (click)="addToCart()" [disabled]="!canAdd() || adding()"
-          [label]="adding() ? 'Agregando...' : 'Reservar'" icon="pi pi-shopping-cart" severity="success"
+          [label]="adding() ? 'Agregando...' : 'Reservar'" icon="pi pi-shopping-bag" severity="success"
           styleClass="flex-1" />
         <p-button type="button" routerLink="/seleccion/carrito" label="Ver Carrito" severity="secondary"
-          variant="outlined" icon="pi pi-shopping-bag" />
+          variant="outlined" icon="pi pi-shopping-cart" />
+        <p-button type="button" routerLink="/seleccion" label="Volver a la selección informada"
+          icon="pi pi-arrow-left" severity="success"
+          styleClass="!bg-[#1f6c2f] !border-[#1f6c2f] hover:!bg-[#17532a] !text-[#fde047] !shadow-lg" />
       </div>
     </div>
   </div>
