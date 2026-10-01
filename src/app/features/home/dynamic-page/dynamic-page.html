@@ -1,18 +1,6 @@
 <section class="min-h-[60vh] w-full py-12">
-  @if (renderCss()) {
-  <style [innerHTML]="renderCss()"></style>
-  }
   @if (renderHtml()) {
   <div [innerHTML]="renderHtml()"></div>
-  @if (slug() === 'ecosistema') {
-  <div class="max-w-[1100px] mx-auto px-5 mt-4">
-    <h2
-      class="text-xl sm:text-2xl font-extrabold text-[#0f1e0f] dark:text-[#e0ead4] pb-2 border-b-2 border-solid border-[#20a038] tracking-tight mb-6">
-      Versión interactiva del ecosistema
-    </h2>
-    <app-ecosystem-diagram />
-  </div>
-  }
   } @else if (loading()) {
   <div class="flex flex-col items-center justify-center py-20 px-8 text-center gap-4">
     <i class="pi pi-spin pi-spinner text-3xl text-emerald-600"></i>

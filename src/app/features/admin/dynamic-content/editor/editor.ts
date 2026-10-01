@@ -17,6 +17,7 @@ import plugin from 'grapesjs-tailwind';
 import gjsBlocksBasic from 'grapesjs-blocks-basic';
 import customCodePlugin from 'grapesjs-custom-code';
 import gjsParserPostcss from 'grapesjs-parser-postcss';
+import gjsScriptEditor from 'grapesjs-script-editor';
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -77,7 +78,7 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
       fromElement: false,
       storageManager: false,
 
-      plugins: [gjsBlocksBasic, plugin, customCodePlugin, gjsParserPostcss, productCarouselPlugin],
+      plugins: [gjsBlocksBasic, plugin, customCodePlugin, gjsParserPostcss, productCarouselPlugin, gjsScriptEditor],
       pluginsOpts: {
         [plugin as any]: { autoBuild: true },
         [productCarouselPlugin as any]: {
@@ -155,7 +156,7 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
     const datosProyectoJson = this.editor.getProjectData();
     const htmlRenderizado = this.editor.getHtml();
     const cssRenderizado = this.editor.getCss() || '';
-
+    const jsRenderizado = (this.editor.getJs() || '').toString();
     try {
       if (this.isNewMode()) {
         // CREAR
@@ -165,6 +166,7 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
           project_data: datosProyectoJson,
           html_content: htmlRenderizado,
           css_content: cssRenderizado,
+          js_content: jsRenderizado
         });
         if (data) {
           this.toastService.success('Página creada exitosamente');
@@ -180,6 +182,7 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
           project_data: datosProyectoJson,
           html_content: htmlRenderizado,
           css_content: cssRenderizado,
+          js_content: jsRenderizado
         });
         if (data) {
           this.toastService.success('Contenido guardado exitosamente');

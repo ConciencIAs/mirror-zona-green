@@ -14,6 +14,11 @@ export const userSchemaRegister = z.object({
   acepta_politica_privacidad: z
     .boolean()
     .refine((v) => v === true, 'Debes aceptar la política de privacidad'),
+  codigo_referido: z
+    .string()
+    .trim()
+    .optional()
+    .default(''),
 });
 
 export const userSchemaLogin = z.object({
