@@ -765,6 +765,37 @@
   }
 }
 
+/* Bug: los bloques "versión de escritorio" del hero (párrafo, label
+   "En Cheyn Verde..." y el carrusel de beneficios) solo traen
+   `lg:block`, sin el `hidden` base — así que en mobile se ven a la
+   vez que su contraparte `lg:hidden`, duplicando el contenido. Se
+   oculta explícitamente por debajo de lg. */
+@media (max-width: 1023.98px) {
+  [data-cheyn-page="home-anonimo"] .lg\:block {
+    display: none !important;
+  }
+}
+
+/* Tarjetas de "¿Cómo funciona?" duplicadas en mobile: la grilla de
+   flip-cards (2 columnas) coexistía con la grilla ancha de texto
+   visible (la que se activó arriba). Se deja solo la ancha. */
+[data-cheyn-page="home-anonimo"] .sm\:hidden.grid-cols-2.gap-4 {
+  display: none !important;
+}
+
+/* "En Cheyn Verde los usuarios pueden encontrar:" — 20% más grande (8px -> 9.6px). */
+[data-cheyn-page="home-anonimo"] .text-\[8px\] {
+  font-size: 9.6px !important;
+}
+
+/* El dark: de Tailwind en contenido dinámico (motor runtime vía CDN)
+   no responde al interruptor manual de modo oscuro del sitio, solo a
+   la preferencia del sistema — por eso este fondo se quedaba siempre
+   en su versión clara. Se fuerza el degradado oscuro explícitamente. */
+.dark [data-cheyn-page="home-anonimo"] {
+  background-image: linear-gradient(to bottom right, #0f1e0f, #1a3a1a, #0f2a0f) !important;
+}
+
 /* Fondos ambientales (hero y cierre): reemplaza las fotos jpg por
    gradientes planos de 3 tonos de verde de marca, conservando el
    mismo crossfade de opacidad que ya traían. */
@@ -1127,6 +1158,13 @@
 
 .gjs-cell {
   height: unset !important;
+}
+
+/* .gjs-row trae 10px de padding por defecto (residuo interno del
+   editor visual GrapesJS, exportado tal cual en el HTML). Genera un
+   margen indeseado alrededor del contenido dinámico en varias páginas. */
+.gjs-row {
+  padding: 0 !important;
 }
 
 /* ── Contraste en modo oscuro para contenido dinámico (Supabase) ──
