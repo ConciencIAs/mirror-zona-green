@@ -54,19 +54,19 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
   standalone: true,
   imports: [FileUploadModule, ButtonModule, TagModule],
   template: `
-    <div class="space-y-6 pt-16 mx-2">
+    <div class="mx-auto w-full max-w-5xl min-w-0 space-y-5 px-3 pb-8 pt-6 sm:space-y-6 sm:px-5 sm:pt-10 lg:px-8">
 
       <!-- Header -->
       <div>
-        <h2 class="text-2xl font-semibold text-slate-900 dark:text-white">Carga Masiva — Base de Confianza (Por Teléfono)</h2>
-        <p class="mt-1 text-sm text-slate-500">
+        <h2 class="text-xl font-semibold leading-tight text-slate-900 sm:text-2xl">Carga Masiva — Base de Confianza (Por Teléfono)</h2>
+        <p class="mt-2 max-w-3xl break-words text-sm leading-relaxed text-slate-500">
           Sube un archivo Excel (.xlsx) con los números telefónicos de los usuarios de confianza.
           Los números se normalizarán automáticamente (añadiendo +57 a celulares colombianos o respetando el indicativo internacional) para auto-aprobación en su registro.
         </p>
       </div>
 
       <!-- ═══════════ EJEMPLO / PLANTILLA DE FORMATO EXCEL ═══════════ -->
-      <div class="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 shadow-sm">
+      <div class="min-w-0 rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4 shadow-sm sm:p-5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
             <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 mb-1">
@@ -75,15 +75,15 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
               </svg>
               Estructura requerida del archivo Excel
             </span>
-            <h3 class="text-base font-semibold text-slate-900">Ejemplo del formato por teléfono</h3>
-            <p class="text-xs text-slate-600">
+            <h3 class="text-base font-semibold leading-snug text-slate-900">Ejemplo del formato por teléfono</h3>
+            <p class="mt-1 break-words text-xs leading-relaxed text-slate-600">
               El archivo debe ser un archivo <strong>.xlsx</strong> o <strong>.xls</strong>. Puede contener una columna llamada <code class="bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-emerald-800 font-mono">telefono</code> o listar los números telefónicos en la primera columna.
             </p>
           </div>
 
           <button
             type="button"
-            class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95 flex-shrink-0 cursor-pointer"
+            class="inline-flex w-full flex-shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-center text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95 sm:w-auto"
             (click)="descargarPlantillaEjemplo()"
           >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -94,30 +94,30 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
         </div>
 
         <!-- Vista previa de la tabla de ejemplo -->
-        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
-          <table class="w-full text-left text-xs">
+        <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-xs">
+          <table class="w-full min-w-[20rem] table-fixed text-left text-xs">
             <thead class="bg-slate-100 font-mono text-slate-700 uppercase border-b border-slate-200">
               <tr>
-                <th class="px-4 py-2">Columna A (telefono)</th>
-                <th class="px-4 py-2 text-slate-400 font-normal italic">Formato Normalizado Resultante</th>
+                <th class="w-[38%] break-words px-3 py-2 sm:px-4">Columna A (telefono)</th>
+                <th class="w-[62%] break-words px-3 py-2 font-normal italic text-slate-400 sm:px-4">Formato Normalizado Resultante</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 font-mono text-slate-600">
               <tr class="bg-white">
-                <td class="px-4 py-2 font-bold text-slate-800">telefono</td>
-                <td class="px-4 py-2 text-slate-400 italic">Formato final</td>
+                <td class="break-words px-3 py-2 font-bold text-slate-800 sm:px-4">telefono</td>
+                <td class="break-words px-3 py-2 italic text-slate-400 sm:px-4">Formato final</td>
               </tr>
               <tr class="bg-slate-50/50">
-                <td class="px-4 py-2 text-emerald-700">3001234567</td>
-                <td class="px-4 py-2 text-slate-700 font-semibold">+573001234567 (Colombia)</td>
+                <td class="break-all px-3 py-2 text-emerald-700 sm:px-4">3001234567</td>
+                <td class="break-words px-3 py-2 font-semibold text-slate-700 sm:px-4">+573001234567 (Colombia)</td>
               </tr>
               <tr class="bg-white">
-                <td class="px-4 py-2 text-emerald-700">+573019876543</td>
-                <td class="px-4 py-2 text-slate-700 font-semibold">+573019876543 (Colombia)</td>
+                <td class="break-all px-3 py-2 text-emerald-700 sm:px-4">+573019876543</td>
+                <td class="break-words px-3 py-2 font-semibold text-slate-700 sm:px-4">+573019876543 (Colombia)</td>
               </tr>
               <tr class="bg-slate-50/50">
-                <td class="px-4 py-2 text-emerald-700">+13051234567</td>
-                <td class="px-4 py-2 text-slate-700 font-semibold">+13051234567 (Internacional / USA)</td>
+                <td class="break-all px-3 py-2 text-emerald-700 sm:px-4">+13051234567</td>
+                <td class="break-words px-3 py-2 font-semibold text-slate-700 sm:px-4">+13051234567 (Internacional / USA)</td>
               </tr>
             </tbody>
           </table>
@@ -125,8 +125,9 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
       </div>
 
       <!-- Upload Zone -->
-      <div class="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 transition hover:border-emerald-400 hover:bg-emerald-50/30">
+      <div class="min-w-0 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-3 transition hover:border-emerald-400 hover:bg-emerald-50/30 sm:p-8">
         <p-fileUpload
+          class="block w-full min-w-0"
           id="bulk-upload-input"
           mode="advanced"
           name="excelFile"
@@ -158,17 +159,17 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
 
       <!-- Resultados del parseo -->
       @if (parsedPhones().length > 0) {
-        <div class="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-slate-800">
+        <div class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+          <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h3 class="text-base font-semibold text-slate-800 sm:text-lg">
               Teléfonos extraídos y normalizados
             </h3>
             <p-tag [value]="parsedPhones().length + ' números'" severity="info" [rounded]="true" />
           </div>
 
-          <div class="max-h-60 overflow-auto rounded-xl bg-slate-50 p-4 space-y-1">
+          <div class="max-h-60 space-y-1 overflow-auto rounded-xl bg-slate-50 p-3 sm:p-4">
             @for (phone of parsedPhones(); track phone) {
-              <p class="text-sm text-slate-700 font-mono flex items-center gap-2">
+              <p class="flex items-center gap-2 break-all font-mono text-sm text-slate-700">
                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                 {{ phone }}
               </p>
@@ -195,8 +196,8 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
 
       <!-- Estado de procesando -->
       @if (processing()) {
-        <div class="flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700 border border-blue-200">
-          <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+        <div class="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          <svg class="mt-0.5 h-5 w-5 flex-shrink-0 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
           </svg>
@@ -206,10 +207,33 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
     </div>
   `,
   styles: `
-    :host ::ng-deep .p-fileupload .p-fileupload-header,
-    :host ::ng-deep .p-fileupload [data-pc-section="header"] {
-      flex-wrap: wrap !important;
-      row-gap: 0.5rem;
+    :host {
+      display: block;
+      min-width: 0;
+    }
+
+    :host ::ng-deep .p-fileupload,
+    :host ::ng-deep .p-fileupload-header,
+    :host ::ng-deep .p-fileupload-content {
+      min-width: 0;
+    }
+
+    :host ::ng-deep .p-fileupload-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 639px) {
+      :host ::ng-deep .p-fileupload-header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      :host ::ng-deep .p-fileupload-header .p-button {
+        justify-content: center;
+        width: 100%;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.Eager,

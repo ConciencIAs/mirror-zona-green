@@ -168,6 +168,7 @@ export interface Orden {
     updated_at: string | null;
     tracking: Tracking[];
     direccion: string
+    uid: string; // es el mismo id pero solo mostrando los 10 primero digitos
 }
 
 export interface Tracking {

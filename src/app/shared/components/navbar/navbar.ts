@@ -3,7 +3,6 @@ import {
   inject,
   signal,
   HostListener,
-  OnInit,
   computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -22,9 +21,8 @@ import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-au
 import { FormsModule } from '@angular/forms';
 
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
+import { DarkModeState } from '@src/app/core/state/app/dark-mode.state';
 import { AdvertisingBannerComponent } from '@src/app/shared/components/advertising-banner/advertising-banner';
-
-const LS_KEY = 'zg-dark';
 
 @Component({
   selector: 'app-navbar',
@@ -98,18 +96,19 @@ const LS_KEY = 'zg-dark';
     }
   `,
 })
-export class Navbar implements OnInit {
+export class Navbar {
   private readonly cartStore = inject(CartStore);
   private readonly userStore = inject(UserStore);
   private readonly router = inject(Router);
   private readonly appConfigStore = inject(AppConfigStore);
   private readonly authService = inject(SupabaseAuthService);
+  private readonly darkModeState = inject(DarkModeState);
 
   searchQuery = signal<string>('');
 
   protected authDropOpen = signal(false);
   protected sidebarOpen = signal(false);
-  protected isDark = signal(false);
+  protected readonly isDark = this.darkModeState.isDark;
 
   totalCartItems = this.cartStore.totalItems;
 
@@ -130,24 +129,8 @@ export class Navbar implements OnInit {
     );
   });
 
-  ngOnInit() {
-    const saved = localStorage.getItem(LS_KEY);
-    if (saved === 'true') {
-      this.applyDark(true);
-      this.isDark.set(true);
-    }
-  }
-
-  private applyDark(on: boolean): void {
-    document.documentElement.classList.toggle('dark', on);
-    document.documentElement.classList.toggle('p-dark', on);
-  }
-
   toggleDark(): void {
-    const next = !this.isDark();
-    this.isDark.set(next);
-    this.applyDark(next);
-    localStorage.setItem(LS_KEY, String(next));
+    this.darkModeState.toggle();
   }
 
   isAuthenticated() {

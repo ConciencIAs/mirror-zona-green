@@ -112,7 +112,9 @@ export class ProductsEditor implements OnInit {
   readonly editingProductId = signal<string | null>(null);
 
   readonly totalStockFromPresentations = computed(() =>
-    this.presentations().reduce((sum, p) => sum + (p.stock * p.gramos), 0)
+    this.productModel().presentacion_venta === 'und'
+      ? this.presentations().reduce((sum, presentation) => sum + presentation.stock, 0)
+      : this.presentations().reduce((sum, presentation) => sum + (presentation.stock * presentation.gramos), 0)
   );
   readonly saleUnitLabel = computed(() => getSaleUnitLabel(this.productModel().presentacion_venta));
   readonly saleUnitName = computed(() => getSaleUnitName(this.productModel().presentacion_venta));

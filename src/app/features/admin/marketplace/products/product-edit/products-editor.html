@@ -67,9 +67,9 @@
     } @else {
     <!-- Mostrar el stock total calculado como lectura -->
     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-4">
-      <p class="text-sm font-semibold text-slate-700">Stock total calculado (en gramos):</p>
+      <p class="text-sm font-semibold text-slate-700">Stock total calculado (en {{ saleUnitName() }}):</p>
       <p class="text-2xl font-bold text-slate-900 mt-1">
-        {{ totalStockFromPresentations() }} g
+        {{ totalStockFromPresentations() }} {{ saleUnitLabel() }}
       </p>
     </div>
     }

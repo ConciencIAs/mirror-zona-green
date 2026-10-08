@@ -84,6 +84,7 @@ export class Ordenes implements OnInit {
   protected readonly filterStatus = signal<EstadoOrden | ''>('');
   protected readonly filterTipoEntrega = signal<string>('');
   protected readonly filterCorreoCliente = signal<string>('');
+  protected readonly filterOrderUid = signal('');
   protected readonly filterFechaRango = signal<Date[] | null>(null);
 
   protected readonly filteredOrders = computed(() => {
@@ -105,6 +106,14 @@ export class Ordenes implements OnInit {
     if (fCorreoCliente) {
       currentOrders = currentOrders.filter((o) =>
         o.correo_cliente?.toLowerCase().includes(fCorreoCliente),
+      );
+    }
+
+    const fOrderUid = this.filterOrderUid().trim().toLowerCase();
+    if (fOrderUid) {
+      currentOrders = currentOrders.filter((order) =>
+        (order.uid || order.id.slice(0, 10)).toLowerCase().includes(fOrderUid) ||
+        order.id.toLowerCase().includes(fOrderUid),
       );
     }
 
@@ -146,6 +155,10 @@ export class Ordenes implements OnInit {
       default:
         return 'bg-gray-100 text-gray-700';
     }
+  }
+
+  protected getOrderDisplayId(order: Orden): string {
+    return order.uid || order.id.slice(0, 10);
   }
 
   protected readonly hasOrders = computed(() => this.filteredOrders().length > 0);
@@ -221,6 +234,7 @@ export class Ordenes implements OnInit {
     const direccion = this.getDireccionEntrega(order);
     const telefono = this.getTelefonoCliente(order);
     const observaciones = this.customObservaciones() || order.comentarios_usuario || 'Sin observaciones';
+    const orderDisplayId = this.getOrderDisplayId(order);
 
     const printWindow = window.open('', '_blank', 'width=450,height=650');
     if (!printWindow) return;
@@ -230,7 +244,7 @@ export class Ordenes implements OnInit {
       <html lang="es">
         <head>
           <meta charset="UTF-8">
-          <title>Etiqueta de Envío (10x15cm) - Orden #${order.id.slice(0, 8)}</title>
+          <title>Etiqueta de Envío (10x15cm) - Orden #${orderDisplayId}</title>
           <style>
             @page {
               size: 100mm 150mm;
@@ -341,7 +355,7 @@ export class Ordenes implements OnInit {
           <div>
             <div class="header-banner">
               <span class="brand-name">CHEIN VERDEN</span>
-              <span class="order-badge">ORDEN #${order.id.slice(0, 8)}</span>
+              <span class="order-badge">ORDEN #${orderDisplayId}</span>
             </div>
 
             <table class="label-table">
