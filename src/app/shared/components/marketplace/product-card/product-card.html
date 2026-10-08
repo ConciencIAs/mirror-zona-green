@@ -1,6 +1,12 @@
 <div
   class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-[#d7dfc7] bg-white shadow-sm transition-all hover:shadow-xl">
-  <div class="h-56 overflow-hidden bg-[#f5f6f0]">
+  <div class="relative h-56 overflow-hidden bg-[#f5f6f0]">
+    @if (hasFreeShipping()) {
+    <span
+      class="absolute top-2 left-2 z-10 rounded-md bg-[#6d28d9] px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
+      Envío incluido
+    </span>
+    }
     @if (product().urls_imagenes && product().urls_imagenes.length > 1) {
     <p-carousel [value]="product().urls_imagenes!" [numVisible]="1" [numScroll]="1" [circular]="true"
       [showIndicators]="true" [showNavigators]="true">

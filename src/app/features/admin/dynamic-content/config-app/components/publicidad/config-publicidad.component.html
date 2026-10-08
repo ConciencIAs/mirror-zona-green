@@ -25,7 +25,7 @@
   <div class="mt-4">
     <h3 class="text-base font-bold text-slate-800 dark:text-slate-200 mb-4">Items de Publicidad</h3>
     <div
-      class="border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 p-4 min-h-[5rem] flex flex-col justify-center mb-6">
+      class="border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-black p-4 min-h-[5rem] flex flex-col justify-center mb-6">
       @if (!config() || config().length === 0) {
       <div class="text-center text-slate-500 dark:text-slate-400 text-sm italic py-4">No hay anuncios agregados.
       </div>
@@ -33,7 +33,7 @@
       <p-orderList [value]="config()" [dragdrop]="true" [styleClass]="'advertising-grid'"
         (onReorder)="onAdvertisingReorder($event)">
         <ng-template let-item let-index="index" pTemplate="item">
-          <div class="advertising-card w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 p-3 h-full">
+          <div class="advertising-card w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-black/90 p-3 h-full">
             <div class="flex items-start justify-between gap-3">
               <div class="flex items-center gap-2 text-slate-400">
                 <i class="pi pi-arrows-alt"></i>
@@ -86,7 +86,7 @@
       </ng-template>
     </p-dialog>
 
-    <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+    <div class="bg-slate-50 dark:bg-black border border-slate-200 dark:border-slate-800 rounded-xl p-5">
       <h4 class="m-0 mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Agregar Anuncio</h4>
       <div class="flex flex-wrap gap-3 items-center">
         <div class="flex-[2] min-w-[250px]"><input pInputText type="text" placeholder="Texto del anuncio"

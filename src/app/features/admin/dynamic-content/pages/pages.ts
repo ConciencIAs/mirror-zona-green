@@ -27,7 +27,21 @@ export interface ContentListItem {
   providers: [ConfirmationService],
   templateUrl: './pages.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styles: ``,
+  styles: `
+    @media (max-width: 640px) {
+      :host ::ng-deep .p-tablist-tab-list {
+        flex-direction: column;
+      }
+      :host ::ng-deep .p-tablist-tab-list .p-tab {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      :host ::ng-deep .p-tablist-prev-button,
+      :host ::ng-deep .p-tablist-next-button {
+        display: none;
+      }
+    }
+  `,
 })
 export class DynamicContentList implements OnInit {
   private contentDbService = inject(ContentDbService);

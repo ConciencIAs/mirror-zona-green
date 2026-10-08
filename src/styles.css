@@ -1183,3 +1183,39 @@
 :where(.dark) :where([data-cheyn-page]) :where(p, li, span) {
   color: #ffffff;
 }
+
+/* Excepción a la red de seguridad de arriba: tarjetas con fondo blanco
+   FIJO (ej. panel de detalle del diagrama circular de ecosistema), sin
+   ningún dark:bg-[...] propio, no cambian de color con el modo oscuro,
+   así que su texto ya es oscuro y legible sobre blanco — no debe caer
+   en el blanco-sobre-blanco.
+   OJO: debe excluir tarjetas con dark:bg-[...] propio (el patrón normal
+   "blanco en claro, verde oscuro en oscuro"), si no esta excepción le
+   gana por especificidad a la regla de abajo que sí debe aplicar ahí. */
+[data-cheyn-page] .bg-white:not([class*="dark:bg-"]) .text-\[\#3a3a38\] {
+  color: #3a3a38 !important;
+}
+[data-cheyn-page] .bg-white:not([class*="dark:bg-"]) .text-\[\#146424\] {
+  color: #146424 !important;
+}
+[data-cheyn-page] .bg-white:not([class*="dark:bg-"]) .text-\[\#5a5a52\] {
+  color: #5a5a52 !important;
+}
+
+/* Fallo generalizado: las utilidades dark:text-[...] de contenido
+   dinámico (varias páginas /content/*) no se aplican de forma
+   confiable — mismo conflicto runtime-vs-build de siempre, el color
+   claro pensado para modo oscuro pierde contra el color oscuro base
+   de modo claro. Se fuerzan todas a blanco (pedido explícito). */
+.dark .dark\:text-\[\#d8e8cc\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#6bc767\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#a0b0a0\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#e0ead4\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#9ab890\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#8a997a\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#66c47a\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#5a6a4a\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#5a7a54\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#ffe082\] { color: #ffe082 !important; }
+.dark .dark\:text-\[\#cfe3c4\] { color: #cfe3c4 !important; }
+.dark .dark\:text-\[\#7a9670\] { color: #ffffff !important; }
