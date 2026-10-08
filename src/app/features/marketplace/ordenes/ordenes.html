@@ -26,7 +26,7 @@
     <div class="rounded-3xl border border-[#d7dfc7] bg-white p-6 shadow-sm">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="text-sm text-[#55644d]">Orden ID: <span class="font-semibold text-[#1d341c]">{{ order.id }}</span>
+          <p class="text-sm text-[#55644d]">Orden: <span class="font-semibold text-[#1d341c]">{{ order.uid || order.id.slice(0, 10) }}</span>
           </p>
           <p class="text-sm text-[#55644d]">Fecha: {{ order.created_at | fechaFormato }}</p>
         </div>
