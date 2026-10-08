@@ -154,7 +154,7 @@
       </p-inputgroup-addon>
     </p-inputgroup>
     }
-    <div class="shrink-0 max-[399px]:hidden">
+    <div class="shrink-0 navbar-profile-main">
       <app-profile-menu />
     </div>
     <p-overlaybadge severity="info" [value]="totalCartItems()" badgeSize="small">
@@ -177,7 +177,7 @@
        Se reserva siempre (aunque esté vacía sin sesión) para que la altura del navbar
        sea predecible y el padding-top del contenido no se desalinee. -->
   <div
-    class="min-[400px]:hidden h-[42px] flex items-center justify-center"
+    class="navbar-profile-extra-row"
     [style.border-top]="isDark() ? '1px solid #1e301e' : '1px solid #e4e4d4'">
     @if (isAuthenticated()) {
     <app-profile-menu />

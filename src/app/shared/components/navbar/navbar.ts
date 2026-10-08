@@ -79,6 +79,23 @@ const LS_KEY = 'zg-dark';
         display: inline;
       }
     }
+    .navbar-profile-main {
+      display: block;
+    }
+    .navbar-profile-extra-row {
+      display: none;
+    }
+    @media (max-width: 399.98px) {
+      .navbar-profile-main {
+        display: none;
+      }
+      .navbar-profile-extra-row {
+        display: flex;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+      }
+    }
   `,
 })
 export class Navbar implements OnInit {
