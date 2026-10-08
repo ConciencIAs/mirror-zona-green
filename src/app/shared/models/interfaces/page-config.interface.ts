@@ -107,7 +107,7 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
       {
         title: 'Navegación',
         items: [
-          { path: '/customer/home', label: 'Inicio' },
+          { path: '/home', label: 'Inicio' },
           { path: '/cannabismedicinalencolombia', label: 'Cannabis medicinal en Colombia' },
           { path: '/medicoscannabiscolombia', label: 'Médicos especialistas en cannabis' },
           { path: '/rrd', label: 'Reducción de Riesgos y Daños' },
@@ -153,7 +153,7 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
       {
         title: 'NAVEGACIÓN',
         items: [
-          { label: 'Inicio', url: '/customer/home' },
+          { label: 'Inicio', url: '/home' },
           { label: 'Cannabis medicinal', url: '/cannabismedicinalencolombia' },
           { label: 'Preguntas frecuentes', url: '/faq' }
         ]

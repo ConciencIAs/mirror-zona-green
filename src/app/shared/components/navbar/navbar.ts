@@ -39,6 +39,62 @@ import { AdvertisingBannerComponent } from '@src/app/shared/components/advertisi
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './navbar.html',
+  styles: `
+    .navbar-logo-img {
+      height: 48px;
+    }
+    @media (min-width: 640px) {
+      .navbar-logo-img {
+        height: 56px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .navbar-logo-img {
+        height: 60px;
+      }
+    }
+    .nav-auth-btn {
+      gap: 4px;
+      padding: 6px 12px;
+      font-size: 11.5px;
+    }
+    .nav-auth-text-short {
+      display: inline;
+    }
+    .nav-auth-text-full {
+      display: none;
+    }
+    @media (min-width: 640px) {
+      .nav-auth-btn {
+        gap: 6px;
+        padding: 8px 13px;
+        font-size: 13px;
+      }
+      .nav-auth-text-short {
+        display: none;
+      }
+      .nav-auth-text-full {
+        display: inline;
+      }
+    }
+    .navbar-profile-main {
+      display: block;
+    }
+    .navbar-profile-extra-row {
+      display: none;
+    }
+    @media (max-width: 399.98px) {
+      .navbar-profile-main {
+        display: none;
+      }
+      .navbar-profile-extra-row {
+        display: flex;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  `,
 })
 export class Navbar {
   private readonly cartStore = inject(CartStore);

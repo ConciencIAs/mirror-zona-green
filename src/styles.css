@@ -765,6 +765,37 @@
   }
 }
 
+/* Bug: los bloques "versión de escritorio" del hero (párrafo, label
+   "En Cheyn Verde..." y el carrusel de beneficios) solo traen
+   `lg:block`, sin el `hidden` base — así que en mobile se ven a la
+   vez que su contraparte `lg:hidden`, duplicando el contenido. Se
+   oculta explícitamente por debajo de lg. */
+@media (max-width: 1023.98px) {
+  [data-cheyn-page="home-anonimo"] .lg\:block {
+    display: none !important;
+  }
+}
+
+/* Tarjetas de "¿Cómo funciona?" duplicadas en mobile: la grilla de
+   flip-cards (2 columnas) coexistía con la grilla ancha de texto
+   visible (la que se activó arriba). Se deja solo la ancha. */
+[data-cheyn-page="home-anonimo"] .sm\:hidden.grid-cols-2.gap-4 {
+  display: none !important;
+}
+
+/* "En Cheyn Verde los usuarios pueden encontrar:" — 20% más grande (8px -> 9.6px). */
+[data-cheyn-page="home-anonimo"] .text-\[8px\] {
+  font-size: 9.6px !important;
+}
+
+/* El dark: de Tailwind en contenido dinámico (motor runtime vía CDN)
+   no responde al interruptor manual de modo oscuro del sitio, solo a
+   la preferencia del sistema — por eso este fondo se quedaba siempre
+   en su versión clara. Se fuerza el degradado oscuro explícitamente. */
+.dark [data-cheyn-page="home-anonimo"] {
+  background-image: linear-gradient(to bottom right, #0f1e0f, #1a3a1a, #0f2a0f) !important;
+}
+
 /* Fondos ambientales (hero y cierre): reemplaza las fotos jpg por
    gradientes planos de 3 tonos de verde de marca, conservando el
    mismo crossfade de opacidad que ya traían. */
@@ -1129,6 +1160,13 @@
   height: unset !important;
 }
 
+/* .gjs-row trae 10px de padding por defecto (residuo interno del
+   editor visual GrapesJS, exportado tal cual en el HTML). Genera un
+   margen indeseado alrededor del contenido dinámico en varias páginas. */
+.gjs-row {
+  padding: 0 !important;
+}
+
 /* ── Contraste en modo oscuro para contenido dinámico (Supabase) ──
    1) Arreglo puntual: colores de bajo contraste ya detectados en
       /content/ecosistema (párrafos y etiquetas de tarjetas con verde
@@ -1145,3 +1183,39 @@
 :where(.dark) :where([data-cheyn-page]) :where(p, li, span) {
   color: #ffffff;
 }
+
+/* Excepción a la red de seguridad de arriba: tarjetas con fondo blanco
+   FIJO (ej. panel de detalle del diagrama circular de ecosistema), sin
+   ningún dark:bg-[...] propio, no cambian de color con el modo oscuro,
+   así que su texto ya es oscuro y legible sobre blanco — no debe caer
+   en el blanco-sobre-blanco.
+   OJO: debe excluir tarjetas con dark:bg-[...] propio (el patrón normal
+   "blanco en claro, verde oscuro en oscuro"), si no esta excepción le
+   gana por especificidad a la regla de abajo que sí debe aplicar ahí. */
+[data-cheyn-page] .bg-white:not([class*="dark:bg-"]) .text-\[\#3a3a38\] {
+  color: #3a3a38 !important;
+}
+[data-cheyn-page] .bg-white:not([class*="dark:bg-"]) .text-\[\#146424\] {
+  color: #146424 !important;
+}
+[data-cheyn-page] .bg-white:not([class*="dark:bg-"]) .text-\[\#5a5a52\] {
+  color: #5a5a52 !important;
+}
+
+/* Fallo generalizado: las utilidades dark:text-[...] de contenido
+   dinámico (varias páginas /content/*) no se aplican de forma
+   confiable — mismo conflicto runtime-vs-build de siempre, el color
+   claro pensado para modo oscuro pierde contra el color oscuro base
+   de modo claro. Se fuerzan todas a blanco (pedido explícito). */
+.dark .dark\:text-\[\#d8e8cc\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#6bc767\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#a0b0a0\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#e0ead4\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#9ab890\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#8a997a\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#66c47a\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#5a6a4a\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#5a7a54\] { color: #ffffff !important; }
+.dark .dark\:text-\[\#ffe082\] { color: #ffe082 !important; }
+.dark .dark\:text-\[\#cfe3c4\] { color: #cfe3c4 !important; }
+.dark .dark\:text-\[\#7a9670\] { color: #ffffff !important; }

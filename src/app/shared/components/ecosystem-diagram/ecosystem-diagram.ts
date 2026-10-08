@@ -16,6 +16,17 @@ interface EcosystemNode {
   imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './ecosystem-diagram.html',
+  styles: `
+    .ecosystem-node-icon {
+      transform: scale(1);
+    }
+    .ecosystem-node:hover .ecosystem-node-icon {
+      transform: scale(1.05);
+    }
+    .ecosystem-node-icon.selected {
+      transform: scale(1.1);
+    }
+  `,
 })
 export class EcosystemDiagram {
   private readonly appConfigStore = inject(AppConfigStore);

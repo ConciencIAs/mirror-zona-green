@@ -18,6 +18,14 @@ import { getSaleUnitLabel } from '@src/app/shared/utils/helpers';
       flex: 1 0 100% !important;
       width: 100% !important;
     }
+    :host ::ng-deep .p-carousel,
+    :host ::ng-deep .p-carousel-content,
+    :host ::ng-deep .p-carousel-container,
+    :host ::ng-deep .p-carousel-items-content,
+    :host ::ng-deep .p-carousel-item-list,
+    :host ::ng-deep .p-carousel-item {
+      height: 100%;
+    }
   `,
 })
 export class ProductCard {
@@ -47,6 +55,11 @@ export class ProductCard {
 
   /** Hay al menos una reseña */
   readonly hasRating = computed(() => this.ratingCount() > 0);
+
+  /** Oferta de envío incluido en el valor del producto */
+  readonly hasFreeShipping = computed(() =>
+    (this.product().ofertas ?? []).some((offer) => offer.name === 'Envío incluido en el valor'),
+  );
 
   /** Devuelve si la estrella de posición `star` debe rellenarse (llena, media, vacía) */
   starFill(star: number): 'full' | 'half' | 'empty' {

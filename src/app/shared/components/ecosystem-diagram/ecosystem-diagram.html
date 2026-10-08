@@ -56,7 +56,8 @@
 
     <!-- Centro -->
     <div
-      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[36%] aspect-square rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center p-4 z-10">
+      class="absolute left-1/2 top-1/2 w-[36%] aspect-square rounded-full bg-white shadow-xl flex flex-col items-center justify-center text-center p-4 z-10"
+      style="transform: translate(-50%, -50%)">
       <img [src]="logoUrl()" alt="Cheyn Verde" class="w-[62%] h-auto object-contain">
       <span class="text-[9px] sm:text-[11px] text-[#5a5a52] mt-1.5 leading-tight px-1">Infraestructura de
         articulación, confianza y trazabilidad</span>
@@ -65,13 +66,14 @@
     <!-- Nodos -->
     @for (n of nodes; track n.title; let i = $index) {
     <button type="button"
-      class="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 group z-10 bg-transparent border-none cursor-pointer p-0"
-      [style.left.%]="(n.x / 600) * 100" [style.top.%]="(n.y / 600) * 100" (click)="select(i)"
+      class="absolute flex flex-col items-center gap-2 group z-10 bg-transparent border-none cursor-pointer p-0 ecosystem-node"
+      [style.left.%]="(n.x / 600) * 100" [style.top.%]="(n.y / 600) * 100"
+      style="transform: translate(-50%, -50%)" (click)="select(i)"
       [attr.aria-pressed]="selected() === i">
       <span
-        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg ring-[3px] transition-all duration-300 group-hover:scale-105"
+        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center shadow-lg ring-[3px] transition-all duration-300 ecosystem-node-icon"
         [class.ring-[#6bc767]]="selected() === i" [class.ring-transparent]="selected() !== i"
-        [class.scale-110]="selected() === i">
+        [class.selected]="selected() === i">
         <svg viewBox="0 0 24 24" fill="none" stroke="#146424" stroke-width="1.8" stroke-linecap="round"
           stroke-linejoin="round" class="w-7 h-7 sm:w-8 sm:h-8">
           @switch (n.icon) {
