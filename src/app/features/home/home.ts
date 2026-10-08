@@ -1,14 +1,14 @@
 import { Component, inject, signal, ChangeDetectionStrategy, computed, DOCUMENT, Inject, OnInit, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { RouterLink } from '@angular/router';
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
+import { DarkModeState } from '@src/app/core/state/app/dark-mode.state';
 
 @Component({
   selector: 'app-customer-home',
-  imports: [RouterLink],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './home.html',
 })
@@ -17,6 +17,7 @@ export class CustomerHome implements OnInit, OnDestroy {
   private contentDbService = inject(ContentDbService);
   private sanitizer = inject(DomSanitizer);
   private userState = inject(UserStore);
+  private readonly darkModeState = inject(DarkModeState);
 
   private styleElement: HTMLStyleElement | null = null;
   private scriptElement: HTMLScriptElement | null = null;
@@ -27,6 +28,7 @@ export class CustomerHome implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
 
   public renderHtml = signal<SafeHtml | undefined>(undefined);
+  protected darkMode = this.darkModeState.isDark;
   protected isAuthenticated = computed(() => this.authService.isAuthenticated() && this.userState.perfil().status === 'activo');
 
 
@@ -55,8 +57,8 @@ export class CustomerHome implements OnInit, OnDestroy {
       if (this.document) {
 
         const style = this.document.createElement('style');
-        style.className = 'content-css'
-        style.textContent = css;
+        style.className = 'content-css';
+        style.textContent = `@scope ([data-home-content]) {\n${css}\n}`;
         this.document.head.appendChild(style);
         this.styleElement = style
         const script = this.document.createElement('script');

@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ContentDbService } from '@src/app/core/services/supabase/dynamic-content/content-db-page.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { DarkModeState } from '@src/app/core/state/app/dark-mode.state';
 import { DOCUMENT } from '@angular/common';
 
 @Component({
@@ -18,12 +19,14 @@ export class DynamicPage implements OnInit, OnDestroy {
   private readonly contentDbService = inject(ContentDbService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly toastService = inject(ToastService);
+  private readonly darkModeState = inject(DarkModeState);
   constructor(@Inject(DOCUMENT) private document: Document) { }
 
   private styleElement: HTMLStyleElement | null = null;
   private scriptElement: HTMLScriptElement | null = null;
 
   public renderHtml = signal<SafeHtml | undefined>(undefined);
+  protected darkMode = this.darkModeState.isDark;
   public loading = signal<boolean>(true);
   public notFound = signal<boolean>(false);
   public slug = signal<string | null>(null);
@@ -44,6 +47,10 @@ export class DynamicPage implements OnInit, OnDestroy {
   }
 
   private async loadPageContent(slug: string): Promise<void> {
+    this.styleElement?.remove();
+    this.styleElement = null;
+    this.scriptElement?.remove();
+    this.scriptElement = null;
     this.loading.set(true);
     this.notFound.set(false);
     this.renderHtml.set(undefined);
@@ -83,8 +90,8 @@ export class DynamicPage implements OnInit, OnDestroy {
       this.renderHtml.set(this.sanitizer.bypassSecurityTrustHtml(tempDiv.innerHTML));
       if (this.document) {
         const style = this.document.createElement('style');
-        style.className = 'content-css'
-        style.textContent = css;
+        style.className = 'content-css';
+        style.textContent = `@scope ([data-dynamic-page-content]) {\n${css}\n}`;
         this.document.head.appendChild(style);
         this.styleElement = style
 
