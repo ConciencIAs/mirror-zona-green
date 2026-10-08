@@ -36,3 +36,20 @@ export const userSchemaLogin = z.object({
   email: z.email('Ingresa un correo válido').min(1, 'El correo es obligatorio'),
   password: z.string().optional(),
 });
+
+export const passwordRecoveryEmailSchema = z.object({
+  email: z.email('Ingresa un correo válido').min(1, 'El correo es obligatorio'),
+});
+
+export const newPasswordSchema = z.object({
+  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+  confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
+}).superRefine((data, ctx) => {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Las contraseñas no coinciden',
+      path: ['confirmPassword'],
+    });
+  }
+});

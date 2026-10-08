@@ -22,6 +22,11 @@ export const routerAuthCustomer: Routes = [
         loadComponent: () => import('./register/register').then((m) => m.Register),
       },
       {
+        path: 'recover-password',
+        title: 'Recuperar contraseña',
+        loadComponent: () => import('./recover-password/recover-password').then((m) => m.RecoverPassword),
+      },
+      {
         path: 'magik-link-callback',
         title: 'magik-link-callback',
         loadComponent: () => import('./magik-link-callback/magik-link-callback').then((m) => m.MagikLinkCallback),
