@@ -18,6 +18,14 @@ import { getSaleUnitLabel } from '@src/app/shared/utils/helpers';
       flex: 1 0 100% !important;
       width: 100% !important;
     }
+    :host ::ng-deep .p-carousel,
+    :host ::ng-deep .p-carousel-content,
+    :host ::ng-deep .p-carousel-container,
+    :host ::ng-deep .p-carousel-items-content,
+    :host ::ng-deep .p-carousel-item-list,
+    :host ::ng-deep .p-carousel-item {
+      height: 100%;
+    }
   `,
 })
 export class ProductCard {
