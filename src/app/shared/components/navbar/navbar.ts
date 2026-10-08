@@ -41,6 +41,45 @@ const LS_KEY = 'zg-dark';
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './navbar.html',
+  styles: `
+    .navbar-logo-img {
+      height: 48px;
+    }
+    @media (min-width: 640px) {
+      .navbar-logo-img {
+        height: 56px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .navbar-logo-img {
+        height: 60px;
+      }
+    }
+    .nav-auth-btn {
+      gap: 4px;
+      padding: 6px 12px;
+      font-size: 11.5px;
+    }
+    .nav-auth-text-short {
+      display: inline;
+    }
+    .nav-auth-text-full {
+      display: none;
+    }
+    @media (min-width: 640px) {
+      .nav-auth-btn {
+        gap: 6px;
+        padding: 8px 13px;
+        font-size: 13px;
+      }
+      .nav-auth-text-short {
+        display: none;
+      }
+      .nav-auth-text-full {
+        display: inline;
+      }
+    }
+  `,
 })
 export class Navbar implements OnInit {
   private readonly cartStore = inject(CartStore);

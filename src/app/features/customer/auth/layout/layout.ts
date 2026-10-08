@@ -7,6 +7,16 @@ import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
   imports: [RouterOutlet, RouterLink],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './layout.html',
+  styles: `
+    .auth-logo-img {
+      height: 7rem;
+    }
+    @media (min-width: 640px) {
+      .auth-logo-img {
+        height: 8rem;
+      }
+    }
+  `,
 })
 export class Layout {
   private readonly appConfigStore = inject(AppConfigStore);

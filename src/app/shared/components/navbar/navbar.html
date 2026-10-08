@@ -7,15 +7,15 @@
 <!-- ── Sidebar ── -->
 <aside
   class="fixed inset-y-0 right-0 w-[min(300px,85vw)] bg-[#0f1f0f] text-[#e0ead4] z-50 flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-y-auto"
-  [class.translate-x-full]="!sidebarOpen()" [class.translate-x-0]="sidebarOpen()" aria-label="Menú de navegación">
+  [style.transform]="sidebarOpen() ? 'translateX(0)' : 'translateX(100%)'" aria-label="Menú de navegación">
   <div class="flex items-center justify-between p-[18px_16px_18px_20px] border-b border-white/7 shrink-0">
     <img [src]="settingsConfig()?.logo_url || '/images/logo-cheyn-verde.png'" alt="Cheyn Verde."
-      class="h-[52px] w-auto object-contain">
+      class="w-auto object-contain" style="height: 52px">
     <button
       class="w-9 h-9 flex items-center justify-center cursor-pointer rounded-lg bg-none border-none relative shrink-0 transition-colors duration-200 hover:bg-white/7"
       (click)="closeSidebar()" aria-label="Cerrar menú">
-      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute rotate-45"></span>
-      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute -rotate-45"></span>
+      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute" style="transform: rotate(45deg)"></span>
+      <span class="block w-[18px] h-[2px] bg-[#e0ead4] rounded-[1px] absolute" style="transform: rotate(-45deg)"></span>
     </button>
   </div>
 
@@ -57,21 +57,24 @@
 
 <!-- ── Navbar ── -->
 <header
-  class="fixed top-0 left-0 right-0 z-40 font-sans transition-all duration-300 ease-in-out flex flex-col bg-white border-b border-[#e4e4d4] shadow-[0_1px_4px_rgba(0,0,0,0.06)] dark:bg-[#0d1a0d] dark:border-[#1e301e] dark:shadow-[0_1px_4px_rgba(0,0,0,0.3)]">
+  class="fixed top-0 left-0 right-0 z-40 font-sans transition-all duration-300 ease-in-out flex flex-col"
+  [style.background-color]="isDark() ? '#0d1a0d' : '#ffffff'"
+  [style.border-bottom]="isDark() ? '1px solid #1e301e' : '1px solid #e4e4d4'"
+  [style.box-shadow]="isDark() ? '0 1px 4px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.06)'">
   <!-- Franja de publicidad (Banner superior) -->
   @if (advertisingBannerConfig().items && advertisingBannerConfig().items.length > 0 && isAuthenticated()) {
   <app-advertising-banner [items]="advertisingBannerConfig().items" />
   }
 
   <div
-    class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 w-full h-[72px] sm:h-[80px] lg:h-[88px] flex items-center gap-[10px]">
+    class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 w-full h-[72px] sm:h-[80px] lg:h-[88px] flex items-center gap-[7px]">
 
     <!-- Logo -->
-    <a routerLink="/home" class="flex items-center shrink-0 no-underline" aria-label="Cheyn Verde. — Inicio">
+    <a routerLink="/home" class="flex items-center shrink-0 no-underline navbar-logo-link" aria-label="Cheyn Verde. — Inicio">
       <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green.svg'" alt="Cheyn Verde."
-        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain block" [class.hidden]="isDark()" [class.block]="!isDark()">
+        class="w-auto object-contain block navbar-logo-img" [class.hidden]="isDark()" [class.block]="!isDark()">
       <img [src]="settingsConfig()?.logo_url || '/images/logo-zona-green-blanco.svg'" alt="Cheyn Verde."
-        class="h-[48px] sm:h-[56px] lg:h-[60px] w-auto object-contain" [class.block]="isDark()"
+        class="w-auto object-contain navbar-logo-img" [class.block]="isDark()"
         [class.hidden]="!isDark()">
     </a>
 
@@ -81,10 +84,10 @@
     @if (!isAuthenticated()) {
     <div class="relative shrink-0">
       <button
-        class="inline-flex items-center gap-1 sm:gap-1.5 py-1.5 px-3 sm:py-2 sm:px-[13px] bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg text-[11.5px] sm:text-[13px] font-semibold font-inherit cursor-pointer transition-colors duration-200 whitespace-nowrap nav-auth-wrap"
+        class="inline-flex items-center bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg font-semibold font-inherit cursor-pointer transition-colors duration-200 whitespace-nowrap nav-auth-wrap nav-auth-btn"
         (click)="toggleAuthDrop()" [attr.aria-expanded]="authDropOpen()" aria-haspopup="true">
-        <span class="inline sm:hidden">Ingresar</span>
-        <span class="hidden sm:inline">Regístrate o Ingresa</span>
+        <span class="nav-auth-text-short">Ingresar</span>
+        <span class="nav-auth-text-full">Regístrate o Ingresa</span>
         <i class="pi pi-chevron-down"></i>
       </button>
 
@@ -130,14 +133,14 @@
 
     <!-- Dark / Light toggle -->
     <button
-      class="flex items-center gap-[5px] bg-none border-none cursor-pointer p-[5px] rounded-full shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10"
+      class="flex items-center gap-[4px] bg-none border-none cursor-pointer p-[4px] rounded-full shrink-0 transition-colors duration-200 hover:bg-[#20a038]/10 text-[0.85em]"
       (click)="toggleDark()" [attr.aria-label]="isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
       <i class="pi pi-sun"></i>
-      <span class="w-[38px] h-[21px] rounded-[11px] relative transition-colors duration-300 shrink-0 block"
+      <span class="w-[32px] h-[18px] rounded-[10px] relative transition-colors duration-300 shrink-0 block"
         [class]="isDark() ? 'bg-[#20a038]' : 'bg-[#d4d4c4]'">
         <span
-          class="absolute top-[3px] w-[15px] h-[15px] bg-white rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.22)] transition-all duration-300 block"
-          [class]="isDark() ? 'left-[20px]' : 'left-[3px]'"></span>
+          class="absolute top-[2.5px] w-[13px] h-[13px] bg-white rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.22)] transition-all duration-300 block"
+          [class]="isDark() ? 'left-[17px]' : 'left-[2.5px]'"></span>
       </span>
       <i class="pi pi-moon"></i>
     </button>
@@ -151,13 +154,13 @@
       </p-inputgroup-addon>
     </p-inputgroup>
     }
-    <div class="shrink-0">
+    <div class="shrink-0 max-[399px]:hidden">
       <app-profile-menu />
     </div>
     <p-overlaybadge severity="info" [value]="totalCartItems()" badgeSize="small">
       <a routerLink="/seleccion/carrito"
-        class="relative inline-flex items-center gap-1 py-1 px-3 bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg text-[11.5px] font-semibold transition-colors duration-200 no-underline">
-        <i class="pi pi-cart-minus" style="font-size: 1.5rem"></i>
+        class="relative inline-flex items-center gap-1 py-[3px] px-[10px] bg-[#20a038] hover:bg-[#178030] text-white border-none rounded-lg text-[11.5px] font-semibold transition-colors duration-200 no-underline">
+        <i class="pi pi-cart-minus" style="font-size: 1.275rem"></i>
       </a>
     </p-overlaybadge>
     }
@@ -168,5 +171,16 @@
       [class.hover:bg-white/7]="isDark()" (click)="openSidebar()" aria-label="Abrir menú">
       <i class="pi pi-bars" style="font-size: 1.5rem"></i>
     </button>
+  </div>
+
+  <!-- Fila extra solo en celulares muy angostos (<400px): perfil con nombre completo.
+       Se reserva siempre (aunque esté vacía sin sesión) para que la altura del navbar
+       sea predecible y el padding-top del contenido no se desalinee. -->
+  <div
+    class="min-[400px]:hidden h-[42px] flex items-center justify-center"
+    [style.border-top]="isDark() ? '1px solid #1e301e' : '1px solid #e4e4d4'">
+    @if (isAuthenticated()) {
+    <app-profile-menu />
+    }
   </div>
 </header>

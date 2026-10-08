@@ -1,9 +1,9 @@
 <div class="flex items-center">
   <p-menu #menu [model]="items" [popup]="true" />
   <button type="button" (click)="menu.toggle($event)"
-    class="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-4 py-2 rounded-full bg-transparent border-none cursor-pointer transition-colors duration-200 hover:bg-[#20a038]/10 dark:hover:bg-white/10 max-w-[110px] sm:max-w-none">
+    class="flex items-center gap-2 sm:gap-3 px-2 sm:px-3.5 py-1.5 rounded-full bg-transparent border-none cursor-pointer transition-colors duration-200 hover:bg-[#20a038]/10 dark:hover:bg-white/10 min-[400px]:max-w-[110px] sm:max-w-none">
     <p-avatar icon="pi pi-user" shape="circle" size="normal"
-      styleClass="!bg-[#20a038] !text-white !ring-2 !ring-[#20a038]/25 shrink-0" />
+      styleClass="!w-[27px] !h-[27px] !text-[0.75rem] !bg-[#20a038] !text-white !ring-2 !ring-[#20a038]/25 shrink-0" />
     <span
       class="inline text-[13.5px] font-semibold text-[#1d1d1b] dark:text-[#e0ead4] whitespace-nowrap truncate">
       {{ displayName }}
