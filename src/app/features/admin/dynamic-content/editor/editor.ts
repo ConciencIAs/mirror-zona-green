@@ -80,7 +80,9 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
 
       plugins: [gjsBlocksBasic, plugin, customCodePlugin, gjsParserPostcss, productCarouselPlugin, gjsScriptEditor],
       pluginsOpts: {
-        [plugin as any]: { autoBuild: true },
+        [plugin as any]: {
+          tailwindConfig: { darkMode: 'class' },
+        },
         [productCarouselPlugin as any]: {
           sbUrl: environment.supabase.url,
           sbKey: environment.supabase.key,
@@ -155,7 +157,15 @@ export class ContentEditor implements OnInit, AfterViewInit, OnDestroy {
 
     const datosProyectoJson = this.editor.getProjectData();
     const htmlRenderizado = this.editor.getHtml();
-    const cssRenderizado = this.editor.getCss() || '';
+    const htmlParaGenerarCss = `<div class="dark">${htmlRenderizado}</div>`;
+    const cssGrapesJs = this.editor.getCss() || '';
+    const cssTailwind = await new Promise<string>((resolve) => {
+      this.editor!.runCommand('get-tailwindCss', {
+        html: htmlParaGenerarCss,
+        callback: (css: string) => resolve(css),
+      });
+    });
+    const cssRenderizado = [cssGrapesJs, cssTailwind].filter(Boolean).join('\n');
     const jsRenderizado = (this.editor.getJs() || '').toString();
     try {
       if (this.isNewMode()) {
