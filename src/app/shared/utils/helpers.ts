@@ -1,10 +1,10 @@
 import { PresentacionesProducto } from '@src/app/shared/models/interfaces/db/db';
 
 export const getSaleUnitLabel = (unit?: PresentacionesProducto | null): string =>
-	unit === 'mg' ? 'mg' : 'g';
+	unit === 'mg' ? 'mg' : unit === 'und' ? 'und' : 'g';
 
 export const getSaleUnitName = (unit?: PresentacionesProducto | null): string =>
-	unit === 'mg' ? 'miligramos' : 'gramos';
+	unit === 'mg' ? 'miligramos' : unit === 'und' ? 'unidades' : 'gramos';
 
 export const fromGramsToSaleUnit = (
 	grams: number | null | undefined,
