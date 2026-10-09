@@ -58,8 +58,8 @@ export function normalizarTelefono(raw: string | number | null | undefined): str
 
       <!-- Header -->
       <div>
-        <h2 class="text-xl font-semibold leading-tight text-slate-900 sm:text-2xl">Carga Masiva — Base de Confianza (Por Teléfono)</h2>
-        <p class="mt-2 max-w-3xl break-words text-sm leading-relaxed text-slate-500">
+        <h2 class="text-xl font-semibold leading-tight text-slate-900 dark:text-white sm:text-2xl">Carga Masiva — Base de Confianza (Por Teléfono)</h2>
+        <p class="mt-2 max-w-3xl break-words text-sm leading-relaxed text-slate-500 dark:text-slate-300">
           Sube un archivo Excel (.xlsx) con los números telefónicos de los usuarios de confianza.
           Los números se normalizarán automáticamente (añadiendo +57 a celulares colombianos o respetando el indicativo internacional) para auto-aprobación en su registro.
         </p>
