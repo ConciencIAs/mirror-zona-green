@@ -1,8 +1,10 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
+import { EdgeFunctionsService } from '@src/app/core/services/edge-functions.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Perfil, EstadoUsuario, RolUsuario } from '@src/app/shared/models/interfaces/db/db';
+import { environment } from '@src/environments/environment';
 
 export type StatusFilter = 'todos' | EstadoUsuario;
 
@@ -20,6 +22,7 @@ function generarCodigoInvitacion(longitud = 8): string {
 @Injectable({ providedIn: 'root' })
 export class AdminUsersService {
   private readonly dbService = inject(SupabaseDbService);
+  private readonly edgeFunctionsService = inject(EdgeFunctionsService);
   private readonly toastService = inject(ToastService);
 
   readonly perfiles = signal<Perfil[]>([]);
@@ -93,6 +96,7 @@ export class AdminUsersService {
   async autorizarUsuario(perfilId: string, origenAutorizacion: string): Promise<void> {
     this.saving.set(perfilId);
     const codigoInvitacion = generarCodigoInvitacion();
+    const perfil = this.perfiles().find((item) => item.id === perfilId);
 
     const { error } = await this.dbService.update(
       TableName.PERFILES,
@@ -120,6 +124,9 @@ export class AdminUsersService {
             : p,
         ),
       );
+      if (perfil?.correo) {
+        await this.enviarCorreoActivacion(perfil.correo);
+      }
       this.toastService.success('Usuario autorizado y código de invitación asignado.');
     }
 
@@ -173,6 +180,8 @@ export class AdminUsersService {
 
   async cambiarEstado(perfilId: string, nuevoEstado: EstadoUsuario): Promise<void> {
     this.saving.set(perfilId);
+    const perfil = this.perfiles().find((item) => item.id === perfilId);
+    const debeNotificarActivacion = nuevoEstado === 'activo' && perfil?.status !== 'activo';
 
     const { error } = await this.dbService.update(
       TableName.PERFILES,
@@ -187,10 +196,35 @@ export class AdminUsersService {
       this.perfiles.update((list) =>
         list.map((p) => (p.id === perfilId ? { ...p, status: nuevoEstado } : p)),
       );
+      if (debeNotificarActivacion && perfil?.correo) {
+        await this.enviarCorreoActivacion(perfil.correo);
+      }
       this.toastService.success('Estado actualizado.');
     }
 
     this.saving.set(null);
+  }
+
+  private async enviarCorreoActivacion(correo: string): Promise<void> {
+    try {
+      const { data, error } = await this.edgeFunctionsService.sendAccountActivation({
+        correo,
+        confirmation_url: `${environment.urlHost}/auth/login`,
+      });
+
+      if (error) {
+        console.error('AdminUsersService: Error al enviar correo de activación', error);
+        this.toastService.warn('El usuario se activó, pero no se pudo enviar el correo de notificación.');
+        return;
+      }
+
+      if (data?.ruta) {
+        console.info('Correo de activación enviado. Ruta detectada:', data.ruta);
+      }
+    } catch (error) {
+      console.error('AdminUsersService: Error al invocar correo de activación', error);
+      this.toastService.warn('El usuario se activó, pero no se pudo enviar el correo de notificación.');
+    }
   }
 
   async cambiarRol(perfilId: string, nuevoRol: RolUsuario): Promise<void> {

@@ -7,6 +7,7 @@ import { CustomerData } from '@src/app/shared/models/interfaces/customer/custome
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
+import { EdgeFunctionsService } from '@src/app/core/services/edge-functions.service';
 
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import {
@@ -39,6 +40,7 @@ type RegistrationFormModel = CustomerData & {
 })
 export class Register {
   private readonly authService = inject(SupabaseAuthService);
+  private readonly edgeFunctionsService = inject(EdgeFunctionsService);
   private readonly dbService = inject(SupabaseDbService);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
@@ -203,10 +205,11 @@ export class Register {
           'Ya existe una cuenta con este correo. Se envió un enlace mágico para iniciar sesión.',
         );
       } else {
+        const confirmationUrl = `${environment.urlHost}/auth/magik-link-callback`;
         const { data, error } = await this.authService.signUpWithEmail(
           currentData.correo.trim().toLowerCase(),
           formData.password,
-          `${window.location.origin}/auth/magik-link-callback`,
+          confirmationUrl,
           {
             full_name: currentData.full_name,
             telefono: currentData.telefono,
@@ -221,6 +224,21 @@ export class Register {
         );
 
         if (error) throw error;
+
+        const { data: emailData, error: emailError } = await this.edgeFunctionsService.sendRegistrationEmail({
+          nombre: currentData.full_name,
+          correo: currentData.correo.trim().toLowerCase(),
+          telefono: String(currentData.telefono),
+          token_referido: codigoReferido || null,
+          confirmation_url: data.session ? null : environment.urlHost,
+        });
+
+        if (emailError) {
+          console.error('Error al enviar notificación de registro:', emailError);
+          this.toastService.warn('La cuenta se creó, pero no se pudo enviar la notificación de registro.');
+        } else if (emailData?.ruta) {
+          console.info('Notificación de registro enviada. Ruta detectada:', emailData.ruta);
+        }
 
         if (data.session) {
           await this.router.navigate(['/auth/magik-link-callback']);
