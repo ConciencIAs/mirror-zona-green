@@ -37,6 +37,7 @@ import {
   getSaleUnitName,
   toGramsFromSaleUnit,
 } from '@src/app/shared/utils/helpers';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 @Component({
   selector: 'app-products-editor',
@@ -164,7 +165,7 @@ export class ProductsEditor implements OnInit {
 
     const { error, data } = await this.dbService
       .from(TableName.PRODUCTOS)
-      .select('*')
+      .select(PRODUCTO_COLUMNAS_PUBLICAS)
       .eq('id', productId)
       .single();
 
@@ -175,7 +176,7 @@ export class ProductsEditor implements OnInit {
       return;
     }
 
-    const product = data as Producto;
+    const product = { ...(data as unknown as Producto), costo: await this.cargarCosto(productId) };
     this.editingProductId.set(product.id);
     this.productModel.set({
       nombre: product.nombre,
@@ -200,6 +201,22 @@ export class ProductsEditor implements OnInit {
 
     this.generalError.set(null);
     this.loading.set(false);
+  }
+
+  // La columna costo no es legible por la API: el admin la lee con la RPC
+  // admin_costos_productos. Si la RPC aún no existe (migración sin aplicar),
+  // se lee la columna directamente, como antes.
+  private async cargarCosto(productId: string): Promise<number> {
+    const { data, error } = await this.dbService.rpc('admin_costos_productos', { p_ids: [productId] });
+    if (!error && Array.isArray(data) && data.length > 0) {
+      return Number((data[0] as { costo: number | null }).costo) || 0;
+    }
+    const { data: fila } = await this.dbService
+      .from(TableName.PRODUCTOS)
+      .select('costo')
+      .eq('id', productId)
+      .maybeSingle();
+    return Number((fila as { costo?: number } | null)?.costo) || 0;
   }
 
   setSaleType(esPorGramos: boolean) {
@@ -280,7 +297,7 @@ export class ProductsEditor implements OnInit {
         const { data, error } = await this.dbService
           .from(TableName.PRODUCTOS)
           .insert(payload)
-          .select('*')
+          .select('id')
           .single();
         if (error) throw error;
         const insertedProduct = data as Producto;

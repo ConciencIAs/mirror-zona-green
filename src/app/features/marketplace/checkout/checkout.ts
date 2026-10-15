@@ -11,6 +11,7 @@ import { MonedaPipe } from '@src/app/shared/pipes/moneda.pipe';
 import { ButtonModule } from 'primeng/button';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { fromGramsToSaleUnit, getSaleUnitLabel } from '@src/app/shared/utils/helpers';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 @Component({
   selector: 'app-checkout',
@@ -70,7 +71,7 @@ export class Checkout implements OnInit {
       if (cart.length === 0) return;
 
       const productIds = Array.from(new Set(cart.map((item) => item.producto_id)));
-      const { data, error } = await this.dbService.from(TableName.PRODUCTOS).select('*').in('id', productIds);
+      const { data, error } = await this.dbService.from(TableName.PRODUCTOS).select(PRODUCTO_COLUMNAS_PUBLICAS).in('id', productIds);
       if (error) throw error;
 
       const products = (data as Producto[]) || [];

@@ -1,6 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { CustomerData } from '@src/app/shared/models/interfaces/customer/customer';
 
@@ -81,6 +81,12 @@ export class Register {
     validateStandardSchema(schemaPath, userSchemaRegister);
   });
 
+  constructor() {
+    // El login redirige aquí con ?email= cuando el correo no tiene cuenta.
+    const correo = inject(ActivatedRoute).snapshot.queryParamMap.get('email');
+    if (correo) this.formModel.update((m) => ({ ...m, correo: correo.trim().toLowerCase() }));
+  }
+
   /**
    * Validación asíncrona con debounce para el código de referido.
    * Llama al RPC `validar_codigo_referido` en Supabase.
@@ -130,17 +136,12 @@ export class Register {
   }
 
   async verificarSiExisteUsuario(correo: string): Promise<boolean> {
-    const { data, error } = await this.dbService
-      .from(this.dbService.tableNames.USUARIOS_PUBLICOS)
-      .select('correo')
-      .eq('correo', correo.trim().toLowerCase())
-      .maybeSingle();
-
-    if (error) {
-      console.error('Error al validar correo:', error.message);
+    try {
+      return await this.dbService.existeCorreo(correo);
+    } catch (error) {
+      console.error('Error al validar correo:', error);
       return false;
     }
-    return !!data;
   }
 
 
@@ -225,19 +226,20 @@ export class Register {
 
         if (error) throw error;
 
-        const { data: emailData, error: emailError } = await this.edgeFunctionsService.sendRegistrationEmail({
+        // La función decide la ruta del correo con los datos guardados en la
+        // base; teléfono y código se siguen enviando por compatibilidad.
+        const { error: emailError } = await this.edgeFunctionsService.sendRegistrationEmail({
           nombre: currentData.full_name,
           correo: currentData.correo.trim().toLowerCase(),
           telefono: String(currentData.telefono),
           token_referido: codigoReferido || null,
           confirmation_url: data.session ? null : environment.urlHost,
+          user_id: data.user?.id ?? null,
         });
 
         if (emailError) {
           console.error('Error al enviar notificación de registro:', emailError);
           this.toastService.warn('La cuenta se creó, pero no se pudo enviar la notificación de registro.');
-        } else if (emailData?.ruta) {
-          console.info('Notificación de registro enviada. Ruta detectada:', emailData.ruta);
         }
 
         if (data.session) {

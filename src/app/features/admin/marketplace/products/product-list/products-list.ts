@@ -14,6 +14,7 @@ import { Tags } from '@src/app/features/admin/marketplace/custom/tags/tags';
 
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 interface ProductDetailRow {
   sku: string;
@@ -57,7 +58,7 @@ export class ProductsList {
     this.loading.set(true);
 
     const [productsRes] = await Promise.all([
-      this.dbService.select(TableName.PRODUCTOS),
+      this.dbService.select(TableName.PRODUCTOS, PRODUCTO_COLUMNAS_PUBLICAS),
     ]);
 
     if (productsRes.error) {

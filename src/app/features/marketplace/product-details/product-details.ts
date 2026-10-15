@@ -14,6 +14,7 @@ import {
   getSaleUnitLabel,
   getSaleUnitName,
 } from '@src/app/shared/utils/helpers';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 @Component({
   selector: 'app-product-details',
@@ -122,7 +123,7 @@ export class ProductDetails {
     try {
       const { error, data } = await this.dbService
         .from(TableName.PRODUCTOS)
-        .select('*')
+        .select(PRODUCTO_COLUMNAS_PUBLICAS)
         .eq('id', productId)
         .single();
 

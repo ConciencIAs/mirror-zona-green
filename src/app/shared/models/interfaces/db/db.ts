@@ -111,7 +111,8 @@ export interface Producto {
     nombre: string;
     descripcion: string | null;
     urls_imagenes: string[];
-    costo: number;
+    /** Solo llega en el editor de admin (RPC admin_costos_productos). */
+    costo?: number;
     precio: number;
     status: 'activo' | 'inactivo';
     stock_total: number;
