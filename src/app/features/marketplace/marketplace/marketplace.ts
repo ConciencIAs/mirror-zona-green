@@ -11,6 +11,7 @@ import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Producto, Tag } from '@src/app/shared/models/interfaces/db/db';
 
 import { ButtonModule } from 'primeng/button';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 @Component({
   selector: 'app-marketplace',
@@ -132,7 +133,7 @@ export class Marketplace implements OnDestroy {
       // Se ordena el conjunto filtrado antes de paginar para respetar Tag.orden.
       let query = this.dbService
         .from(TableName.PRODUCTOS)
-        .select('*', { count: 'exact' })
+        .select(PRODUCTO_COLUMNAS_PUBLICAS, { count: 'exact' })
         .eq('status', 'activo')
         .order('created_at', { ascending: false });
 

@@ -9,6 +9,7 @@ import { CartButtonComponent } from '@src/app/shared/components/marketplace/butt
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { ButtonModule } from 'primeng/button';
 import { fromGramsToSaleUnit, getSaleUnitLabel } from '@src/app/shared/utils/helpers';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 type CartProduct = {
   producto: Producto;
@@ -67,7 +68,7 @@ export class CarritoComponent {
 
       const productIds = Array.from(new Set(cart.map((item) => item.producto_id)));
       const [productsResult] = await Promise.all([
-        this.dbService.from(TableName.PRODUCTOS).select('*').in('id', productIds),
+        this.dbService.from(TableName.PRODUCTOS).select(PRODUCTO_COLUMNAS_PUBLICAS).in('id', productIds),
       ]);
 
       if (productsResult.error) throw productsResult.error;

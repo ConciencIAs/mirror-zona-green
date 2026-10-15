@@ -10,6 +10,8 @@ export interface RegistrationEmailPayload {
   telefono: string;
   token_referido: string | null;
   confirmation_url: string | null;
+  /** Id del usuario recién creado; la función busca el perfil en la base. */
+  user_id?: string | null;
 }
 
 export interface AccountActivationEmailPayload {

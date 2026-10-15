@@ -87,6 +87,10 @@ export class MagikLinkCallback implements OnInit {
       .eq('id', userId);
 
     if (!error) {
+      // usuarios_publicos ahora la llena handle_new_user en la base. Esta
+      // escritura queda solo por compatibilidad mientras se aplica la
+      // migración, y su fallo ya no bloquea el ingreso (después de cerrar la
+      // tabla, el navegador no tiene permiso de escritura).
       const { error: publicUserError } = await this.dbService
         .from(this.dbService.tableNames.USUARIOS_PUBLICOS)
         .upsert(
@@ -96,7 +100,9 @@ export class MagikLinkCallback implements OnInit {
           },
           { onConflict: 'correo' },
         );
-      if (publicUserError) throw publicUserError;
+      if (publicUserError) {
+        console.warn('usuarios_publicos no se pudo escribir desde el navegador (esperado tras la migración):', publicUserError.message);
+      }
       this.localStorageState.removeState(PENDING_DATA_KEY);
       await this.cargarPerfil(userId);
     } else {

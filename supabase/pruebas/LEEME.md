@@ -1,0 +1,54 @@
+# Pruebas contra Supabase LOCAL
+
+Todo lo de esta carpeta corre contra el Supabase local (Docker). Los scripts
+se niegan a correr si la API no es `127.0.0.1`/`localhost`. Nunca contra producción.
+
+## Preparar
+
+```bash
+npx supabase start
+# esquema público de producción (sin datos) + auth/storage + datos sintéticos
+docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/pruebas/00_esquema_publico_produccion_2026-10-15.sql
+docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/pruebas/01_local_auth_storage_datos_sinteticos.sql
+# migraciones a probar
+docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/migrations/<archivo>.sql
+docker exec supabase_db_Cheyn_Verde psql -U postgres -c "NOTIFY pgrst, 'reload schema'"
+```
+
+## Edge Functions con correo local (Mailpit, http://127.0.0.1:54324)
+
+Archivo de entorno fuera del repo, por ejemplo `functions.local.env`:
+
+```
+GMAIL_USER=pruebas@cheyn.test
+GMAIL_APP_PASSWORD=local-no-usado
+SMTP_HOST=<IP del contenedor supabase_inbucket_Cheyn_Verde>
+SMTP_PORT=1025
+SMTP_SECURE=false
+APP_URLS=http://localhost:4202
+```
+
+La IP se obtiene con
+`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' supabase_inbucket_Cheyn_Verde`
+(el runtime de Deno no resuelve el nombre del contenedor desde nodemailer).
+
+```bash
+npx supabase functions serve --env-file functions.local.env
+```
+
+## App apuntando al Supabase local
+
+```bash
+node supabase/pruebas/generar-environment-local.mjs   # crea src/environments/environment.local.ts (ignorado por git)
+npx ng serve --configuration local --port 4202
+```
+
+## Scripts
+
+| Script | Qué prueba |
+|---|---|
+| `flujo-registro-login.mjs` | registro → correo de confirmación → login, por API |
+| `funciones-correo.mjs` | `send-registration-email` y `send-account-activation`: permisos, envío único, ruta decidida en la base, enlaces permitidos |
+| `e2e-login.mjs [carpeta]` | login en el navegador (Playwright): correo sin cuenta, sin confirmar, clave equivocada, cuenta sin fila en `usuarios_publicos`, activación reflejada al recargar, cuenta bloqueada. Con `carpeta` guarda capturas claro/oscuro, desktop/móvil |
+
+Las cuentas que crean usan el dominio `@cheyn.test` y solo existen en la base local.

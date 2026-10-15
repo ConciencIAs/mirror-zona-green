@@ -4,6 +4,7 @@ import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.s
 import { Producto } from '@src/app/shared/models/interfaces/db/db';
 import { ProductCard } from '@src/app/shared/components/marketplace/product-card/product-card';
 import { CarouselModule } from 'primeng/carousel';
+import { PRODUCTO_COLUMNAS_PUBLICAS } from '@src/app/shared/models/constans/db/productos-columnas';
 
 @Component({
   selector: 'app-dynamic-carousel',
@@ -68,7 +69,7 @@ export class DynamicCarouselComponent implements OnInit, OnChanges {
   async loadProducts() {
     this.loading.set(true);
     try {
-      let query = this.supabaseDbService.from(this.supabaseDbService.tableNames.PRODUCTOS).select('*');
+      let query = this.supabaseDbService.from(this.supabaseDbService.tableNames.PRODUCTOS).select(PRODUCTO_COLUMNAS_PUBLICAS);
       
       const by = this.filterBy();
       const val = this.filterValue();

@@ -207,7 +207,7 @@ export class AdminUsersService {
 
   private async enviarCorreoActivacion(correo: string): Promise<void> {
     try {
-      const { data, error } = await this.edgeFunctionsService.sendAccountActivation({
+      const { error } = await this.edgeFunctionsService.sendAccountActivation({
         correo,
         confirmation_url: `${environment.urlHost}/auth/login`,
       });
@@ -215,11 +215,6 @@ export class AdminUsersService {
       if (error) {
         console.error('AdminUsersService: Error al enviar correo de activación', error);
         this.toastService.warn('El usuario se activó, pero no se pudo enviar el correo de notificación.');
-        return;
-      }
-
-      if (data?.ruta) {
-        console.info('Correo de activación enviado. Ruta detectada:', data.ruta);
       }
     } catch (error) {
       console.error('AdminUsersService: Error al invocar correo de activación', error);

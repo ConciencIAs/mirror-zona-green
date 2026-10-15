@@ -59,24 +59,28 @@ export class Login {
         return;
       }
 
-      const { data: publicUser, error: lookupError } = await this.dbService
-        .from(this.dbService.tableNames.USUARIOS_PUBLICOS)
-        .select('correo')
-        .eq('correo', email)
-        .maybeSingle();
-
-      if (lookupError) throw lookupError;
-      if (!publicUser) {
-        this.confirmationModalService.confirm({
-          message: 'No se encontró una cuenta con este correo. ¿Deseas crear una nueva cuenta?',
-          accept: () => this.router.navigate(['/auth/register'], { queryParams: { email } }),
-        });
-        return;
-      }
-
       if (this.loginMode() === 'password') {
+        // Se autentica primero: Supabase Auth es la fuente de verdad. La
+        // consulta previa a usuarios_publicos rechazaba cuentas válidas que
+        // no tenían fila en esa tabla.
         const { data, error } = await this.authService.signInWithEmail(email, password);
-        if (error) throw error;
+        if (error) {
+          if (error.code === 'email_not_confirmed') {
+            this.generalError.set(
+              'Debes confirmar tu correo antes de ingresar. Revisa tu bandeja de entrada (y la carpeta de spam) y haz clic en el enlace de confirmación.',
+            );
+            return;
+          }
+          if (error.code === 'invalid_credentials') {
+            if (!(await this.dbService.existeCorreo(email))) {
+              this.ofrecerRegistro(email);
+              return;
+            }
+            this.generalError.set('La contraseña no es correcta. Inténtalo de nuevo o recupérala.');
+            return;
+          }
+          throw error;
+        }
         if (!data.user) throw new Error('No se pudo obtener el usuario autenticado.');
 
         const { data: profile, error: profileError } = await this.dbService
@@ -88,13 +92,33 @@ export class Login {
         if (profileError) throw profileError;
         if (!profile) throw new Error('No se encontró el perfil asociado a esta cuenta.');
 
-        this.userStore.setPerfil(profile as Perfil);
+        const perfil = profile as Perfil;
+        if (perfil.status === 'bloqueado' || perfil.status === 'eliminado') {
+          await this.authService.signOut();
+          this.userStore.clearPerfil();
+          this.generalError.set('Tu cuenta no está habilitada. Escríbenos a cheynverde@gmail.com si crees que es un error.');
+          return;
+        }
+
+        this.userStore.setPerfil(perfil);
+        if (perfil.status !== 'activo') {
+          this.toastService.info(
+            'Tu cuenta está registrada y pendiente de autorización. Te avisaremos por correo cuando esté activa.',
+          );
+        }
         await this.router.navigate(['/home']);
       } else {
+        if (!(await this.dbService.existeCorreo(email))) {
+          this.ofrecerRegistro(email);
+          return;
+        }
+
         const { error } = await this.authService.auth.signInWithOtp({
           email,
           options: {
             emailRedirectTo: `${environment.urlHost}/auth/magik-link-callback`,
+            // El login no debe crear cuentas nuevas por la puerta del magic link.
+            shouldCreateUser: false,
           },
         });
 
@@ -108,6 +132,13 @@ export class Login {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private ofrecerRegistro(email: string): void {
+    this.confirmationModalService.confirm({
+      message: 'No se encontró una cuenta con este correo. ¿Deseas crear una nueva cuenta?',
+      accept: () => this.router.navigate(['/auth/register'], { queryParams: { email } }),
+    });
   }
 
   setLoginMode(mode: 'password' | 'magic-link'): void {

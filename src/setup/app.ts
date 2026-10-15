@@ -53,7 +53,18 @@ export class App implements OnInit {
     this.supabaseAuthService.currentUserEvent
       .pipe(
         distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event),
-        filter((event) => event.event !== 'INITIAL_SESSION'),
+        filter((event) => {
+          if (event.event !== 'INITIAL_SESSION') return true;
+          // Al recargar: si la sesión ya no existe pero quedó un perfil en
+          // localStorage, se limpia para no mostrar una sesión fantasma.
+          if (!event.session && this.userStore.isAuthenticated()) {
+            this.userStore.clearPerfil();
+            this.cartStore.clearCart();
+          }
+          // Con sesión válida se relee el perfil, para que un cambio hecho por
+          // el admin (activación, bloqueo, rol) se refleje sin volver a entrar.
+          return !!event.session;
+        }),
       )
       .subscribe(async (event) => {
         const { error, data } = await this.supabaseDbService

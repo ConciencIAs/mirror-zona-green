@@ -2,29 +2,56 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import nodemailer from "npm:nodemailer@6.9.10";
 
-// --- Configuración de Supabase (solo lectura) y Gmail ---
+// Correo de "registro recibido". Se llama justo después del signUp, cuando el
+// usuario todavía no tiene sesión, así que no se puede exigir un JWT. Para que
+// no sirva para enviar correos a cualquiera:
+//   - el destinatario debe ser un perfil creado hace poco (VENTANA_MINUTOS);
+//   - se envía una sola vez por perfil (marca en datos_adicionales);
+//   - la ruta (1, 2 o 3) se decide con lo que guardó handle_new_user en la
+//     base, no con el teléfono ni el código que manda el navegador;
+//   - el enlace se arma en el servidor con un origen de la lista APP_URLS;
+//   - la respuesta ya no dice qué ruta se usó.
+// Acepta el payload anterior ({nombre, correo, telefono, token_referido,
+// confirmation_url}) y, opcionalmente, user_id.
+
+const VENTANA_MINUTOS = 30;
+const MARCA_ENVIO = "correo_registro_enviado_at";
+
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+const APP_URLS = (Deno.env.get("APP_URLS") ??
+  "https://mirror-zona-green.vercel.app,https://cheynverde.com,https://www.cheynverde.com")
+  .split(",")
+  .map((u) => u.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+// SMTP_HOST/PORT/SECURE solo se definen en local (Mailpit); en producción
+// quedan los valores de Gmail.
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  host: Deno.env.get("SMTP_HOST") ?? "smtp.gmail.com",
+  port: Number(Deno.env.get("SMTP_PORT") ?? 465),
+  secure: (Deno.env.get("SMTP_SECURE") ?? "true") === "true",
   auth: {
     user: Deno.env.get("GMAIL_USER"),
     pass: Deno.env.get("GMAIL_APP_PASSWORD"),
   },
 });
 
-// Normalización bilateral de teléfono (solo dígitos, últimos 10)
-function normalizePhone(phone: string): string {
-  if (!phone) return "";
-  const digits = phone.replace(/\D/g, "");
-  return digits.length > 10 ? digits.slice(-10) : digits;
+function urlLogin(urlCliente: unknown): string {
+  let origen = APP_URLS[0];
+  if (typeof urlCliente === "string") {
+    try {
+      const candidato = new URL(urlCliente).origin;
+      if (APP_URLS.includes(candidato)) origen = candidato;
+    } catch { /* se usa el predeterminado */ }
+  }
+  return `${origen}/auth/login`;
 }
 
-// Generador de HTML para plantillas de correo
+// Generador de HTML para plantillas de correo. Todo el texto es fijo; no se
+// inserta nada que venga del cliente.
 function buildEmailHtml(params: {
   subtituloHeader?: string;
   tituloCuerpo: string;
@@ -65,8 +92,8 @@ function buildEmailHtml(params: {
         <tr>
           <td style="padding: 16px;">
             <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #1d3a60;">
-              Si el enlace no funciona contacta a Cheyn Verde al correo: 
-              <a href="mailto:cheynverde@gmail.com" style="color: #336fb6; text-decoration: underline; font-weight: 600;">cheynverde@gmail.com</a>, 
+              Si el enlace no funciona contacta a Cheyn Verde al correo:
+              <a href="mailto:cheynverde@gmail.com" style="color: #336fb6; text-decoration: underline; font-weight: 600;">cheynverde@gmail.com</a>,
               detallando fecha y correo electrónico con el cual intentaste el ingreso. Nos encargaremos de solucionar a la mayor brevedad posible.
             </p>
           </td>
@@ -117,8 +144,18 @@ function buildEmailHtml(params: {
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+// Respuesta igual se envíe o no, para no revelar si el correo existe.
+const RESPUESTA_GENERICA = { success: true, mensaje: "Solicitud procesada." };
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -126,38 +163,57 @@ serve(async (req) => {
   }
 
   if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Método no permitido" }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 405 });
+    return json({ error: "Método no permitido" }, 405);
   }
 
   try {
-    const { nombre, correo, telefono, token_referido, confirmation_url } = await req.json();
+    const { correo, user_id, confirmation_url } = await req.json();
 
-    if (!correo || !telefono) {
-      return new Response(JSON.stringify({ error: "Faltan campos requeridos: correo, telefono" }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 });
+    if (!correo || typeof correo !== "string") {
+      return json({ error: "Falta el campo requerido: correo" }, 400);
+    }
+    const correoNormalizado = correo.trim().toLowerCase();
+
+    // 1. Perfil del destinatario, leído en el servidor.
+    let consulta = supabase
+      .from("perfiles")
+      .select("id, correo, status, referido_por, origen_autorizacion, datos_adicionales, created_at")
+      .eq("correo", correoNormalizado);
+    if (typeof user_id === "string" && user_id) consulta = consulta.eq("id", user_id);
+
+    const { data: perfil, error: errPerfil } = await consulta.maybeSingle();
+    if (errPerfil) throw errPerfil;
+    if (!perfil) return json(RESPUESTA_GENERICA);
+
+    // 2. Solo registros recientes.
+    const creado = new Date(perfil.created_at ?? 0).getTime();
+    if (!creado || Date.now() - creado > VENTANA_MINUTOS * 60_000) {
+      return json(RESPUESTA_GENERICA);
     }
 
-    const telNormalizado = normalizePhone(telefono);
+    // 3. Una sola vez por perfil: la marca se pone con una actualización
+    //    condicional; si otra llamada la puso antes, no se envía de nuevo.
+    const datos = (perfil.datos_adicionales ?? {}) as Record<string, unknown>;
+    if (datos[MARCA_ENVIO]) return json(RESPUESTA_GENERICA);
 
-    // Consulta de lectura a base_confianza para validación de número
-    const { data: baseConfianza, error: errDb } = await supabase
-      .from("base_confianza")
-      .select("*").eq('telefono', telNormalizado);
+    const { data: marcado, error: errMarca } = await supabase
+      .from("perfiles")
+      .update({ datos_adicionales: { ...datos, [MARCA_ENVIO]: new Date().toISOString() } })
+      .eq("id", perfil.id)
+      .is(`datos_adicionales->>${MARCA_ENVIO}`, null)
+      .select("id");
+    if (errMarca) throw errMarca;
+    if (!marcado?.length) return json(RESPUESTA_GENERICA);
 
-    if (errDb) throw errDb;
+    // 4. Ruta según lo que decidió handle_new_user.
+    const enBaseConfianza = perfil.origen_autorizacion === "base_confianza";
+    const tieneReferido = typeof perfil.referido_por === "string" && perfil.referido_por.trim() !== "";
 
-    const estaEnBaseConfianza = baseConfianza?.length >= 1
+    let emailSubject: string;
+    let emailHtml: string;
 
-    console.log('telNormalizado', telNormalizado, 'estaEnBaseConfianza', estaEnBaseConfianza, 'baseConfianza.length', baseConfianza.length )
-
-    let ruta: 1 | 2 | 3;
-    let emailSubject = "";
-    let emailHtml = "";
-
-    if (estaEnBaseConfianza) {
-      // ----------------------------------------------------
-      // RUTA 1: Pertenece a la base de confianza
-      // ----------------------------------------------------
-      ruta = 1;
+    if (enBaseConfianza) {
+      // RUTA 1: pertenece a la base de confianza
       emailSubject = "Confirmación de correo - Cheyn Verde";
       emailHtml = buildEmailHtml({
         subtituloHeader: "¡Bienvenido a la familia Cheyn Verde!",
@@ -167,16 +223,12 @@ serve(async (req) => {
           "Debes hacer clic en el enlace de confirmación para ingresar al sistema y conocer la oferta de Cheyn Verde.",
           "Bienvenido a la familia Cheyn Verde.",
         ],
-        confirmationUrl: confirmation_url || "",
-        textoBoton: "Confirmar correo electrónico",
+        confirmationUrl: urlLogin(confirmation_url),
+        textoBoton: "Ingresar a Cheyn Verde",
         mostrarCajaSoporte: true,
       });
-
-    } else if (token_referido && token_referido.trim() !== "") {
-      // ----------------------------------------------------
-      // RUTA 2: NO está en base de confianza, PERO tiene código de referido
-      // ----------------------------------------------------
-      ruta = 2;
+    } else if (tieneReferido) {
+      // RUTA 2: no está en base de confianza, pero tiene código de referido
       emailSubject = "Registro recibido - Cheyn Verde";
       emailHtml = buildEmailHtml({
         subtituloHeader: "Tu registro está en revisión",
@@ -188,12 +240,8 @@ serve(async (req) => {
         ],
         mostrarCajaSoporte: false,
       });
-
     } else {
-      // ----------------------------------------------------
-      // RUTA 3: NO está en base de confianza y NO tiene código de referido
-      // ----------------------------------------------------
-      ruta = 3;
+      // RUTA 3: no está en base de confianza y no tiene código de referido
       emailSubject = "Registro recibido - Cheyn Verde";
       emailHtml = buildEmailHtml({
         subtituloHeader: "Tu registro está en revisión",
@@ -206,20 +254,22 @@ serve(async (req) => {
       });
     }
 
-    // Envío único del correo vía Gmail SMTP
-    await transporter.sendMail({
-      from: `"Cheyn Verde" <${Deno.env.get("GMAIL_USER")}>`,
-      to: correo,
-      subject: emailSubject,
-      html: emailHtml,
-    });
+    try {
+      await transporter.sendMail({
+        from: `"Cheyn Verde" <${Deno.env.get("GMAIL_USER")}>`,
+        to: perfil.correo,
+        subject: emailSubject,
+        html: emailHtml,
+      });
+    } catch (errEnvio) {
+      // Si el SMTP falla se quita la marca para permitir un reintento.
+      await supabase.from("perfiles").update({ datos_adicionales: datos }).eq("id", perfil.id);
+      throw errEnvio;
+    }
 
-    return new Response(
-      JSON.stringify({ success: true, ruta, mensaje: `Correo de Ruta ${ruta} enviado con éxito.` }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-    );
-
-  } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 });
+    return json(RESPUESTA_GENERICA);
+  } catch (err) {
+    console.error("send-registration-email:", err);
+    return json({ error: "No se pudo procesar la notificación de registro." }, 500);
   }
 });

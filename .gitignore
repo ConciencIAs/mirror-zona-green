@@ -45,6 +45,11 @@ Thumbs.db
 
 .github/workflows/mirror.yml
 
+# Pruebas contra Supabase local (se genera con supabase/pruebas/generar-environment-local.mjs)
+/src/environments/environment.local.ts
+# Sesiones guardadas por Playwright (contienen tokens)
+.auth-state.json
+
 # Design source assets / working notes (not part of the app)
 /Mickups VLado/
 /pendientes/
