@@ -1,17 +1,30 @@
 # Migraciones pendientes (restrictivas)
 
-Estas migraciones **cierran permisos**. Si se aplican antes de desplegar el
-frontend compatible, rompen el login o el marketplace en producción.
+Estas migraciones **cierran permisos o imponen reglas**. Si se aplican antes de
+tiempo pueden romper el registro, el login o el marketplace en producción.
 
-Por eso no están en `supabase/migrations/`: así `supabase db push` no las
-aplica por accidente.
+Por eso no están en `supabase/migrations/`: así nadie las aplica por accidente
+(producción no tiene historial de migraciones; no usar `supabase db push`).
+Cuando una se aplica, se mueve a `supabase/migrations/` en el siguiente PR.
 
-Orden obligatorio:
+## Pendiente ahora
 
-1. Aplicar `supabase/migrations/20261015120000_fase0_existe_correo_y_usuarios_publicos.sql` (aditiva, segura).
-2. Desplegar el frontend de este PR y comprobar en producción que login, registro y marketplace funcionan.
-3. Mover a `supabase/migrations/` y aplicar, una por una, verificando después de cada una:
-   - `20261015120100_fase0_cerrar_usuarios_publicos.sql` → probar login y registro.
-   - `20261015120200_fase0_ocultar_costo_productos.sql` → probar marketplace, carrito, checkout y el editor de productos del admin.
+### `20261016130200_fase2c_telefono_unico.sql` (Fase 2c: un celular por persona)
+Aplicar solo después de:
+1. `supabase/migrations/20261016130000_fase2c_telefono_normalizado.sql` (aditiva).
+2. `supabase/migrations/20261016130100_fase2c_limpiar_telefonos_repetidos.sql` (limpieza).
+3. Desplegar el frontend de la Fase 2c.
+
+Si todavía hubiera un celular repetido, la migración falla sin cambiar nada:
+volver a correr la limpieza (paso 2) y repetir.
+
+Después de aplicarla, probar: registro con un celular nuevo (entra), registro
+con un celular ya usado (mensaje "Este celular ya está registrado") y cambio de
+celular en Mi perfil.
+
+## Ya aplicadas (historial)
+- `20261015120100_fase0_cerrar_usuarios_publicos.sql` y
+  `20261015120200_fase0_ocultar_costo_productos.sql`: aplicadas el 15 de octubre
+  de 2026, ahora en `supabase/migrations/`.
 
 Cada archivo trae su rollback comentado al final.

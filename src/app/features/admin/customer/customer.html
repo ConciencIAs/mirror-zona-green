@@ -82,6 +82,14 @@
             <div>
               <div class="text-xs text-slate-400 dark:text-slate-400">Teléfono</div>
               <div class="font-mono text-slate-700 dark:text-slate-200">{{ profile.telefono ?? '—' }}</div>
+              @if (adminUsersService.alertaCelular(profile); as alerta) {
+                <span class="ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                  [class]="alerta === 'repetido' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-900'"
+                  [pTooltip]="alerta === 'repetido' ? 'Otro perfil tiene este mismo celular' : alerta === 'invalido' ? 'No es un celular válido (colombiano de 10 dígitos o extranjero con +)' : 'Sin celular registrado'"
+                  tooltipPosition="top">
+                  {{ alerta === 'repetido' ? 'Repetido' : alerta === 'invalido' ? 'Inválido' : 'Sin celular' }}
+                </span>
+              }
             </div>
             <div>
               <div class="text-xs text-slate-400 dark:text-slate-400">Referido por</div>
@@ -234,6 +242,14 @@
                 <span class="font-mono text-sm text-slate-700 dark:text-slate-200">
                   {{ profile.telefono ?? '—' }}
                 </span>
+                @if (adminUsersService.alertaCelular(profile); as alerta) {
+                  <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                    [class]="alerta === 'repetido' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-900'"
+                    [pTooltip]="alerta === 'repetido' ? 'Otro perfil tiene este mismo celular' : alerta === 'invalido' ? 'No es un celular válido (colombiano de 10 dígitos o extranjero con +)' : 'Sin celular registrado'"
+                    tooltipPosition="top">
+                    {{ alerta === 'repetido' ? 'Repetido' : alerta === 'invalido' ? 'Inválido' : 'Sin celular' }}
+                  </span>
+                }
 
                 @if (profile.telefono) {
                   <button

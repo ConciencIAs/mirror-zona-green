@@ -4,6 +4,7 @@
 // un bucle /home ↔ /seleccion). Solo contra el Supabase LOCAL.
 // Uso: node supabase/pruebas/e2e-bucle-roles.mjs [puerto=4202]
 import { execSync } from 'node:child_process';
+import { celularUnico } from './_comun.mjs';
 import { chromium } from 'playwright';
 
 const status = JSON.parse(execSync('npx supabase status -o json', { encoding: 'utf8' }).match(/\{[\s\S]*\}/)[0]);
@@ -28,7 +29,7 @@ async function crear(correo, rol, estado) {
   const r = await fetch(`${API}/auth/v1/signup`, {
     method: 'POST',
     headers: { apikey: ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: correo, password, data: { full_name: 'Usuario Roles', telefono: '3004440000', documento: '1', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá' } }),
+    body: JSON.stringify({ email: correo, password, data: { full_name: 'Usuario Roles', telefono: celularUnico(), documento: '1', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá' } }),
   });
   const id = (await r.json()).id;
   sql(`update auth.users set email_confirmed_at = now() where id = '${id}';

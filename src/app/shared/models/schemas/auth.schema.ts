@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { MENSAJE_CELULAR_INVALIDO, normalizarCelular } from '@src/app/shared/utils/telefono';
 
 export const userSchemaRegister = z.object({
   full_name: z.string().min(2, 'Nombre demasiado corto (mín. 2 caracteres)'),
@@ -6,8 +7,9 @@ export const userSchemaRegister = z.object({
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
   confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
   telefono: z
-    .number()
-    .min(7, 'Teléfono inválido (ingresa de 7 a 15 dígitos sin espacios)'),
+    .string()
+    .min(1, 'El celular es obligatorio')
+    .refine((v) => normalizarCelular(v) !== null, MENSAJE_CELULAR_INVALIDO),
   documento: z.number().min(4, 'Documento de identidad no válido (mín. 4 caracteres)'),
   fecha_nacimiento: z.date(),
   tipo_documento: z.string().default('CC'),

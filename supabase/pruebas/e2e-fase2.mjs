@@ -3,6 +3,7 @@
 // migración 20261016120000_fase2_menu_metricas.sql aplicada en la base local.
 // Uso: node supabase/pruebas/e2e-fase2.mjs [carpeta-capturas]
 import { execSync } from 'node:child_process';
+import { celularUnico } from './_comun.mjs';
 import { mkdirSync } from 'node:fs';
 import { chromium, devices } from 'playwright';
 
@@ -32,7 +33,7 @@ async function registrar(correo) {
   const r = await fetch(`${API}/auth/v1/signup?redirect_to=${encodeURIComponent(APP + '/auth/login?confirmado=1')}`, {
     method: 'POST',
     headers: { apikey: ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: correo, password, data: { full_name: 'Usuario Fase 2', telefono: '3006660000', documento: '123', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá', acepta_terminos: true, acepta_politica_privacidad: true } }),
+    body: JSON.stringify({ email: correo, password, data: { full_name: 'Usuario Fase 2', telefono: celularUnico(), documento: '123', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá', acepta_terminos: true, acepta_politica_privacidad: true } }),
   });
   creados.push(correo);
   return (await r.json()).id;

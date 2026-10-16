@@ -53,6 +53,11 @@ npx ng serve --configuration local --port 4202
 | `e2e-bucle-roles.mjs [puerto]` | usuario activo que entra desde un navegador sin sesión (antes se congelaba la pestaña) y recarga de páginas protegidas con sesión abierta |
 | `e2e-fase2.mjs [carpeta]` | ver/ocultar contraseña, errores de validación, primer correo → login, reenviar confirmación, cambiar contraseña en Mi perfil, orden de usuarios, métricas sin canceladas, enlace de métricas en el menú. Requiere la migración `20261016120000_fase2_menu_metricas.sql` aplicada en la base local |
 
+| `e2e-fase2c.mjs [carpeta]` | un celular por persona: registro con celular inválido, repetido (en otro formato), extranjero y con guiones; Mi perfil (aviso, cambio a un celular ajeno o libre); fecha de nacimiento sin desfase (Bogotá y Tokio); etiquetas del panel admin. Requiere las tres migraciones de la 2c aplicadas en la base local |
+
+Desde la Fase 2c la base no admite dos perfiles con el mismo celular: las
+pruebas usan `celularUnico()` de `_comun.mjs` para cada cuenta nueva.
+
 En la base local, la plantilla `supabase/templates/confirmacion.html` se usa como correo "Confirm signup" (ver `config.toml`); hay que reiniciar con `npx supabase stop && npx supabase start` después de cambiarla.
 
 Las cuentas que crean usan el dominio `@cheyn.test` y solo existen en la base local.

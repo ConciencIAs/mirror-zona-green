@@ -29,6 +29,13 @@ import {
 } from '@src/app/shared/components/form/form-select/form-select';
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 import { CambiarContrasena } from './cambiar-contrasena/cambiar-contrasena';
+import { fechaAISO, fechaDesdeISO } from '@src/app/shared/utils/fechas';
+import {
+  MENSAJE_CELULAR_EN_USO,
+  MENSAJE_CELULAR_INVALIDO,
+  esErrorCelularRepetido,
+  normalizarCelular,
+} from '@src/app/shared/utils/telefono';
 
 @Component({
   selector: 'app-account',
@@ -71,6 +78,23 @@ export class Account implements OnInit {
       month: 'long',
       day: 'numeric',
     });
+  });
+
+  /**
+   * Aviso para completar el celular (Fase 2c): falta, no es un celular válido,
+   * o se retiró porque coincidía con el de otra cuenta.
+   */
+  readonly avisoCelular = computed(() => {
+    const perfil = this.userStore.perfil();
+    const retirado = (perfil.datos_adicionales as Record<string, unknown> | null)?.['telefono_retirado_motivo'];
+    if (!perfil.telefono && retirado) {
+      return 'Tu celular coincidía con el de otra cuenta y lo retiramos. Escribe tu celular para seguir recibiendo avisos.';
+    }
+    if (!perfil.telefono) return 'Aún no tienes un celular registrado. Agrégalo para que podamos contactarte.';
+    if (!normalizarCelular(perfil.telefono)) {
+      return 'Tu celular no parece válido. Revísalo: colombiano de 10 dígitos o extranjero con indicativo (+).';
+    }
+    return null;
   });
 
   /** Código de invitación / referido propio del usuario */
@@ -130,13 +154,8 @@ export class Account implements OnInit {
   ngOnInit(): void {
     const perfil = this.userStore.perfil();
 
-    let fechaNacimiento: Date;
-    if (perfil.fecha_nacimiento) {
-      const parsed = new Date(perfil.fecha_nacimiento);
-      fechaNacimiento = isNaN(parsed.getTime()) ? new Date() : parsed;
-    } else {
-      fechaNacimiento = new Date();
-    }
+    // Fecha de calendario en hora local (antes se mostraba un día menos).
+    const fechaNacimiento = fechaDesdeISO(perfil.fecha_nacimiento) ?? new Date();
 
     this.formModel.set({
       full_name: perfil.full_name ?? '',
@@ -178,18 +197,36 @@ export class Account implements OnInit {
       const data = this.formModel();
       const userId = this.userStore.perfil().id;
 
+      // Un celular por persona (Fase 2c): si cambió, no puede ser de otra cuenta.
+      const celular = normalizarCelular(data.telefono);
+      if (!celular) {
+        this.toastService.error(MENSAJE_CELULAR_INVALIDO);
+        return;
+      }
+      if (celular !== normalizarCelular(this.userStore.perfil().telefono)) {
+        const estado = await this.dbService.estadoCelular(celular, userId);
+        if (estado !== 'disponible') {
+          this.toastService.error(estado === 'en_uso' ? MENSAJE_CELULAR_EN_USO : MENSAJE_CELULAR_INVALIDO);
+          return;
+        }
+      }
+
       const payload: Record<string, unknown> = {
         full_name: data.full_name.trim(),
-        telefono: data.telefono.trim(),
+        telefono: celular,
         documento: data.documento.trim(),
         tipo_documento: data.tipo_documento,
-        fecha_nacimiento: data.fecha_nacimiento.toISOString().split('T')[0],
+        fecha_nacimiento: fechaAISO(data.fecha_nacimiento),
         ubicacion: data.ubicacion.trim(),
         updated_at: new Date().toISOString(),
       };
 
       const { error } = await this.dbService.update(TableName.PERFILES, payload, { id: userId });
 
+      if (esErrorCelularRepetido(error)) {
+        this.toastService.error(MENSAJE_CELULAR_EN_USO);
+        return;
+      }
       if (error) {
         this.toastService.error(
           'Error al actualizar el perfil: ' + (error as { message: string }).message,
@@ -197,12 +234,13 @@ export class Account implements OnInit {
         return;
       }
 
+      this.formModel.update((m) => ({ ...m, telefono: celular }));
       this.userStore.updatePerfil({
         full_name: data.full_name.trim(),
-        telefono: data.telefono.trim(),
+        telefono: celular,
         documento: data.documento.trim(),
         tipo_documento: data.tipo_documento as TipoDoc,
-        fecha_nacimiento: data.fecha_nacimiento.toISOString().split('T')[0],
+        fecha_nacimiento: fechaAISO(data.fecha_nacimiento),
         ubicacion: data.ubicacion.trim(),
         updated_at: new Date().toISOString(),
       });

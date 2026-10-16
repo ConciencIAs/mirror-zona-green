@@ -25,15 +25,16 @@
     <app-form-input [control]="registerForm.confirmPassword()" type="password" label="Confirmar contraseña"
       placeholder="Repite tu contraseña" />
 
-    <!-- GRID -->
-    <div class="grid grid-cols-2 gap-4">
-      <!-- TELEFONO -->
-      <app-form-input [control]="registerForm.telefono()" type="number" label="Teléfono" placeholder="3001234567" />
+    <!-- CELULAR (colombiano o extranjero con indicativo) -->
+    <app-form-input [control]="registerForm.telefono()" label="Celular" placeholder="3001234567 o +54 9 11 1234 5678"
+      autocomplete="tel" />
+    <p class="-mt-3 mb-4 text-xs text-slate-500">
+      Un celular por persona. Si es de otro país, escríbelo con su indicativo (+).
+    </p>
 
-      <!-- TIPO DOCUMENTO -->
-      <app-form-select [control]="registerForm.tipo_documento()" label="Tipo documento" [options]="documentTypeOptions"
-        placeholder="Selecciona" />
-    </div>
+    <!-- TIPO DOCUMENTO -->
+    <app-form-select [control]="registerForm.tipo_documento()" label="Tipo documento" [options]="documentTypeOptions"
+      placeholder="Selecciona" />
 
     <!-- DOCUMENTO -->
     <app-form-input [control]="registerForm.documento()" type="number" label="Documento"

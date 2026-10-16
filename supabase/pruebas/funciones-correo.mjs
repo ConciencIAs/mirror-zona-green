@@ -5,6 +5,7 @@
 //
 // Uso: node supabase/pruebas/funciones-correo.mjs
 import { execSync } from 'node:child_process';
+import { celularUnico } from './_comun.mjs';
 
 const status = JSON.parse(execSync('npx supabase status -o json', { encoding: 'utf8' }).match(/\{[\s\S]*\}/)[0]);
 const API = status.API_URL;
@@ -59,7 +60,10 @@ const creados = [];
 // ── send-registration-email ────────────────────────────────────────────────
 console.log('\n== send-registration-email ==');
 const c1 = `prueba.reg1.${t}@cheyn.test`;
-const id1 = await registrar(c1, '3009990001'); // está en base_confianza (datos sintéticos)
+// Celulares nuevos de la base de confianza (uno por cuenta: la base no permite repetidos).
+const confianza1 = celularUnico(), confianza2 = celularUnico();
+sql(`insert into public.base_confianza (telefono) values ('${confianza1}'), ('${confianza2}');`);
+const id1 = await registrar(c1, confianza1); // está en base_confianza
 creados.push(c1);
 await espera(1500);
 const inicial = await buzon(c1);
@@ -88,7 +92,7 @@ paso('el enlace de confirmación lleva al login', destino.startsWith('http://loc
 
 // Ruta 1 con correo ya confirmado (confirmaciones desactivadas): bienvenida con enlace al login.
 const c1b = `prueba.reg1b.${t}@cheyn.test`;
-const id1b = await registrar(c1b, '3009990001');
+const id1b = await registrar(c1b, confianza2);
 creados.push(c1b);
 sql(`update auth.users set email_confirmed_at = now() where id = '${id1b}';`);
 await call('/functions/v1/send-registration-email', {
@@ -108,22 +112,22 @@ await espera(1500);
 paso('segunda llamada no reenvía el correo', r1b.status === 200 && (await buzon(c1b)).length === msgs1.length, `${(await buzon(c1b)).length} correos`);
 
 const ajeno = `persona.ajena.${t}@cheyn.test`;
-const r2 = await call('/functions/v1/send-registration-email', { body: { correo: ajeno, telefono: '3009990001' } });
+const r2 = await call('/functions/v1/send-registration-email', { body: { correo: ajeno, telefono: confianza1 } });
 await espera(1000);
 paso('correo sin perfil: no se envía nada y la respuesta es la misma', r2.status === 200 && (await buzon(ajeno)).length === 0, JSON.stringify(r2.body));
 
 const c3 = `prueba.reg3.${t}@cheyn.test`;
-const id3 = await registrar(c3, '3005550000');
+const id3 = await registrar(c3, celularUnico());
 creados.push(c3);
 sql(`update public.perfiles set created_at = now() - interval '2 hours' where id = '${id3}';`);
-await call('/functions/v1/send-registration-email', { body: { correo: c3, telefono: '3005550000', user_id: id3 } });
+await call('/functions/v1/send-registration-email', { body: { correo: c3, telefono: '1', user_id: id3 } });
 await espera(1000);
 paso('perfil de hace más de 30 min: no se envía', !(await buzon(c3)).some((m) => m.Subject.includes('Registro recibido')));
 
 const c4 = `prueba.reg4.${t}@cheyn.test`;
-const id4 = await registrar(c4, '3005550001');
+const id4 = await registrar(c4, celularUnico());
 creados.push(c4);
-await call('/functions/v1/send-registration-email', { body: { correo: c4, telefono: '3009990001', token_referido: 'CODIGO-FALSO', user_id: id4 } });
+await call('/functions/v1/send-registration-email', { body: { correo: c4, telefono: confianza1, token_referido: 'CODIGO-FALSO', user_id: id4 } });
 await espera(1500);
 const m4 = (await buzon(c4)).find((m) => m.Subject.includes('Registro recibido'));
 paso('ruta 3 aunque el cliente dijera teléfono de confianza y código', !!m4 && !(await cuerpo(m4.ID)).includes('código de invitado'), m4?.Subject);
@@ -138,7 +142,7 @@ const comoCliente = await call('/functions/v1/send-account-activation', { token:
 paso('con sesión de cliente: rechazado', comoCliente.status === 403, `HTTP ${comoCliente.status}`);
 
 const admin = `prueba.admin.${t}@cheyn.test`;
-await registrar(admin, '3005550002');
+await registrar(admin, celularUnico());
 creados.push(admin);
 sql(`update public.perfiles set rol = 'admin', status = 'activo' where correo = '${admin}';`);
 const tokAdmin = await confirmarYEntrar(admin);

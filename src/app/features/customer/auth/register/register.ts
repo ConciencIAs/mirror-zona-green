@@ -20,6 +20,13 @@ import { FormDatepickerComponent } from '@src/app/shared/components/form/form-da
 
 import { userSchemaRegister } from '@src/app/shared/models/schemas/auth.schema';
 import { environment } from '@src/environments/environment';
+import {
+  MENSAJE_CELULAR_EN_USO,
+  MENSAJE_CELULAR_INVALIDO,
+  esErrorCelularRepetido,
+  normalizarCelular,
+} from '@src/app/shared/utils/telefono';
+import { fechaAISO } from '@src/app/shared/utils/fechas';
 
 type RegistrationFormModel = CustomerData & {
   password: string;
@@ -67,7 +74,7 @@ export class Register {
     correo: '',
     password: '',
     confirmPassword: '',
-    telefono: 0,
+    telefono: '',
     documento: 0,
     fecha_nacimiento: new Date(),
     tipo_documento: 'CC',
@@ -207,6 +214,15 @@ export class Register {
           'Ya existe una cuenta con este correo. Se envió un enlace mágico para iniciar sesión.',
         );
       } else {
+        // Un celular por persona (Fase 2c): se avisa antes de crear la cuenta.
+        // La base también lo impide (índice único), por si se salta este paso.
+        const celular = normalizarCelular(currentData.telefono);
+        const estadoCelular = celular ? await this.dbService.estadoCelular(celular) : 'invalido';
+        if (estadoCelular !== 'disponible') {
+          this.generalError.set(estadoCelular === 'en_uso' ? MENSAJE_CELULAR_EN_USO : MENSAJE_CELULAR_INVALIDO);
+          return;
+        }
+
         // El enlace del primer correo lleva al login (caso 6): la persona entra
         // con el usuario y la contraseña que acaba de crear.
         const confirmationUrl = `${environment.urlHost}/auth/login?confirmado=1`;
@@ -216,10 +232,10 @@ export class Register {
           confirmationUrl,
           {
             full_name: currentData.full_name,
-            telefono: currentData.telefono,
+            telefono: celular!,
             documento: currentData.documento,
             tipo_documento: currentData.tipo_documento,
-            fecha_nacimiento: currentData.fecha_nacimiento.toISOString().slice(0, 10),
+            fecha_nacimiento: fechaAISO(currentData.fecha_nacimiento),
             ubicacion: currentData.ubicacion,
             acepta_terminos: currentData.acepta_terminos,
             acepta_politica_privacidad: currentData.acepta_politica_privacidad,
@@ -227,6 +243,10 @@ export class Register {
           },
         );
 
+        if (esErrorCelularRepetido(error)) {
+          this.generalError.set(MENSAJE_CELULAR_EN_USO);
+          return;
+        }
         if (error) throw error;
 
         // La función decide la ruta del correo con los datos guardados en la
@@ -234,7 +254,7 @@ export class Register {
         const { error: emailError } = await this.edgeFunctionsService.sendRegistrationEmail({
           nombre: currentData.full_name,
           correo: currentData.correo.trim().toLowerCase(),
-          telefono: String(currentData.telefono),
+          telefono: celular!,
           token_referido: codigoReferido || null,
           confirmation_url: data.session ? null : environment.urlHost,
           user_id: data.user?.id ?? null,

@@ -5,6 +5,7 @@ import { EdgeFunctionsService } from '@src/app/core/services/edge-functions.serv
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Perfil, EstadoUsuario, RolUsuario } from '@src/app/shared/models/interfaces/db/db';
 import { environment } from '@src/environments/environment';
+import { normalizarCelular } from '@src/app/shared/utils/telefono';
 
 export type StatusFilter = 'todos' | EstadoUsuario;
 
@@ -62,6 +63,24 @@ export class AdminUsersService {
     }
     return map;
   });
+
+  /** Cuántos perfiles comparten cada celular (normalizado). */
+  private readonly perfilesPorCelular = computed(() => {
+    const conteo = new Map<string, number>();
+    for (const p of this.perfiles()) {
+      const celular = p.telefono_normalizado ?? normalizarCelular(p.telefono);
+      if (celular) conteo.set(celular, (conteo.get(celular) ?? 0) + 1);
+    }
+    return conteo;
+  });
+
+  /** Alerta del celular para el panel (Fase 2c), o null si está bien. */
+  alertaCelular(perfil: Perfil): 'repetido' | 'invalido' | 'falta' | null {
+    if (!perfil.telefono) return 'falta';
+    const celular = perfil.telefono_normalizado ?? normalizarCelular(perfil.telefono);
+    if (!celular) return 'invalido';
+    return (this.perfilesPorCelular().get(celular) ?? 0) > 1 ? 'repetido' : null;
+  }
 
   getReferente(codigoReferido: string | null | undefined): Perfil | null {
     if (!codigoReferido) return null;
