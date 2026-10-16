@@ -27,8 +27,8 @@ import { ProductReviewModalComponent } from '@src/app/shared/components/product-
   changeDetection: ChangeDetectionStrategy.Eager,
   // CSS literal (no utilidades de Tailwind): el Tailwind del CDN puede pisarlas.
   styles: `
+    /* Solo el margen: p-timeline ya es flex (fila en horizontal, columna en vertical). */
     :host ::ng-deep p-timeline {
-      display: block;
       margin-top: 1rem;
     }
     /* En vertical la columna de fechas tiene ancho fijo para que la línea no se corra. */
