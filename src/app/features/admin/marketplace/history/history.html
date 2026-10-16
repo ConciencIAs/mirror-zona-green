@@ -28,7 +28,7 @@
         <div>
           <p class="text-sm text-[#55644d]">Orden: <span class="font-semibold text-[#1d341c]">{{ order.uid || order.id.slice(0, 10) }}</span>
           </p>
-          <p class="text-sm text-[#55644d]">Usuario: <span class="font-semibold text-[#1d341c]">{{ order.usuario_id
+          <p class="text-sm text-[#55644d]">Cliente: <span class="font-semibold text-[#1d341c]">{{ order.nombre_cliente || order.correo_cliente || order.usuario_id
               }}</span></p>
         </div>
         <span
@@ -42,7 +42,7 @@
           <p><strong>Fecha creación:</strong> {{ order.created_at | fechaFormato }}</p>
         </div>
         <div class="rounded-3xl border border-[#e4ebdd] bg-[#fcfdf7] p-4">
-          <p class="font-semibold text-[#1f6c2f]">Comentario agente</p>
+          <p class="font-semibold text-[#1f6c2f]">Comentario del cliente</p>
           <p>{{ order.comentarios_usuario || 'Sin comentario' }}</p>
         </div>
       </div>

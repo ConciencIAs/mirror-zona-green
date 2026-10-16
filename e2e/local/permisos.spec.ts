@@ -1,6 +1,8 @@
 // Prueba 4 — Matriz de permisos: cada tipo de usuario contra cada tabla y
 // función de la base, por la misma API que usa la app. Si un cambio futuro abre
 // un permiso por error (como los que encontró la auditoría), esta prueba falla.
+// "agente" es el rol que la app muestra como "Colaborador": los módulos del
+// admin menos Métricas de ventas y Referidos; solo gestiona clientes.
 import {
   ANON,
   API,
@@ -98,12 +100,12 @@ test.describe('Matriz de permisos', () => {
   test('costo de productos por la API: nadie (ni el admin)', () =>
     matriz(NADIE, async (a) => (await api(a, '/rest/v1/productos?select=costo&limit=1')).status === 200));
 
-  test('costo de productos por admin_costos_productos: solo admin', () =>
-    matriz(SOLO_ADMIN, async (a) => (await api(a, '/rest/v1/rpc/admin_costos_productos', { method: 'POST', body: {} })).status === 200));
+  test('costo de productos por admin_costos_productos: admin y colaborador', () =>
+    matriz(STAFF, async (a) => (await api(a, '/rest/v1/rpc/admin_costos_productos', { method: 'POST', body: {} })).status === 200));
 
-  test('cambiar el precio de un producto: solo admin', async () => {
+  test('cambiar el precio de un producto: admin y colaborador', async () => {
     try {
-      await matriz(SOLO_ADMIN, async (a) => {
+      await matriz(STAFF, async (a) => {
         // Sin pedir la fila de vuelta: el costo ya no es legible por la API (Fase 0).
         await api(a, `/rest/v1/productos?id=eq.${PRODUCTO_UNIDADES}`, { method: 'PATCH', body: { precio: 1 } });
         const cambio = Number(sql(`select precio from public.productos where id = '${PRODUCTO_UNIDADES}'`)) === 1;
@@ -181,17 +183,65 @@ test.describe('Matriz de permisos', () => {
     return matriz(SOLO_ADMIN, async (a) => filas((await api(a, `/rest/v1/referidos?select=referido_id&referido_id=eq.${ajeno.id}`)).cuerpo) === 1);
   });
 
-  test('base de confianza: solo admin', () =>
-    matriz(SOLO_ADMIN, async (a) => filas((await api(a, '/rest/v1/base_confianza?select=telefono&limit=1')).cuerpo) === 1));
+  test('base de confianza: admin y colaborador', () =>
+    matriz(STAFF, async (a) => filas((await api(a, '/rest/v1/base_confianza?select=telefono&limit=1')).cuerpo) === 1));
 
   test('roles: solo con sesión', () =>
     matriz(CON_SESION, async (a) => filas((await api(a, '/rest/v1/roles?select=nombre')).cuerpo) > 0));
 
-  test('editar el menú (page_config): solo admin', () =>
-    matriz(SOLO_ADMIN, async (a) => {
+  test('editar el menú (page_config): admin y colaborador', () =>
+    matriz(STAFF, async (a) => {
       const antes = sql(`select content::text from public.page_config where config_name = 'footer'`);
       const r = await api(a, '/rest/v1/page_config?config_name=eq.footer', { method: 'PATCH', body: { content: JSON.parse(antes) }, prefer: 'return=representation' });
       return filas(r.cuerpo) === 1;
+    }));
+
+  test('activar a un cliente pendiente: admin y colaborador', async () => {
+    const pendiente = await crearUsuario('perm-pendiente', { status: 'inactivo' });
+    await matriz(STAFF, async (a) => {
+      sql(`update public.perfiles set status = 'inactivo' where id = '${pendiente.id}';`);
+      await api(a, `/rest/v1/perfiles?id=eq.${pendiente.id}`, { method: 'PATCH', body: { status: 'activo' } });
+      return sql(`select status from public.perfiles where id = '${pendiente.id}'`) === 'activo';
+    });
+  });
+
+  test('cambiar el rol de un cliente: solo admin', () =>
+    matriz(SOLO_ADMIN, async (a) => {
+      sql(`update public.perfiles set rol = 'customer' where id = '${ajeno.id}';`);
+      await api(a, `/rest/v1/perfiles?id=eq.${ajeno.id}`, { method: 'PATCH', body: { rol: 'agente' } });
+      const cambio = sql(`select rol from public.perfiles where id = '${ajeno.id}'`) === 'agente';
+      sql(`update public.perfiles set rol = 'customer' where id = '${ajeno.id}';`);
+      return cambio;
+    }));
+
+  test('bloquear a un administrador: solo otro admin', async () => {
+    const otroAdmin = await crearUsuario('perm-otro-admin', { rol: 'admin', status: 'activo' });
+    await matriz(SOLO_ADMIN, async (a) => {
+      await api(a, `/rest/v1/perfiles?id=eq.${otroAdmin.id}`, { method: 'PATCH', body: { status: 'bloqueado' } });
+      const cambio = sql(`select status from public.perfiles where id = '${otroAdmin.id}'`) === 'bloqueado';
+      sql(`update public.perfiles set status = 'activo' where id = '${otroAdmin.id}';`);
+      return cambio;
+    });
+  });
+
+  test('editar páginas de contenido (dynamic_components): admin y colaborador', () => {
+    const id = sql(
+      `insert into public.dynamic_components (name, slug, html_content)
+       values ('e2e permisos', 'e2e-permisos-${Date.now()}', '<p>e2e</p>') returning id`,
+    ).split('\n')[0];
+    return matriz(STAFF, async (a) => {
+      const r = await api(a, `/rest/v1/dynamic_components?id=eq.${id}`, { method: 'PATCH', body: { name: 'e2e permisos' }, prefer: 'return=representation' });
+      return filas(r.cuerpo) === 1;
+    }).finally(() => sql(`delete from public.dynamic_components where id = '${id}';`));
+  });
+
+  test('crear etiquetas: admin y colaborador', () =>
+    matriz(STAFF, async (a) => {
+      const nombre = `e2e-tag-${a.perfil}-${Date.now()}`;
+      await api(a, '/rest/v1/tags', { method: 'POST', body: { nombre, orden: 99 } });
+      const creada = sql(`select count(*) from public.tags where nombre = '${nombre}'`) === '1';
+      sql(`delete from public.tags where nombre = '${nombre}';`);
+      return creada;
     }));
 
   test('saber si un correo existe (existe_correo): todos, sin datos personales', () =>

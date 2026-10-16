@@ -1,4 +1,5 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -41,6 +42,13 @@ import { SelectOption } from '@src/app/shared/components/form/form-select/form-s
 })
 export class Customer {
   readonly adminUsersService = inject(AdminUsersService);
+  private readonly userStore = inject(UserStore);
+
+  /** El administrador gestiona a todos; el colaborador solo a clientes y sin cambiar roles (la base lo exige igual). */
+  protected readonly esAdmin = this.userStore.isAdmin;
+  protected puedeGestionar(profile: Perfil): boolean {
+    return this.esAdmin() || profile.rol === 'customer';
+  }
   private readonly toastService = inject(ToastService);
 
   // Alias para mantener limpia la plantilla
@@ -81,7 +89,7 @@ export class Customer {
   readonly rolOptions: SelectOption[] = [
     { label: 'Admin', value: 'admin' },
     { label: 'Customer', value: 'customer' },
-    { label: 'Agente', value: 'agente' },
+    { label: 'Colaborador', value: 'agente' },
   ];
 
   constructor() {

@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import nodemailer from "npm:nodemailer@6.9.10";
 
 // Correo "Tu registro fue autorizado". Solo lo puede pedir un administrador
-// con sesión, y solo para un perfil que ya está activo. Antes cualquiera con
+// o un colaborador (rol agente) con sesión, y solo para un perfil que ya está
+// activo. Antes cualquiera con
 // la clave pública podía enviar este correo a cualquier dirección y con
 // cualquier enlace.
 
@@ -84,8 +85,8 @@ serve(async (req) => {
       .eq("id", userData.user.id)
       .maybeSingle();
     if (errAdmin) throw errAdmin;
-    if (perfilAdmin?.rol !== "admin" || perfilAdmin?.status === "bloqueado") {
-      return json({ error: "Solo un administrador puede enviar este correo." }, 403);
+    if (!["admin", "agente"].includes(perfilAdmin?.rol ?? "") || perfilAdmin?.status === "bloqueado") {
+      return json({ error: "Solo un administrador o colaborador puede enviar este correo." }, 403);
     }
 
     // 2. El destinatario debe ser un perfil existente y ya activo.

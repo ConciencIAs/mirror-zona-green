@@ -15,6 +15,7 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Orden, SnapshotAnalitica } from '@src/app/shared/models/interfaces/db/db';
 import { nombreEstadoOrden } from '@src/app/shared/utils/estados-orden';
+import { MonedaPipe } from '@src/app/shared/pipes/';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 
@@ -61,6 +62,7 @@ export interface UsuarioResumen {
     SelectModule,
     TabsModule,
     TooltipModule,
+    MonedaPipe,
   ],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './dashboard.html',
