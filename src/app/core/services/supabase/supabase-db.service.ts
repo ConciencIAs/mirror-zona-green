@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SupabaseClientService } from './supabase-client.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
+import { EstadoCelular, normalizarCelular } from '@src/app/shared/utils/telefono';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseDbService {
@@ -47,6 +48,21 @@ export class SupabaseDbService {
       .maybeSingle();
     if (errorTabla) throw errorTabla;
     return !!fila;
+  }
+
+  /**
+   * 'invalido' | 'en_uso' | 'disponible' para un celular, sin revelar de quién
+   * es. `excluirPerfilId` permite que un usuario conserve su propio número.
+   * Si la RPC aún no existe en la base (migración 20261016130000 sin aplicar),
+   * solo se valida el formato y se deja la decisión al guardar.
+   */
+  async estadoCelular(telefono: string, excluirPerfilId?: string): Promise<EstadoCelular> {
+    const { data, error } = await this.rpc('estado_telefono', {
+      p_telefono: telefono,
+      p_excluir: excluirPerfilId ?? null,
+    });
+    if (!error && (data === 'invalido' || data === 'en_uso' || data === 'disponible')) return data;
+    return normalizarCelular(telefono) ? 'disponible' : 'invalido';
   }
 
   get tableNames() {

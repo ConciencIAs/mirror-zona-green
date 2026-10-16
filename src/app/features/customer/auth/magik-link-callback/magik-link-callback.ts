@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { Perfil } from '@src/app/shared/models/interfaces/db/db';
 import type { User } from '@supabase/supabase-js';
+import { normalizarCelular } from '@src/app/shared/utils/telefono';
+import { fechaDesdeISO } from '@src/app/shared/utils/fechas';
 
 @Component({
   selector: 'app-magik-link-callback',
@@ -76,7 +78,7 @@ export class MagikLinkCallback implements OnInit {
     const { error } = await this.dbService
       .from(this.dbService.tableNames.PERFILES)
       .update({
-        telefono: datosPendientes.telefono,
+        telefono: normalizarCelular(datosPendientes.telefono) ?? String(datosPendientes.telefono),
         documento: datosPendientes.documento,
         tipo_documento: datosPendientes.tipo_documento,
         full_name: datosPendientes.full_name,
@@ -112,18 +114,18 @@ export class MagikLinkCallback implements OnInit {
 
   private getRegistrationDataFromMetadata(user: User): CustomerData | null {
     const metadata = user.user_metadata;
-    const telefono = Number(metadata['telefono']);
+    const telefono = normalizarCelular(String(metadata['telefono'] ?? ''));
     const documento = Number(metadata['documento']);
-    const fechaNacimiento = new Date(String(metadata['fecha_nacimiento'] ?? ''));
+    const fechaNacimiento = fechaDesdeISO(String(metadata['fecha_nacimiento'] ?? ''));
     const tipoDocumento = metadata['tipo_documento'];
     const tiposDocumento = ['CC', 'CE', 'NIT', 'Pasaporte'];
 
     if (
       typeof metadata['full_name'] !== 'string' ||
       !metadata['full_name'] ||
-      !Number.isFinite(telefono) ||
+      !telefono ||
       !Number.isFinite(documento) ||
-      Number.isNaN(fechaNacimiento.getTime()) ||
+      !fechaNacimiento ||
       typeof tipoDocumento !== 'string' ||
       !tiposDocumento.includes(tipoDocumento) ||
       typeof metadata['ubicacion'] !== 'string' ||

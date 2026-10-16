@@ -62,6 +62,8 @@ export interface Perfil {
     full_name: string | null;
     rol: RolUsuario;
     telefono: string | null;
+    /** Calculado en la base (Fase 2c): identidad del celular, null si no es válido. */
+    telefono_normalizado?: string | null;
     tipo_documento: TipoDoc | null;
     ubicacion: string | null;
     updated_at: string | null;

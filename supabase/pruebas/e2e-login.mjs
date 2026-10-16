@@ -3,6 +3,7 @@
 //           npx ng serve --configuration local --port 4202
 // Uso: node supabase/pruebas/e2e-login.mjs [carpeta-capturas]
 import { execSync } from 'node:child_process';
+import { celularUnico } from './_comun.mjs';
 import { mkdirSync } from 'node:fs';
 import { chromium, devices } from 'playwright';
 
@@ -28,7 +29,7 @@ async function registrar(correo) {
   const r = await fetch(`${API}/auth/v1/signup`, {
     method: 'POST',
     headers: { apikey: ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: correo, password, data: { full_name: 'Usuario E2E', telefono: '3007770000', documento: '123', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá', acepta_terminos: true, acepta_politica_privacidad: true } }),
+    body: JSON.stringify({ email: correo, password, data: { full_name: 'Usuario E2E', telefono: celularUnico(), documento: '123', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá', acepta_terminos: true, acepta_politica_privacidad: true } }),
   });
   return (await r.json()).id;
 }

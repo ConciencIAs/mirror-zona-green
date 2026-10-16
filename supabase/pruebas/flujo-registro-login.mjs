@@ -4,6 +4,7 @@
 //
 // Uso: node supabase/pruebas/flujo-registro-login.mjs [correo] [telefono]
 import { execSync } from 'node:child_process';
+import { celularUnico } from './_comun.mjs';
 
 const status = JSON.parse(execSync('npx supabase status -o json', { encoding: 'utf8' }).match(/\{[\s\S]*\}/)[0]);
 const API = status.API_URL;
@@ -14,7 +15,7 @@ if (!API.startsWith('http://127.0.0.1') && !API.startsWith('http://localhost')) 
 }
 
 const correo = (process.argv[2] || `prueba.${Date.now()}@cheyn.test`).toLowerCase();
-const telefono = process.argv[3] || '3001112233';
+const telefono = process.argv[3] || celularUnico();
 const password = 'Prueba-12345';
 const h = { apikey: ANON, 'Content-Type': 'application/json' };
 const paso = (n, ok, detalle = '') => console.log(`${ok ? 'OK ' : 'FALLA'}  ${n}${detalle ? ' — ' + detalle : ''}`);

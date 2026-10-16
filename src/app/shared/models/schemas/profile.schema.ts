@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { MENSAJE_CELULAR_INVALIDO, normalizarCelular } from '@src/app/shared/utils/telefono';
 
 export const profileUpdateSchema = z.object({
   full_name: z
@@ -7,7 +8,8 @@ export const profileUpdateSchema = z.object({
     .max(100, 'El nombre es demasiado largo (máx. 100 caracteres)'),
   telefono: z
     .string()
-    .regex(/^\+?\d{7,15}$/, 'Teléfono inválido (ingresa de 7 a 15 dígitos sin espacios)'),
+    .min(1, 'El celular es obligatorio')
+    .refine((v) => normalizarCelular(v) !== null, MENSAJE_CELULAR_INVALIDO),
   documento: z
     .string()
     .min(4, 'Documento de identidad no válido (mín. 4 caracteres)')

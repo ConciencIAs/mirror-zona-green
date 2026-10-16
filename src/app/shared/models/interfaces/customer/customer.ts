@@ -1,7 +1,8 @@
 export interface CustomerData {
   full_name: string;
   correo: string;
-  telefono: number;
+  /** Celular tal como lo escribió la persona; se normaliza al guardar. */
+  telefono: string;
   documento: number;
   fecha_nacimiento: Date;
   tipo_documento: 'CC' | 'CE' | 'NIT' | 'Pasaporte';

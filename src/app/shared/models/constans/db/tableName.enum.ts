@@ -11,4 +11,5 @@ export enum TableName {
   DYNAMIC_CONTENT = 'dynamic_components',
   PRODUCT_REVIEWS = 'product_reviews',
   BASE_CONFIANZA = 'base_confianza',
+  REFERIDOS = 'referidos',
 }

@@ -67,6 +67,17 @@
           <p class="text-xs text-slate-300 mt-0.5">
             Comparte tu código con nuevos usuarios para invitarlos a registrarse.
           </p>
+          @if (cuantosReferidos() !== null && codigoInvitacion()) {
+          <p class="mt-2 text-sm font-semibold text-emerald-300">
+            @if (cuantosReferidos() === 0) {
+            Todavía nadie se ha registrado con tu código.
+            } @else if (cuantosReferidos() === 1) {
+            1 persona se registró con tu código.
+            } @else {
+            {{ cuantosReferidos() }} personas se registraron con tu código.
+            }
+          </p>
+          }
         </div>
 
         @if (codigoInvitacion()) {
@@ -153,9 +164,20 @@
         }
 
         <!-- TELÉFONO -->
+        @if (avisoCelular() && editingField() !== 'telefono') {
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="status">
+          <i class="pi pi-exclamation-circle mr-1"></i>
+          {{ avisoCelular() }}
+          <button type="button" (click)="toggleEdit('telefono')" class="ml-1 font-semibold underline hover:no-underline">
+            Actualizar celular
+          </button>
+        </div>
+        }
         @if (editingField() === 'telefono') {
         <div class="rounded-2xl border-2 border-primary-300 bg-primary-50/40 p-4 space-y-1">
-          <app-form-input [control]="profileForm.telefono()" label="Teléfono" placeholder="+573001234567" />
+          <app-form-input [control]="profileForm.telefono()" label="Celular" autocomplete="tel"
+            placeholder="3001234567 o +54 9 11 1234 5678" />
+          <p class="-mt-3 text-xs text-slate-500">Un celular por persona. Si es de otro país, escríbelo con su indicativo (+).</p>
           <div class="flex justify-end">
             <button type="button" (click)="toggleEdit('telefono')"
               class="text-xs font-semibold text-primary-600 hover:text-primary-700">Listo</button>

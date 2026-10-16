@@ -5,8 +5,15 @@ import { EdgeFunctionsService } from '@src/app/core/services/edge-functions.serv
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Perfil, EstadoUsuario, RolUsuario } from '@src/app/shared/models/interfaces/db/db';
 import { environment } from '@src/environments/environment';
+import { normalizarCelular } from '@src/app/shared/utils/telefono';
 
 export type StatusFilter = 'todos' | EstadoUsuario;
+
+export interface RelacionReferido {
+  referido_id: string;
+  referente_id: string | null;
+  estado: 'resuelto' | 'no_resuelto' | 'asignado_manual';
+}
 
 function generarCodigoInvitacion(longitud = 8): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -63,9 +70,57 @@ export class AdminUsersService {
     return map;
   });
 
+  /** Cuántos perfiles comparten cada celular (normalizado). */
+  private readonly perfilesPorCelular = computed(() => {
+    const conteo = new Map<string, number>();
+    for (const p of this.perfiles()) {
+      const celular = p.telefono_normalizado ?? normalizarCelular(p.telefono);
+      if (celular) conteo.set(celular, (conteo.get(celular) ?? 0) + 1);
+    }
+    return conteo;
+  });
+
+  /** Alerta del celular para el panel (Fase 2c), o null si está bien. */
+  alertaCelular(perfil: Perfil): 'repetido' | 'invalido' | 'falta' | null {
+    if (!perfil.telefono) return 'falta';
+    const celular = perfil.telefono_normalizado ?? normalizarCelular(perfil.telefono);
+    if (!celular) return 'invalido';
+    return (this.perfilesPorCelular().get(celular) ?? 0) > 1 ? 'repetido' : null;
+  }
+
+  /**
+   * Relaciones de la tabla `referidos` (Fase 2b), por id del referido. Vacío si
+   * la migración aún no está aplicada: entonces se resuelve por código.
+   */
+  readonly relacionesReferido = signal(new Map<string, RelacionReferido>());
+
   getReferente(codigoReferido: string | null | undefined): Perfil | null {
     if (!codigoReferido) return null;
     return this.perfilesByCodigo().get(codigoReferido.trim().toUpperCase()) ?? null;
+  }
+
+  /** Referente de un perfil: primero la relación guardada, si no, el código. */
+  referenteDe(perfil: Perfil): Perfil | null {
+    const relacion = this.relacionesReferido().get(perfil.id);
+    if (relacion) {
+      return relacion.referente_id ? (this.perfiles().find((p) => p.id === relacion.referente_id) ?? null) : null;
+    }
+    return this.getReferente(perfil.referido_por);
+  }
+
+  /** true si el perfil usó un código que no se pudo atribuir a nadie. */
+  referidoNoResuelto(perfil: Perfil): boolean {
+    return this.relacionesReferido().get(perfil.id)?.estado === 'no_resuelto';
+  }
+
+  private async cargarRelacionesReferido(): Promise<void> {
+    const { data, error } = await this.dbService
+      .from(TableName.REFERIDOS)
+      .select('referido_id, referente_id, estado');
+    if (error) return; // Migración 20261016140000 sin aplicar: se usa el código.
+    this.relacionesReferido.set(
+      new Map(((data ?? []) as RelacionReferido[]).map((r) => [r.referido_id, r])),
+    );
   }
 
   readonly totalPerfiles = computed(() => this.perfiles().length);
@@ -91,6 +146,7 @@ export class AdminUsersService {
       this.perfiles.set([]);
     } else {
       this.perfiles.set((data as unknown as Perfil[]) ?? []);
+      await this.cargarRelacionesReferido();
     }
 
     this.loading.set(false);
