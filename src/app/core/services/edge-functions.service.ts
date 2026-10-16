@@ -4,16 +4,6 @@ import { Carrito } from '@src/app/shared/models/interfaces/db/db';
 
 export type EdgeAuthMode = 'user' | 'anon' | 'service';
 
-export interface RegistrationEmailPayload {
-  nombre: string;
-  correo: string;
-  telefono: string;
-  token_referido: string | null;
-  confirmation_url: string | null;
-  /** Id del usuario recién creado; la función busca el perfil en la base. */
-  user_id?: string | null;
-}
-
 export interface AccountActivationEmailPayload {
   correo: string;
   confirmation_url: string;
@@ -23,9 +13,16 @@ export interface AccountActivationEmailPayload {
 export class EdgeFunctionsService {
   private readonly supabaseClient = inject(SupabaseClientService);
 
-  async sendRegistrationEmail(payload: RegistrationEmailPayload) {
+  /**
+   * Correo "Tu correo está confirmado, tu ingreso está en revisión". Se pide
+   * con la sesión de la persona, después de confirmar su correo; la función
+   * decide en el servidor si corresponde (inactiva, fuera de la base de
+   * confianza) y lo envía una sola vez. Correo e id van por compatibilidad con
+   * la versión anterior de la función.
+   */
+  async avisarRegistroEnRevision(correo: string, userId: string) {
     return this.supabaseClient.supabase.functions.invoke('send-registration-email', {
-      body: payload,
+      body: { correo, user_id: userId },
     });
   }
 

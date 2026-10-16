@@ -134,14 +134,14 @@ serve(async (req) => {
               </p>
 
               <p style="font-size: 15px; line-height: 1.6; color: #101d30; margin-bottom: 24px;">
-                Debes hacer clic en el siguiente enlace para acceder al sistema y conocer la oferta de Cheyn Verde.
+                Ingresa con tu correo y la contraseña que creaste para conocer la oferta de Cheyn Verde.
               </p>
 
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 28px 0;">
                 <tr>
                   <td align="center">
                     <a href="${enlace}" target="_blank" style="background-color: #20a038; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none; padding: 14px 32px; border-radius: 8px; display: inline-block; box-shadow: 0 3px 6px rgba(32, 160, 56, 0.3);">
-                      Acceder al sistema
+                      Ingresar a Cheyn Verde
                     </a>
                   </td>
                 </tr>
