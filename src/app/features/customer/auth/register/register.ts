@@ -167,6 +167,7 @@ export class Register {
     this.generalError.set(null);
 
     if (this.registerForm().invalid()) {
+      this.registerForm().markAsTouched();
       this.showErrorsModal.set(true);
       this.loading.set(false);
       return;

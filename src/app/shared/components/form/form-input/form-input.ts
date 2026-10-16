@@ -23,6 +23,7 @@ import { FormsModule } from '@angular/forms';
           [id]="uid"
           [ngModel]="getControl().value()"
           (ngModelChange)="getControl().controlValue.set($event)"
+          (onBlur)="getControl().markAsTouched()"
           [placeholder]="placeholder()"
           [useGrouping]="false"
           class="w-full text-black border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 overflow-hidden"
@@ -39,6 +40,7 @@ import { FormsModule } from '@angular/forms';
             [id]="uid"
             [ngModel]="getControl().value()"
             (ngModelChange)="getControl().controlValue.set($event)"
+            (blur)="getControl().markAsTouched()"
             [placeholder]="placeholder()"
             [type]="inputType()"
             [attr.autocomplete]="autocomplete() || null"
@@ -89,7 +91,8 @@ export class FormInputComponent {
 
   isInvalid = computed(() => {
     const ctrl = this.getControl();
-    return ctrl.invalid();
+    // El error se muestra solo después de tocar el campo o enviar el formulario.
+    return ctrl.invalid() && ctrl.touched();
   });
 
   errorMessage = computed(() => {

@@ -167,6 +167,7 @@ export class Account implements OnInit {
     event.preventDefault();
 
     if (this.profileForm().invalid()) {
+      this.profileForm().markAsTouched();
       this.toastService.error('Por favor corrige los errores del formulario antes de guardar.');
       return;
     }

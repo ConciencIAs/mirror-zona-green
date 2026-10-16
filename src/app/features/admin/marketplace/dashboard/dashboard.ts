@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -67,6 +67,7 @@ export interface UsuarioResumen {
 export class DashboardComponent implements OnInit {
   private readonly dbService = inject(SupabaseDbService);
   private readonly toastService = inject(ToastService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // Filtros
   fechaInicio: Date | undefined;
@@ -136,6 +137,8 @@ export class DashboardComponent implements OnInit {
       this.toastService.error('Error inesperado al cargar datos');
     } finally {
       this.cargando = false;
+      // App zoneless: tras un await hay que avisar a Angular para que repinte.
+      this.cdr.markForCheck();
     }
   }
 
@@ -160,6 +163,8 @@ export class DashboardComponent implements OnInit {
     if (error) {
       this.toastService.error('Error al filtrar órdenes', error.message);
       this.cargando = false;
+      // App zoneless: tras un await hay que avisar a Angular para que repinte.
+      this.cdr.markForCheck();
       return;
     }
 
@@ -167,6 +172,8 @@ export class DashboardComponent implements OnInit {
     this.construirListaUsuarios(this.ordenesDb);
     this.aplicarFiltroUsuario();
     this.cargando = false;
+    // App zoneless: tras un await hay que avisar a Angular para que repinte.
+    this.cdr.markForCheck();
   }
 
   limpiarFiltros() {

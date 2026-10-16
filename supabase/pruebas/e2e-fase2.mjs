@@ -66,7 +66,8 @@ async function entrar(page, correo, clave) {
   await campo(page, 'correo@ejemplo.com').fill(correo);
   await campo(page, 'Ingresa tu contraseña').fill(clave);
   await page.getByRole('button', { name: 'Iniciar sesión' }).click();
-  return page.waitForURL(/\/home/, { timeout: 10000 }).then(() => true, () => false);
+  // Un usuario activo termina en /seleccion; uno inactivo, en /home.
+  return page.waitForURL(/\/(home|seleccion)/, { timeout: 10000 }).then(() => true, () => false);
 }
 async function capturar(page, nombre, { dark = false, mobile = false } = {}, locator) {
   if (!CAPTURAS) return;
@@ -101,6 +102,31 @@ for (const v of variantes) {
   await ctx.close();
 }
 
+// ── 1b. Errores de validación: solo tras tocar el campo o enviar ──────────
+console.log('\n== Validación ==');
+{
+  const ctx = await contexto();
+  const page = await ctx.newPage();
+  const visible = (t) => page.getByText(t).first().isVisible();
+  await page.goto(`${APP}/auth/login`);
+  await page.waitForTimeout(1500);
+  paso('login recién abierto: sin errores en rojo', !(await visible('Ingresa un correo válido')));
+  const correo = campo(page, 'correo@ejemplo.com');
+  await correo.fill('no-es-correo');
+  await page.waitForTimeout(300);
+  paso('  → mientras escribe tampoco', !(await visible('Ingresa un correo válido')));
+  await correo.blur();
+  await page.waitForTimeout(400);
+  paso('  → al salir del campo sí muestra el error', await visible('Ingresa un correo válido'));
+  await page.goto(`${APP}/auth/register`);
+  await page.waitForTimeout(1500);
+  paso('registro recién abierto: sin errores en rojo', !(await visible('Nombre demasiado corto')));
+  await page.locator('form button[type="submit"]').first().click();
+  await page.waitForTimeout(800);
+  paso('  → al enviarlo vacío, los errores aparecen en cada campo', await visible('Nombre demasiado corto'));
+  await ctx.close();
+}
+
 // ── 2. Primer correo → login (caso 6) ──────────────────────────────────────
 console.log('\n== Primer correo lleva al login ==');
 const nuevo = `prueba.f2.${t}@cheyn.test`;
@@ -125,7 +151,7 @@ for (const v of variantes) {
       perfil: localStorage.getItem('user-profile') ?? '',
     }));
     paso('  → no queda sesión abierta: se entra con contraseña', !estado.token && !estado.perfil.includes(nuevo));
-    await capturar(page, '08-login-correo-confirmado', v);
+    await capturar(page, '08-login-correo-confirmado', v, page.getByText('Tu correo fue confirmado'));
     await campo(page, 'Ingresa tu contraseña').fill(password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
     paso('  → con su contraseña entra', await page.waitForURL(/\/home/, { timeout: 10000 }).then(() => true, () => false));
@@ -133,7 +159,7 @@ for (const v of variantes) {
     // El enlace es de un solo uso: para las demás variantes se muestra el mismo estado.
     await page.goto(`${APP}/auth/login?confirmado=1`);
     await page.getByText('Tu correo fue confirmado').waitFor({ timeout: 8000 }).catch(() => {});
-    await capturar(page, '08-login-correo-confirmado', v);
+    await capturar(page, '08-login-correo-confirmado', v, page.getByText('Tu correo fue confirmado'));
   }
   await ctx.close();
 }
@@ -227,9 +253,13 @@ for (const v of variantes) {
   await page.goto(`${APP}/admin`, { waitUntil: 'domcontentloaded' });
   await page.getByText(usuario).first().waitFor({ timeout: 10000 }).catch(() => {});
   if (!v.dark && !v.mobile) {
+    // Correos en el orden en que se muestran, comparados con su fecha en la base.
     const texto = await page.locator('body').innerText();
-    const iNuevo = texto.indexOf(usuario), iViejo = texto.indexOf(admin);
-    paso('usuarios: el más reciente aparece primero', iNuevo >= 0 && iViejo >= 0 && iNuevo < iViejo, `${iNuevo} < ${iViejo}`);
+    const mostrados = [...new Set(texto.match(/[\w.+-]+@[\w-]+\.[\w.]+/g) ?? [])].filter((c) => c.endsWith('@cheyn.test'));
+    const fechas = mostrados.map((c) => sql(`select extract(epoch from created_at) from public.perfiles where correo = '${c}'`));
+    const ordenado = fechas.every((f, i) => i === 0 || Number(fechas[i - 1]) >= Number(f));
+    paso('usuarios: los más recientes primero', mostrados.length >= 3 && ordenado,
+      `${mostrados.length} filas; primera: ${mostrados[0]}`);
   }
   await capturar(page, '11-admin-usuarios-recientes', v);
 

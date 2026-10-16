@@ -58,7 +58,8 @@ export class FormDatepickerComponent implements OnInit {
 
   isInvalid = computed(() => {
     const ctrl = this.getControl();
-    return ctrl.invalid();
+    // El error se muestra solo después de tocar el campo o enviar el formulario.
+    return ctrl.invalid() && ctrl.touched();
   });
 
   errorMessage = computed(() => {

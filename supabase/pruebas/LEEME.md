@@ -49,6 +49,10 @@ npx ng serve --configuration local --port 4202
 |---|---|
 | `flujo-registro-login.mjs` | registro → correo de confirmación → login, por API |
 | `funciones-correo.mjs` | `send-registration-email` y `send-account-activation`: permisos, envío único, ruta decidida en la base, enlaces permitidos |
-| `e2e-login.mjs [carpeta]` | login en el navegador (Playwright): correo sin cuenta, sin confirmar, clave equivocada, cuenta sin fila en `usuarios_publicos`, activación reflejada al recargar, cuenta bloqueada. Con `carpeta` guarda capturas claro/oscuro, desktop/móvil |
+| `e2e-login.mjs [carpeta]` | login en el navegador (Playwright): correo sin cuenta, sin confirmar, clave equivocada, cuenta sin fila en `usuarios_publicos`, activación reflejada al recargar, cuenta bloqueada. Con `carpeta` guarda capturas claro/oscuro, desktop/móvil. Puerto con `PUERTO=` |
+| `e2e-bucle-roles.mjs [puerto]` | usuario activo que entra desde un navegador sin sesión (antes se congelaba la pestaña) y recarga de páginas protegidas con sesión abierta |
+| `e2e-fase2.mjs [carpeta]` | ver/ocultar contraseña, errores de validación, primer correo → login, reenviar confirmación, cambiar contraseña en Mi perfil, orden de usuarios, métricas sin canceladas, enlace de métricas en el menú. Requiere la migración `20261016120000_fase2_menu_metricas.sql` aplicada en la base local |
+
+En la base local, la plantilla `supabase/templates/confirmacion.html` se usa como correo "Confirm signup" (ver `config.toml`); hay que reiniciar con `npx supabase stop && npx supabase start` después de cambiarla.
 
 Las cuentas que crean usan el dominio `@cheyn.test` y solo existen en la base local.
