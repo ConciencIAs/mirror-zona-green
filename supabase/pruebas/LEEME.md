@@ -7,13 +7,21 @@ se niegan a correr si la API no es `127.0.0.1`/`localhost`. Nunca contra producc
 
 ```bash
 npx supabase start
-# esquema público de producción (sin datos) + auth/storage + datos sintéticos
-docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/pruebas/00_esquema_publico_produccion_2026-10-15.sql
-docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/pruebas/01_local_auth_storage_datos_sinteticos.sql
-# migraciones a probar
-docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/migrations/<archivo>.sql
-docker exec supabase_db_Cheyn_Verde psql -U postgres -c "NOTIFY pgrst, 'reload schema'"
+bash supabase/pruebas/preparar-base-local.sh   # solo con una base vacía
 ```
+
+`preparar-base-local.sh` aplica, en orden: `00_esquema_publico_produccion_*.sql` (esquema sin datos),
+`01_local_auth_storage_datos_sinteticos.sql`, `02_config_publica.sql` (roles, etiquetas, menú) y todas las
+migraciones de `supabase/migrations/`. Para empezar de cero: `npx supabase stop --no-backup` y otra vez lo de arriba.
+
+## Pruebas automáticas (Playwright, carpeta `e2e/`)
+
+| Comando | Qué prueba |
+|---|---|
+| `npm run e2e` | Compra de punta a punta (reservar → carrito → checkout → pedido → WhatsApp → Mis órdenes; stock agotado) y matriz de permisos (6 tipos de usuario × tablas y funciones). Supabase local |
+| `npm run e2e:produccion` | Control rápido del sitio publicado, **solo lectura**: portada sin errores, encabezados de seguridad, Tailwind con integridad, login y registro, páginas privadas piden sesión, la API no entrega datos privados |
+
+Corren solas en GitHub Actions (`.github/workflows/pruebas.yml`): la local en cada PR y la de producción todos los días.
 
 ## Edge Functions con correo local (Mailpit, http://127.0.0.1:54324)
 

@@ -59,7 +59,12 @@ max_client_conn = 100
 
 [db.migrations]
 # If disabled, migrations will be skipped during a db push or reset.
-enabled = true
+# Desactivado a propósito: las migraciones de este repo suponen el esquema de
+# producción ya creado (no hay migración base) y en producción las aplica una
+# persona por el SQL Editor. Así `supabase start` no intenta aplicarlas sobre una
+# base vacía y `supabase db push` no puede aplicarlas por accidente. La base
+# local se arma con supabase/pruebas/preparar-base-local.sh.
+enabled = false
 # Specifies an ordered list of schema files, directories, or glob patterns that describe your database.
 # Supports paths relative to supabase directory: "./schemas/*.sql", "./database".
 schema_paths = []
