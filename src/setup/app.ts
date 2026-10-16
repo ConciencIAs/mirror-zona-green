@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy, Injector } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { createCustomElement } from '@angular/elements';
-import { distinctUntilChanged, filter } from 'rxjs';
+import { distinctUntilChanged, filter, skip } from 'rxjs';
 
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -52,6 +52,11 @@ export class App implements OnInit {
     this.supabaseAuthService.onAuthStateChange();
     this.supabaseAuthService.currentUserEvent
       .pipe(
+        // El primer valor es el inicial del BehaviorSubject ({INITIAL_SESSION,
+        // session: null}), no un evento real de Supabase: si se procesara,
+        // borraría el perfil en cada recarga y los guards mandarían al login.
+        // Supabase emite su INITIAL_SESSION real de forma asíncrona, después.
+        skip(1),
         distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event),
         filter((event) => {
           if (event.event !== 'INITIAL_SESSION') return true;
@@ -67,17 +72,25 @@ export class App implements OnInit {
         }),
       )
       .subscribe(async (event) => {
+        const userId = event.session?.user.id;
+        if (!userId) return;
         const { error, data } = await this.supabaseDbService
           .from(this.supabaseDbService.tableNames.PERFILES)
           .select('*')
-          .eq('id', event.session?.user.id)
+          .eq('id', userId)
           .single();
         const { error: cartError, data: cartData } = await this.supabaseDbService
           .from(this.supabaseDbService.tableNames.CARRITO)
           .select('*')
-          .eq('usuario_id', event.session?.user.id);
+          .eq('usuario_id', userId);
+        // Si mientras se cargaba la sesión se cerró (p. ej. al volver del
+        // enlace de confirmación), no se guarda un perfil fantasma.
+        const { data: actual } = await this.supabaseAuthService.auth.getSession();
+        if (actual.session?.user.id !== userId) return;
         if (!error) this.userStore.setPerfil(data);
         if (!cartError) this.cartStore.setCart(cartData);
+        // La tabla roles solo se puede leer con sesión: se recarga al entrar.
+        void this.getRoles();
       });
     this.getRoles();
     this.isLegalAge.set(this.userSaysToBeLegalAge);
@@ -108,7 +121,8 @@ export class App implements OnInit {
     const { error, data } = await this.supabaseDbService
       .from(this.supabaseDbService.tableNames.ROLES)
       .select('*');
-    if (!error) {
+    // Sin sesión la consulta devuelve [] (RLS); no se pisa una copia válida.
+    if (!error && data?.length) {
       this.localStorageStateService.setState('app_roles', data);
     }
   }

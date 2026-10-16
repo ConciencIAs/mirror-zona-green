@@ -239,6 +239,7 @@ export class ProductsEditor implements OnInit {
     }));
 
     if (this.productForm().invalid()) {
+      this.productForm().markAsTouched();
       this.generalError.set('Revisa los campos del formulario.');
       this.showErrorsModal.set(true);
       this.toastService.warn('Revisa los datos del producto.');

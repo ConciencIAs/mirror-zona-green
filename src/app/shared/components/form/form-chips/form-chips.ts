@@ -56,7 +56,8 @@ export class FormChipsComponent {
   }
 
   isInvalid = computed(() => {
-    return this.control().invalid();
+    // El error se muestra solo después de tocar el campo o enviar el formulario.
+    return this.control().invalid() && this.control().touched();
   });
 
   errorMessage = computed(() => {

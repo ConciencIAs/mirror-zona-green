@@ -167,6 +167,7 @@ export class Register {
     this.generalError.set(null);
 
     if (this.registerForm().invalid()) {
+      this.registerForm().markAsTouched();
       this.showErrorsModal.set(true);
       this.loading.set(false);
       return;
@@ -206,7 +207,9 @@ export class Register {
           'Ya existe una cuenta con este correo. Se envió un enlace mágico para iniciar sesión.',
         );
       } else {
-        const confirmationUrl = `${environment.urlHost}/auth/magik-link-callback`;
+        // El enlace del primer correo lleva al login (caso 6): la persona entra
+        // con el usuario y la contraseña que acaba de crear.
+        const confirmationUrl = `${environment.urlHost}/auth/login?confirmado=1`;
         const { data, error } = await this.authService.signUpWithEmail(
           currentData.correo.trim().toLowerCase(),
           formData.password,

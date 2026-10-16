@@ -28,10 +28,11 @@ import {
   SelectOption,
 } from '@src/app/shared/components/form/form-select/form-select';
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
+import { CambiarContrasena } from './cambiar-contrasena/cambiar-contrasena';
 
 @Component({
   selector: 'app-account',
-  imports: [FormInputComponent, FormSelectComponent, FormDatepickerComponent],
+  imports: [FormInputComponent, FormSelectComponent, FormDatepickerComponent, CambiarContrasena],
   templateUrl: './account.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: ``,
@@ -166,6 +167,7 @@ export class Account implements OnInit {
     event.preventDefault();
 
     if (this.profileForm().invalid()) {
+      this.profileForm().markAsTouched();
       this.toastService.error('Por favor corrige los errores del formulario antes de guardar.');
       return;
     }

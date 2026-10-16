@@ -12,7 +12,7 @@ const ANON = status.PUBLISHABLE_KEY || status.ANON_KEY;
 if (!API.startsWith('http://127.0.0.1') && !API.startsWith('http://localhost')) {
   throw new Error('Esta prueba solo corre contra el Supabase local.');
 }
-const APP = 'http://localhost:4202';
+const APP = `http://localhost:${process.env.PUERTO || 4202}`;
 const CAPTURAS = process.argv[2];
 const sql = (q) =>
   execSync('docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -At -v ON_ERROR_STOP=1', { input: q, encoding: 'utf8' }).trim();
