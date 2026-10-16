@@ -55,6 +55,13 @@ npx ng serve --configuration local --port 4202
 
 | `e2e-fase2c.mjs [carpeta]` | un celular por persona: registro con celular inválido, repetido (en otro formato), extranjero y con guiones; Mi perfil (aviso, cambio a un celular ajeno o libre); fecha de nacimiento sin desfase (Bogotá y Tokio); etiquetas del panel admin. Requiere las tres migraciones de la 2c aplicadas en la base local |
 
+| `referidos.mjs` | trazabilidad de referidos por API: resolución del código (mayúsculas/espacios), árbol de 3 niveles, código inexistente o de perfil inactivo, historial de códigos, permisos (usuario normal vs. admin), asignación manual, ciclos, alerta de más de 20 en 24 h |
+| `e2e-fase2b.mjs [carpeta]` | panel de usuarios (referente por relación, "No resuelto"), página Árbol de referidos (árbol, ranking, no resueltos con asignación), conteo en Mi cuenta, enlace del menú. Requiere las migraciones `20261016140000` y `20261016140100` |
+
+Aplicar las migraciones locales siempre con bash (`docker exec -i … psql … < archivo.sql`). Desde
+PowerShell, `Get-Content | docker exec` cambia la codificación y las tildes (nombres de políticas,
+mensajes, "Administración") quedan dañadas.
+
 Desde la Fase 2c la base no admite dos perfiles con el mismo celular: las
 pruebas usan `celularUnico()` de `_comun.mjs` para cada cuenta nueva.
 

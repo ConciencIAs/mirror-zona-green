@@ -28,6 +28,12 @@ export const adminRoutes: Routes = [
             title: 'Gestión de Usuarios'
           },
           {
+            path: 'referidos',
+            loadComponent: () => import('./referidos/referidos').then(m => m.AdminReferidos),
+            data: { zone: 'admin' },
+            title: 'Árbol de referidos'
+          },
+          {
             path: 'bulk-upload',
             loadComponent: () => import('./customer/bulk-upload/bulk-upload').then(m => m.BulkUpload),
             data: { zone: 'admin' },

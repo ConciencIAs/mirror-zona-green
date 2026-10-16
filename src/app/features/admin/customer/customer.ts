@@ -1,5 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 // PrimeNG
 import { TableModule } from 'primeng/table';
@@ -32,6 +33,7 @@ import { SelectOption } from '@src/app/shared/components/form/form-select/form-s
     IconFieldModule,
     InputIconModule,
     TagModule,
+    RouterLink,
   ],
   templateUrl: './customer.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -109,12 +111,13 @@ export class Customer {
   }
 
   // ── Obtener datos del referente ──
-  getReferente(codigo: string | null | undefined): Perfil | null {
-    return this.adminUsersService.getReferente(codigo);
+  getReferente(perfil: Perfil): Perfil | null {
+    return this.adminUsersService.referenteDe(perfil);
   }
 
-  getTooltipReferente(codigoReferido: string): string {
-    const referente = this.getReferente(codigoReferido);
+  getTooltipReferente(perfil: Perfil): string {
+    const codigoReferido = perfil.referido_por ?? '';
+    const referente = this.getReferente(perfil);
     if (!referente) {
       return `Referido por código: ${codigoReferido}`;
     }
@@ -142,8 +145,9 @@ export class Customer {
   }
 
   // ── Copiar teléfono del referente ──
-  async copiarTelefonoReferente(codigoReferido: string): Promise<void> {
-    const referente = this.getReferente(codigoReferido);
+  async copiarTelefonoReferente(perfil: Perfil): Promise<void> {
+    const codigoReferido = perfil.referido_por ?? '';
+    const referente = this.getReferente(perfil);
     if (referente && referente.telefono) {
       const nombre = referente.full_name || referente.correo;
       await this.copiarTelefono(referente.telefono, `del referente (${nombre})`);

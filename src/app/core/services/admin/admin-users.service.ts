@@ -9,6 +9,12 @@ import { normalizarCelular } from '@src/app/shared/utils/telefono';
 
 export type StatusFilter = 'todos' | EstadoUsuario;
 
+export interface RelacionReferido {
+  referido_id: string;
+  referente_id: string | null;
+  estado: 'resuelto' | 'no_resuelto' | 'asignado_manual';
+}
+
 function generarCodigoInvitacion(longitud = 8): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let codigo = '';
@@ -82,9 +88,39 @@ export class AdminUsersService {
     return (this.perfilesPorCelular().get(celular) ?? 0) > 1 ? 'repetido' : null;
   }
 
+  /**
+   * Relaciones de la tabla `referidos` (Fase 2b), por id del referido. Vacío si
+   * la migración aún no está aplicada: entonces se resuelve por código.
+   */
+  readonly relacionesReferido = signal(new Map<string, RelacionReferido>());
+
   getReferente(codigoReferido: string | null | undefined): Perfil | null {
     if (!codigoReferido) return null;
     return this.perfilesByCodigo().get(codigoReferido.trim().toUpperCase()) ?? null;
+  }
+
+  /** Referente de un perfil: primero la relación guardada, si no, el código. */
+  referenteDe(perfil: Perfil): Perfil | null {
+    const relacion = this.relacionesReferido().get(perfil.id);
+    if (relacion) {
+      return relacion.referente_id ? (this.perfiles().find((p) => p.id === relacion.referente_id) ?? null) : null;
+    }
+    return this.getReferente(perfil.referido_por);
+  }
+
+  /** true si el perfil usó un código que no se pudo atribuir a nadie. */
+  referidoNoResuelto(perfil: Perfil): boolean {
+    return this.relacionesReferido().get(perfil.id)?.estado === 'no_resuelto';
+  }
+
+  private async cargarRelacionesReferido(): Promise<void> {
+    const { data, error } = await this.dbService
+      .from(TableName.REFERIDOS)
+      .select('referido_id, referente_id, estado');
+    if (error) return; // Migración 20261016140000 sin aplicar: se usa el código.
+    this.relacionesReferido.set(
+      new Map(((data ?? []) as RelacionReferido[]).map((r) => [r.referido_id, r])),
+    );
   }
 
   readonly totalPerfiles = computed(() => this.perfiles().length);
@@ -110,6 +146,7 @@ export class AdminUsersService {
       this.perfiles.set([]);
     } else {
       this.perfiles.set((data as unknown as Perfil[]) ?? []);
+      await this.cargarRelacionesReferido();
     }
 
     this.loading.set(false);

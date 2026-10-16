@@ -97,6 +97,14 @@ export class Account implements OnInit {
     return null;
   });
 
+  /** Cuántas personas se registraron con mi código (Fase 2b). null = sin dato. */
+  readonly cuantosReferidos = signal<number | null>(null);
+
+  private async cargarConteoReferidos(): Promise<void> {
+    const { data, error } = await this.dbService.rpc('mis_referidos_conteo');
+    if (!error && typeof data === 'number') this.cuantosReferidos.set(data);
+  }
+
   /** Código de invitación / referido propio del usuario */
   readonly codigoInvitacion = computed(() => this.userStore.perfil().codigo_invitacion);
 
@@ -153,6 +161,7 @@ export class Account implements OnInit {
 
   ngOnInit(): void {
     const perfil = this.userStore.perfil();
+    void this.cargarConteoReferidos();
 
     // Fecha de calendario en hora local (antes se mostraba un día menos).
     const fechaNacimiento = fechaDesdeISO(perfil.fecha_nacimiento) ?? new Date();

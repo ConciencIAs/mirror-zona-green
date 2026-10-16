@@ -67,6 +67,17 @@
           <p class="text-xs text-slate-300 mt-0.5">
             Comparte tu código con nuevos usuarios para invitarlos a registrarse.
           </p>
+          @if (cuantosReferidos() !== null && codigoInvitacion()) {
+          <p class="mt-2 text-sm font-semibold text-emerald-300">
+            @if (cuantosReferidos() === 0) {
+            Todavía nadie se ha registrado con tu código.
+            } @else if (cuantosReferidos() === 1) {
+            1 persona se registró con tu código.
+            } @else {
+            {{ cuantosReferidos() }} personas se registraron con tu código.
+            }
+          </p>
+          }
         </div>
 
         @if (codigoInvitacion()) {
