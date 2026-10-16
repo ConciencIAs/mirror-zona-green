@@ -29,7 +29,7 @@ import {
 } from '@src/app/shared/components/form/form-select/form-select';
 import { FormDatepickerComponent } from '@src/app/shared/components/form/form-datepicker/form-datapicker';
 import { CambiarContrasena } from './cambiar-contrasena/cambiar-contrasena';
-import { fechaAISO, fechaDesdeISO } from '@src/app/shared/utils/fechas';
+import { esMayorDeEdad, fechaAISO, fechaDesdeISO, fechaMaximaNacimiento } from '@src/app/shared/utils/fechas';
 import {
   MENSAJE_CELULAR_EN_USO,
   MENSAJE_CELULAR_INVALIDO,
@@ -97,6 +97,15 @@ export class Account implements OnInit {
     return null;
   });
 
+  /** Aviso cuando la fecha de nacimiento falta o no cumple los 18 años (Fase 3). */
+  readonly avisoFecha = computed(() => {
+    const fecha = fechaDesdeISO(this.userStore.perfil().fecha_nacimiento);
+    if (esMayorDeEdad(fecha)) return null;
+    return fecha
+      ? 'Tu fecha de nacimiento indica menos de 18 años. Revísala: debes ser mayor de edad para usar Cheyn Verde.'
+      : 'Aún no tienes fecha de nacimiento registrada. Agrégala para completar tu perfil.';
+  });
+
   /** Cuántas personas se registraron con mi código (Fase 2b). null = sin dato. */
   readonly cuantosReferidos = signal<number | null>(null);
 
@@ -130,7 +139,8 @@ export class Account implements OnInit {
   });
 
   /** Fecha máxima: hoy (no puede ser usuario del futuro) */
-  readonly maxDate = new Date();
+  /** Hoy menos 18 años (Fase 3: edad mínima). */
+  readonly maxDate = fechaMaximaNacimiento();
 
   /** Modelo del formulario: se inicializa en ngOnInit con los datos del store */
   readonly formModel = signal<ProfileUpdateData>({

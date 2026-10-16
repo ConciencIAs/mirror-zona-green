@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { MENSAJE_EDAD_MINIMA, esMayorDeEdad } from '@src/app/shared/utils/fechas';
 import { MENSAJE_CELULAR_INVALIDO, normalizarCelular } from '@src/app/shared/utils/telefono';
 
 export const profileUpdateSchema = z.object({
@@ -22,7 +23,8 @@ export const profileUpdateSchema = z.object({
     .refine(
       (d) => d <= new Date(),
       'La fecha de nacimiento no puede ser futura'
-    ),
+    )
+    .refine((d) => esMayorDeEdad(d), MENSAJE_EDAD_MINIMA),
   ubicacion: z
     .string()
     .min(2, 'La ubicación es demasiado corta (mín. 2 caracteres)')

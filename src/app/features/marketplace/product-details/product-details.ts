@@ -65,8 +65,6 @@ export class ProductDetails {
   protected readonly maxAvailableUnits = computed(() => {
     const prod = this.product();
     if (!prod) return 0;
-    const reservado = prod.reservado ?? 0;
-
     const pGramos = prod.es_por_gramos ? this.selectedGrams() : null;
     const existingItem = this.cartStore.items().find(i => i.producto_id === prod.id && (i.paquete_gramos ?? null) === pGramos);
     const existingQty = existingItem ? existingItem.cantidad : 0;
@@ -77,24 +75,16 @@ export class ProductDetails {
       const gramos = pres?.gramos ?? 1;
 
       const remainingPresStock = Math.max(0, presStock - existingQty);
-      const remainingGlobalGrams = Math.max(0, prod.stock_total - reservado);
+      // Gramos que la persona ya tiene en su carrito de este producto (todas las presentaciones).
+      const gramosEnCarrito = this.cartStore.items()
+        .filter((i) => i.producto_id === prod.id)
+        .reduce((total, i) => total + i.cantidad * (i.paquete_gramos ?? 0), 0);
+      const remainingGlobalGrams = Math.max(0, prod.stock_total - gramosEnCarrito);
       const remainingGlobalBags = Math.floor(remainingGlobalGrams / gramos);
       
       return Math.min(remainingPresStock, remainingGlobalBags);
     } else {
-      return Math.max(0, prod.stock_total - reservado);
-    }
-  });
-
-  protected readonly reservedAmountText = computed(() => {
-    const prod = this.product();
-    if (!prod) return '';
-    const reservado = prod.reservado ?? 0;
-    if (prod.es_por_gramos) {
-      const saleUnitAmount = fromGramsToSaleUnit(reservado, prod.presentacion_venta);
-      return `${saleUnitAmount} ${getSaleUnitName(prod.presentacion_venta)} reservados (global)`;
-    } else {
-      return `${reservado} unidades reservadas`;
+      return Math.max(0, prod.stock_total - existingQty);
     }
   });
 
@@ -183,7 +173,7 @@ export class ProductDetails {
       });
 
       this.added.set(true);
-      await this.loadProduct(prod.id); // Reload product to refresh reservado
+      await this.loadProduct(prod.id); // Recarga el producto para mostrar el stock actualizado
 
       setTimeout(() => {
         this.added.set(false);

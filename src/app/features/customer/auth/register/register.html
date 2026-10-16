@@ -41,7 +41,9 @@
       placeholder="Número de documento" />
 
     <!-- FECHA -->
-    <app-form-datepicker [control]="registerForm.fecha_nacimiento()" label="Fecha de nacimiento" />
+    <app-form-datepicker [control]="registerForm.fecha_nacimiento()" label="Fecha de nacimiento"
+      [maxDate]="fechaMaxima" />
+    <p class="-mt-3 mb-4 text-xs text-slate-500">Debes ser mayor de 18 años.</p>
 
     <!-- UBICACION -->
     <app-form-input [control]="registerForm.ubicacion()" label="Ubicación" type="text"
