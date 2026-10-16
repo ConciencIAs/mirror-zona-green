@@ -61,6 +61,8 @@ npx ng serve --configuration local --port 4202
 | `fase3-endurecimiento.mjs` | carrito (cantidades negativas, cero, fraccionarias), pedido normal y de usuario bloqueado, visitante, campos protegidos del perfil, perfil creado como admin, calificaciones, edad mínima, respaldo de "reservado" |
 | `e2e-fase3.mjs [carpeta]` | registro (contraseña con letras y números, 18 años), detalle de producto sin "reservados", `/lab` solo admin, aviso de fecha en Mi perfil, script de Tailwind con versión fija e integridad |
 
+| `concurrencia-compras.mjs [rondas] [salida.json]` | Fase 3b: 10 compradores confirman a la vez el mismo producto por gramos (4 presentaciones) por `create-order`; verifica stock, totales, rechazos y bloqueos mutuos en cada ronda. Necesita `npx supabase functions serve`. Resultados: `docs/auditoria/fase-3b/RESULTADOS.md` |
+
 Notas:
 - En el calendario, la fecha se escribe tecleando y saliendo con Tab (`fill` + `blur` lo deja vacío).
 - Correr toda la batería seguida puede chocar con el límite local de inicios de sesión de Supabase Auth (30 cada 5 min por IP): si una prueba falla con 401 en un login, repetirla sola.
