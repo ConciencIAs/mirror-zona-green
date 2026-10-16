@@ -64,6 +64,18 @@ for (const [nombre, correo, destino, rolesVacios] of casos) {
     new Promise((ok) => setTimeout(() => ok(false), 3000)),
   ]);
   paso(`${nombre}: entra sin congelarse`, llego && responde, `app_roles sin sesión=${rolesSinSesion ?? 'null'}; url=${responde ? page.url() : 'página bloqueada'}`);
+
+  // Recargar (o abrir un enlace directo) con la sesión abierta no debe mandar al login.
+  if (llego && responde) {
+    await page.waitForTimeout(1500);
+    for (const ruta of ['/customer/perfil', '/seleccion']) {
+      if (ruta === '/seleccion' && !destino.source.includes('seleccion')) continue;
+      await page.goto(`${APP}${ruta}`, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(2500);
+      const url = page.url().replace(APP, '');
+      paso(`  → recargar ${ruta} mantiene la sesión`, url.startsWith(ruta), url);
+    }
+  }
   await ctx.close().catch(() => {});
 }
 await browser.close().catch(() => {});

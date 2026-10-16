@@ -1,7 +1,7 @@
 import { Component, signal, inject, OnInit, ChangeDetectionStrategy, Injector } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { createCustomElement } from '@angular/elements';
-import { distinctUntilChanged, filter } from 'rxjs';
+import { distinctUntilChanged, filter, skip } from 'rxjs';
 
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -52,6 +52,11 @@ export class App implements OnInit {
     this.supabaseAuthService.onAuthStateChange();
     this.supabaseAuthService.currentUserEvent
       .pipe(
+        // El primer valor es el inicial del BehaviorSubject ({INITIAL_SESSION,
+        // session: null}), no un evento real de Supabase: si se procesara,
+        // borraría el perfil en cada recarga y los guards mandarían al login.
+        // Supabase emite su INITIAL_SESSION real de forma asíncrona, después.
+        skip(1),
         distinctUntilChanged((event_a, event_b) => event_a.event === event_b.event),
         filter((event) => {
           if (event.event !== 'INITIAL_SESSION') return true;
