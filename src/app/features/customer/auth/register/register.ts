@@ -26,7 +26,7 @@ import {
   esErrorCelularRepetido,
   normalizarCelular,
 } from '@src/app/shared/utils/telefono';
-import { fechaAISO } from '@src/app/shared/utils/fechas';
+import { MENSAJE_EDAD_MINIMA, fechaAISO, fechaMaximaNacimiento } from '@src/app/shared/utils/fechas';
 
 type RegistrationFormModel = CustomerData & {
   password: string;
@@ -83,6 +83,9 @@ export class Register {
     acepta_politica_privacidad: false,
     codigo_referido: '',
   });
+
+  /** Hoy menos 18 años: el calendario no deja elegir una fecha posterior. */
+  readonly fechaMaxima = fechaMaximaNacimiento();
 
   readonly registerForm = form(this.formModel, (schemaPath) => {
     validateStandardSchema(schemaPath, userSchemaRegister);
@@ -243,6 +246,18 @@ export class Register {
           },
         );
 
+        if (error?.message?.includes('mayor de 18')) {
+          this.generalError.set(MENSAJE_EDAD_MINIMA);
+          return;
+        }
+        // Supabase Auth no reenvía el mensaje de la base cuando un trigger rechaza
+        // el registro (celular repetido, edad): se explica sin detalles internos.
+        if (error?.message?.includes('Database error saving new user')) {
+          this.generalError.set(
+            'No pudimos crear la cuenta con estos datos. Revisa tu celular (no puede estar registrado por otra persona) y tu fecha de nacimiento (debes ser mayor de 18 años).',
+          );
+          return;
+        }
         if (esErrorCelularRepetido(error)) {
           this.generalError.set(MENSAJE_CELULAR_EN_USO);
           return;

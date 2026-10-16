@@ -90,8 +90,6 @@ export class CartButtonComponent implements OnInit, OnDestroy {
   getMaxTotalQuantity(): number {
     const p = this.product();
     const pGramos = this.paquete_gramos();
-    const reservado = p.reservado ?? 0;
-
     const cartItem = this.cartItem();
     const existingQty = cartItem ? cartItem.cantidad : 0;
 
@@ -100,12 +98,16 @@ export class CartButtonComponent implements OnInit, OnDestroy {
       const presStock = pres ? pres.stock : 0;
 
       const remainingPresStock = Math.max(0, presStock - existingQty);
-      const availableGrams = Math.max(0, p.stock_total - reservado);
+      // Gramos que la persona ya tiene en su carrito de este producto (todas las presentaciones).
+      const gramosEnCarrito = this.cartStore.items()
+        .filter((i) => i.producto_id === p.id)
+        .reduce((total, i) => total + i.cantidad * (i.paquete_gramos ?? 0), 0);
+      const availableGrams = Math.max(0, p.stock_total - gramosEnCarrito);
       const maxBagsFromGrams = Math.floor(availableGrams / pGramos);
 
       return existingQty + Math.min(remainingPresStock, maxBagsFromGrams);
     } else {
-      return existingQty + Math.max(0, p.stock_total - reservado);
+      return Math.max(existingQty, p.stock_total);
     }
   }
 

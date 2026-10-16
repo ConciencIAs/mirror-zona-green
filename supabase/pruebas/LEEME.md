@@ -58,6 +58,13 @@ npx ng serve --configuration local --port 4202
 | `referidos.mjs` | trazabilidad de referidos por API: resolución del código (mayúsculas/espacios), árbol de 3 niveles, código inexistente o de perfil inactivo, historial de códigos, permisos (usuario normal vs. admin), asignación manual, ciclos, alerta de más de 20 en 24 h |
 | `e2e-fase2b.mjs [carpeta]` | panel de usuarios (referente por relación, "No resuelto"), página Árbol de referidos (árbol, ranking, no resueltos con asignación), conteo en Mi cuenta, enlace del menú. Requiere las migraciones `20261016140000` y `20261016140100` |
 
+| `fase3-endurecimiento.mjs` | carrito (cantidades negativas, cero, fraccionarias), pedido normal y de usuario bloqueado, visitante, campos protegidos del perfil, perfil creado como admin, calificaciones, edad mínima, respaldo de "reservado" |
+| `e2e-fase3.mjs [carpeta]` | registro (contraseña con letras y números, 18 años), detalle de producto sin "reservados", `/lab` solo admin, aviso de fecha en Mi perfil, script de Tailwind con versión fija e integridad |
+
+Notas:
+- En el calendario, la fecha se escribe tecleando y saliendo con Tab (`fill` + `blur` lo deja vacío).
+- Correr toda la batería seguida puede chocar con el límite local de inicios de sesión de Supabase Auth (30 cada 5 min por IP): si una prueba falla con 401 en un login, repetirla sola.
+
 Aplicar las migraciones locales siempre con bash (`docker exec -i … psql … < archivo.sql`). Desde
 PowerShell, `Get-Content | docker exec` cambia la codificación y las tildes (nombres de políticas,
 mensajes, "Administración") quedan dañadas.

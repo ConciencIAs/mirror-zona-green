@@ -93,6 +93,13 @@ async function llenarRegistro(page, correo, celular) {
   await campo(page, CELULAR_PH).fill(celular);
   await page.locator('app-form-input:has-text("Documento") input').fill('12345678');
   await campo(page, 'Ciudad, dirección...').fill('Bogotá');
+  // Desde la Fase 3 hay que ser mayor de 18: la fecha por defecto (hoy) no sirve.
+  const fecha = page.locator('app-form-datepicker input').first();
+  // Se teclea como una persona (fill + blur deja el calendario vacío).
+  await fecha.click();
+  await fecha.press('Control+A');
+  await fecha.pressSequentially('05/05/1990', { delay: 20 });
+  await fecha.press('Tab');
   await page.locator('p-checkbox').nth(0).click();
   await page.locator('p-checkbox').nth(1).click();
 }

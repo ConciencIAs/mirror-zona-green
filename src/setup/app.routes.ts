@@ -8,10 +8,13 @@ import { authGuard } from '@src/app/core/guards/auth-guard';
 import { homeGuard } from '@src/app/core/guards/home-guard';
 
 export const routes: Routes = [
-  // TEMPORAL: laboratorio de experimentos visuales — borrar/ocultar antes de producción
+  // TEMPORAL: laboratorio de experimentos visuales. Solo admin (Fase 3): estaba
+  // abierto a cualquiera en producción.
   {
     path: 'lab',
     title: 'Laboratorio Visual',
+    canActivate: [authGuard, roleGuard],
+    data: { zone: 'admin' },
     loadComponent: () => import('@src/app/features/lab/lab').then((m) => m.Lab),
   },
   {

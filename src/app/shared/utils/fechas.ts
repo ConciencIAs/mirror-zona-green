@@ -22,3 +22,20 @@ export function fechaAISO(fecha: Date): string {
   const dd = String(fecha.getDate()).padStart(2, '0');
   return `${fecha.getFullYear()}-${mm}-${dd}`;
 }
+
+/** Edad mínima para registrarse (Fase 3). La base aplica la misma regla. */
+export const EDAD_MINIMA = 18;
+
+/** Última fecha de nacimiento permitida: hoy menos 18 años (hora local). */
+export function fechaMaximaNacimiento(hoy = new Date()): Date {
+  return new Date(hoy.getFullYear() - EDAD_MINIMA, hoy.getMonth(), hoy.getDate());
+}
+
+/** true si quien nació en `fecha` ya cumplió 18 años. */
+export function esMayorDeEdad(fecha: Date | null | undefined): boolean {
+  if (!fecha || Number.isNaN(fecha.getTime())) return false;
+  const nacimiento = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+  return nacimiento <= fechaMaximaNacimiento();
+}
+
+export const MENSAJE_EDAD_MINIMA = 'Debes ser mayor de 18 años para registrarte en Cheyn Verde.';
