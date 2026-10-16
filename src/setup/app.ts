@@ -84,6 +84,8 @@ export class App implements OnInit {
         if (actual.session?.user.id !== userId) return;
         if (!error) this.userStore.setPerfil(data);
         if (!cartError) this.cartStore.setCart(cartData);
+        // La tabla roles solo se puede leer con sesión: se recarga al entrar.
+        void this.getRoles();
       });
     this.getRoles();
     this.isLegalAge.set(this.userSaysToBeLegalAge);
@@ -114,7 +116,8 @@ export class App implements OnInit {
     const { error, data } = await this.supabaseDbService
       .from(this.supabaseDbService.tableNames.ROLES)
       .select('*');
-    if (!error) {
+    // Sin sesión la consulta devuelve [] (RLS); no se pisa una copia válida.
+    if (!error && data?.length) {
       this.localStorageStateService.setState('app_roles', data);
     }
   }
