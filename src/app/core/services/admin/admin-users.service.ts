@@ -80,7 +80,10 @@ export class AdminUsersService {
 
   async cargarPerfiles(): Promise<void> {
     this.loading.set(true);
-    const { data, error } = await this.dbService.select(TableName.PERFILES);
+    // Los registros más recientes primero (los que suelen esperar autorización).
+    const { data, error } = await this.dbService
+      .select(TableName.PERFILES)
+      .order('created_at', { ascending: false, nullsFirst: false });
 
     if (error) {
       console.error('AdminUsersService: Error al cargar perfiles', error);

@@ -1,7 +1,6 @@
 import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { form, validateStandardSchema } from '@angular/forms/signals';
-import { Router } from '@angular/router';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-auth.service';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
@@ -25,11 +24,54 @@ export class Login {
   private readonly dbService = inject(SupabaseDbService);
   private readonly confirmationModalService = inject(ConfirmationModalService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly userStore = inject(UserStore);
 
   loading = signal(false);
   generalError = signal<string | null>(null);
   loginMode = signal<'password' | 'magic-link'>('password');
+
+  /** Mensaje de éxito al volver del enlace de confirmación del correo. */
+  readonly avisoConfirmacion = signal<string | null>(null);
+  /** Correo al que se puede reenviar la confirmación (cuenta sin confirmar). */
+  readonly reenviarA = signal<string | null>(null);
+  readonly reenviando = signal(false);
+
+  constructor() {
+    void this.procesarRegresoDeConfirmacion();
+  }
+
+  /**
+   * El primer correo (plantilla "Confirm signup") trae a la persona aquí con
+   * ?confirmado=1. Se confirma el correo y se le pide entrar con su usuario y
+   * contraseña, como dice el correo. Si el enlace dejó una sesión abierta, se
+   * cierra en este navegador para que el ingreso sea con contraseña.
+   */
+  private async procesarRegresoDeConfirmacion(): Promise<void> {
+    const params = this.route.snapshot.queryParamMap;
+    if (params.get('confirmado') !== '1') return;
+
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    if (hash.get('error_code')) {
+      this.generalError.set(
+        hash.get('error_code') === 'otp_expired'
+          ? 'El enlace de confirmación venció o ya se usó. Ingresa con tu correo y contraseña; si tu correo aún no está confirmado, te ofreceremos reenviarlo.'
+          : 'No se pudo confirmar el correo con ese enlace. Intenta ingresar con tu correo y contraseña.',
+      );
+      return;
+    }
+
+    const { data } = await this.authService.auth.getSession();
+    const correo = data.session?.user.email ?? '';
+    if (data.session) {
+      await this.authService.auth.signOut({ scope: 'local' });
+      this.userStore.clearPerfil();
+    }
+    if (correo) this.loginModel.update((m) => ({ ...m, email: correo }));
+    this.avisoConfirmacion.set(
+      'Tu correo fue confirmado. Ingresa con tu correo y la contraseña que creaste para conocer la oferta Cheyn Verde.',
+    );
+  }
 
   loginModel = signal({
     email: '',
@@ -44,6 +86,8 @@ export class Login {
     event.preventDefault();
     this.loading.set(true);
     this.generalError.set(null);
+    this.reenviarA.set(null);
+    this.avisoConfirmacion.set(null);
 
     if (this.loginForm().invalid()) {
       this.loginForm().markAsTouched();
@@ -69,6 +113,7 @@ export class Login {
             this.generalError.set(
               'Debes confirmar tu correo antes de ingresar. Revisa tu bandeja de entrada (y la carpeta de spam) y haz clic en el enlace de confirmación.',
             );
+            this.reenviarA.set(email);
             return;
           }
           if (error.code === 'invalid_credentials') {
@@ -131,6 +176,32 @@ export class Login {
       this.toastService.error(message);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async reenviarConfirmacion(): Promise<void> {
+    const email = this.reenviarA();
+    if (!email) return;
+    this.reenviando.set(true);
+    try {
+      const { error } = await this.authService.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: `${environment.urlHost}/auth/login?confirmado=1` },
+      });
+      if (error) {
+        this.toastService.error(
+          error.status === 429
+            ? 'Ya enviamos un correo hace poco. Espera un minuto antes de pedir otro.'
+            : 'No se pudo reenviar el correo de confirmación.',
+        );
+        return;
+      }
+      this.reenviarA.set(null);
+      this.generalError.set(null);
+      this.toastService.success('Te enviamos de nuevo el correo de confirmación.');
+    } finally {
+      this.reenviando.set(false);
     }
   }
 

@@ -41,7 +41,8 @@ async function cuerpo(id) {
 }
 const password = 'Prueba-12345';
 async function registrar(correo, telefono, extra = {}) {
-  const r = await call('/auth/v1/signup', {
+  // Mismo redirect que usa register.ts para el enlace del primer correo.
+  const r = await call(`/auth/v1/signup?redirect_to=${encodeURIComponent('http://localhost:4202/auth/login?confirmado=1')}`, {
     body: { email: correo, password, data: { full_name: 'Usuario Prueba', telefono, documento: '123', tipo_documento: 'CC', fecha_nacimiento: '1990-01-01', ubicacion: 'Bogotá', acepta_terminos: true, acepta_politica_privacidad: true, ...extra } },
   });
   return r.body?.id ?? r.body?.user?.id;
@@ -60,26 +61,51 @@ console.log('\n== send-registration-email ==');
 const c1 = `prueba.reg1.${t}@cheyn.test`;
 const id1 = await registrar(c1, '3009990001'); // está en base_confianza (datos sintéticos)
 creados.push(c1);
-await espera(800);
-const antes = (await buzon(c1)).length; // correo de confirmación de Supabase Auth
+await espera(1500);
+const inicial = await buzon(c1);
+const plantilla = inicial.find((m) => m.Subject.includes('Confirma tu correo'));
+let enlaceConfirmacion;
+paso('primer correo = plantilla "Confirm signup" con el texto pedido', !!plantilla, plantilla?.Subject);
+if (plantilla) {
+  const html = await cuerpo(plantilla.ID);
+  paso('  → texto del caso 6, con "Tu"', html.includes('Tu dirección de correo fue registrada correctamente.') &&
+    html.includes('ingresar al sistema con el usuario y contraseña creada para conocer la oferta Cheyn Verde') && !html.includes('Tú '));
+  enlaceConfirmacion = html.match(/href="([^"]*\/auth\/v1\/verify[^"]*)"/)?.[1]?.replace(/&amp;/g, '&');
+}
 
+// Ruta 1 sin correo confirmado: la plantilla ya fue el primer correo, la función no duplica.
 const r1 = await call('/functions/v1/send-registration-email', {
   body: { nombre: 'X', correo: c1, telefono: '0000000000', token_referido: null, confirmation_url: 'https://sitio-malicioso.test/robar', user_id: id1 },
 });
 paso('responde 200 con el payload de siempre + user_id', r1.status === 200, JSON.stringify(r1.body));
 paso('la respuesta ya no expone la ruta', r1.body && !('ruta' in r1.body));
 await espera(1500);
-const msgs1 = await buzon(c1);
-const nuevo = msgs1.find((m) => m.Subject.includes('Confirmación de correo'));
-paso('ruta 1 (base de confianza) decidida por la base, aunque el cliente mandó otro teléfono', !!nuevo, nuevo?.Subject);
+paso('ruta 1 con confirmación pendiente: no duplica el primer correo', (await buzon(c1)).length === inicial.length);
+
+const conf = enlaceConfirmacion ? await fetch(enlaceConfirmacion, { redirect: 'manual' }) : null;
+const destino = conf?.headers.get('location')?.split('#')[0] ?? '';
+paso('el enlace de confirmación lleva al login', destino.startsWith('http://localhost:4202/auth/login?confirmado=1'), destino);
+
+// Ruta 1 con correo ya confirmado (confirmaciones desactivadas): bienvenida con enlace al login.
+const c1b = `prueba.reg1b.${t}@cheyn.test`;
+const id1b = await registrar(c1b, '3009990001');
+creados.push(c1b);
+sql(`update auth.users set email_confirmed_at = now() where id = '${id1b}';`);
+await call('/functions/v1/send-registration-email', {
+  body: { correo: c1b, telefono: '0000000000', confirmation_url: 'https://sitio-malicioso.test/robar', user_id: id1b },
+});
+await espera(1500);
+const msgs1 = await buzon(c1b);
+const nuevo = msgs1.find((m) => m.Subject.includes('Bienvenido'));
+paso('ruta 1 decidida por la base (el cliente mandó otro teléfono)', !!nuevo, nuevo?.Subject);
 if (nuevo) {
   const html = await cuerpo(nuevo.ID);
   paso('el enlace del correo es del dominio permitido', html.includes('href="http://localhost:4202/auth/login"') && !html.includes('sitio-malicioso'));
 }
 
-const r1b = await call('/functions/v1/send-registration-email', { body: { correo: c1, telefono: '1', user_id: id1 } });
+const r1b = await call('/functions/v1/send-registration-email', { body: { correo: c1b, telefono: '1', user_id: id1b } });
 await espera(1500);
-paso('segunda llamada no reenvía el correo', r1b.status === 200 && (await buzon(c1)).length === msgs1.length, `${(await buzon(c1)).length} correos (antes del aviso: ${antes})`);
+paso('segunda llamada no reenvía el correo', r1b.status === 200 && (await buzon(c1b)).length === msgs1.length, `${(await buzon(c1b)).length} correos`);
 
 const ajeno = `persona.ajena.${t}@cheyn.test`;
 const r2 = await call('/functions/v1/send-registration-email', { body: { correo: ajeno, telefono: '3009990001' } });

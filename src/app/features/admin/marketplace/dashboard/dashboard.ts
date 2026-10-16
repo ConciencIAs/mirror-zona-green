@@ -209,11 +209,15 @@ export class DashboardComponent implements OnInit {
     this.ordenesFiltradas = datos;
 
     // ── KPIs Generales ──
+    // Las órdenes canceladas cuentan para el total de órdenes, la tasa de
+    // cancelación y el gráfico de estados, pero no para ventas, ticket,
+    // productos, gramos ni usuarios (antes inflaban esas cifras).
     this.totalOrdenes = datos.length;
-    this.totalVentas = datos.reduce((sum, o) => sum + (o.precio_total || 0), 0);
-    this.ticketPromedio = this.totalOrdenes > 0 ? this.totalVentas / this.totalOrdenes : 0;
-
     const canceladas = datos.filter((o) => o.status === 'cancelado').length;
+    const validas = datos.filter((o) => o.status !== 'cancelado');
+
+    this.totalVentas = validas.reduce((sum, o) => sum + Number(o.precio_total || 0), 0);
+    this.ticketPromedio = validas.length > 0 ? this.totalVentas / validas.length : 0;
     this.tasaCancelacion = this.totalOrdenes > 0 ? (canceladas / this.totalOrdenes) * 100 : 0;
     this.ordenesCompletadas = datos.filter((o) => o.status === 'entregado').length;
 
@@ -224,7 +228,7 @@ export class DashboardComponent implements OnInit {
     // ── Análisis por Producto (separado gramos / unidad) ──
     const mapaProductos = new Map<string, ProductoResumen>();
 
-    datos.forEach((orden) => {
+    validas.forEach((orden) => {
       if (!orden.lista_productos) return;
       orden.lista_productos.forEach((prod: SnapshotAnalitica) => {
         const key = prod.sku || prod.nombre;
@@ -295,7 +299,7 @@ export class DashboardComponent implements OnInit {
 
     // ── Análisis por Usuario ──
     const mapaUsuarios = new Map<string, UsuarioResumen>();
-    datos.forEach((orden) => {
+    validas.forEach((orden) => {
       const correo = orden.correo_cliente || 'desconocido';
       const actual = mapaUsuarios.get(correo) || {
         nombre: orden.nombre_cliente || 'Sin nombre',
@@ -308,7 +312,7 @@ export class DashboardComponent implements OnInit {
       };
 
       actual.totalOrdenes += 1;
-      actual.gastado += orden.precio_total || 0;
+      actual.gastado += Number(orden.precio_total || 0);
 
       if (!actual.ultimaOrden || (orden.created_at && orden.created_at > actual.ultimaOrden)) {
         actual.ultimaOrden = orden.created_at;
@@ -353,6 +357,8 @@ export class DashboardComponent implements OnInit {
       enviado: 'Enviado',
       entregado: 'Entregado',
       cancelado: 'Cancelado',
+      seleccion: 'Selección',
+      aporte: 'Aporte',
     };
     return map[status] || status;
   }

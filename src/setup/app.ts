@@ -67,15 +67,21 @@ export class App implements OnInit {
         }),
       )
       .subscribe(async (event) => {
+        const userId = event.session?.user.id;
+        if (!userId) return;
         const { error, data } = await this.supabaseDbService
           .from(this.supabaseDbService.tableNames.PERFILES)
           .select('*')
-          .eq('id', event.session?.user.id)
+          .eq('id', userId)
           .single();
         const { error: cartError, data: cartData } = await this.supabaseDbService
           .from(this.supabaseDbService.tableNames.CARRITO)
           .select('*')
-          .eq('usuario_id', event.session?.user.id);
+          .eq('usuario_id', userId);
+        // Si mientras se cargaba la sesión se cerró (p. ej. al volver del
+        // enlace de confirmación), no se guarda un perfil fantasma.
+        const { data: actual } = await this.supabaseAuthService.auth.getSession();
+        if (actual.session?.user.id !== userId) return;
         if (!error) this.userStore.setPerfil(data);
         if (!cartError) this.cartStore.setCart(cartData);
       });

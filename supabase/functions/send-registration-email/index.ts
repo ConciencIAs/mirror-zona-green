@@ -11,6 +11,8 @@ import nodemailer from "npm:nodemailer@6.9.10";
 //     base, no con el teléfono ni el código que manda el navegador;
 //   - el enlace se arma en el servidor con un origen de la lista APP_URLS;
 //   - la respuesta ya no dice qué ruta se usó.
+// Ruta 1 (base de confianza): normalmente no envía nada, porque el primer
+// correo es la plantilla "Confirm signup" de Supabase Auth.
 // Acepta el payload anterior ({nombre, correo, telefono, token_referido,
 // confirmation_url}) y, opcionalmente, user_id.
 
@@ -191,7 +193,20 @@ serve(async (req) => {
       return json(RESPUESTA_GENERICA);
     }
 
-    // 3. Una sola vez por perfil: la marca se pone con una actualización
+    // 3. Ruta según lo que decidió handle_new_user.
+    const enBaseConfianza = perfil.origen_autorizacion === "base_confianza";
+    const tieneReferido = typeof perfil.referido_por === "string" && perfil.referido_por.trim() !== "";
+
+    // Ruta 1: el primer correo es la plantilla "Confirm signup" de Supabase
+    // Auth (caso 6). Este correo solo se manda si Auth no envió esa plantilla,
+    // es decir, si el correo quedó confirmado automáticamente.
+    if (enBaseConfianza) {
+      const { data: authUser, error: errAuth } = await supabase.auth.admin.getUserById(perfil.id);
+      if (errAuth) throw errAuth;
+      if (!authUser.user?.email_confirmed_at) return json(RESPUESTA_GENERICA);
+    }
+
+    // 4. Una sola vez por perfil: la marca se pone con una actualización
     //    condicional; si otra llamada la puso antes, no se envía de nuevo.
     const datos = (perfil.datos_adicionales ?? {}) as Record<string, unknown>;
     if (datos[MARCA_ENVIO]) return json(RESPUESTA_GENERICA);
@@ -205,23 +220,18 @@ serve(async (req) => {
     if (errMarca) throw errMarca;
     if (!marcado?.length) return json(RESPUESTA_GENERICA);
 
-    // 4. Ruta según lo que decidió handle_new_user.
-    const enBaseConfianza = perfil.origen_autorizacion === "base_confianza";
-    const tieneReferido = typeof perfil.referido_por === "string" && perfil.referido_por.trim() !== "";
-
     let emailSubject: string;
     let emailHtml: string;
 
     if (enBaseConfianza) {
-      // RUTA 1: pertenece a la base de confianza
-      emailSubject = "Confirmación de correo - Cheyn Verde";
+      // RUTA 1: base de confianza con el correo ya confirmado (sin plantilla de Auth)
+      emailSubject = "Bienvenido - Cheyn Verde";
       emailHtml = buildEmailHtml({
         subtituloHeader: "¡Bienvenido a la familia Cheyn Verde!",
-        tituloCuerpo: "Confirma tu dirección de correo",
+        tituloCuerpo: "Tu cuenta está lista",
         mensajes: [
-          "Tú dirección de correo fue registrada correctamente.",
-          "Debes hacer clic en el enlace de confirmación para ingresar al sistema y conocer la oferta de Cheyn Verde.",
-          "Bienvenido a la familia Cheyn Verde.",
+          "Tu dirección de correo fue registrada correctamente.",
+          "Ingresa al sistema con el usuario y contraseña creada para conocer la oferta Cheyn Verde.",
         ],
         confirmationUrl: urlLogin(confirmation_url),
         textoBoton: "Ingresar a Cheyn Verde",
@@ -234,7 +244,7 @@ serve(async (req) => {
         subtituloHeader: "Tu registro está en revisión",
         tituloCuerpo: "Registro recibido con código de invitado",
         mensajes: [
-          "Tú dirección de correo fue registrada correctamente.",
+          "Tu dirección de correo fue registrada correctamente.",
           "El equipo de Cheyn Verde validará tu ingreso con la persona que te compartió la invitación y pronto te enviará un correo de ingreso al sistema.",
           "Pronto podrás acceder a nuestra oferta.",
         ],
@@ -247,7 +257,7 @@ serve(async (req) => {
         subtituloHeader: "Tu registro está en revisión",
         tituloCuerpo: "Registro recibido",
         mensajes: [
-          "Tú dirección de correo fue registrada correctamente.",
+          "Tu dirección de correo fue registrada correctamente.",
           "El equipo de Cheyn Verde validará la información y te enviará un correo de ingreso al sistema.",
         ],
         mostrarCajaSoporte: false,

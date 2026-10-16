@@ -45,9 +45,22 @@
         </button>
       </form>
 
+      @if (avisoConfirmacion()) {
+      <div class="rounded-xl border border-green-200 bg-green-50 p-4 mt-5 text-sm text-green-800" role="status">
+        <i class="pi pi-check-circle mr-1"></i>
+        {{ avisoConfirmacion() }}
+      </div>
+      }
+
       @if (generalError()) {
-      <div class="rounded-xl border border-red-200 bg-red-50 p-4 mt-5 text-sm text-red-700">
+      <div class="rounded-xl border border-red-200 bg-red-50 p-4 mt-5 text-sm text-red-700" role="alert">
         {{ generalError() }}
+        @if (reenviarA()) {
+        <button type="button" (click)="reenviarConfirmacion()" [disabled]="reenviando()"
+          class="mt-3 block font-semibold text-red-800 underline hover:no-underline disabled:opacity-60">
+          {{ reenviando() ? 'Enviando...' : 'Reenviar correo de confirmación' }}
+        </button>
+        }
       </div>
       }
     </div>

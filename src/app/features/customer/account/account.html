@@ -265,6 +265,13 @@
       </form>
     </div>
 
+    <!-- ==============================
+         CAMBIAR CONTRASEÑA
+    =============================== -->
+    @if (correo()) {
+    <app-cambiar-contrasena [correo]="correo()" />
+    }
+
     <!-- Nota informativa -->
     <p class="mt-4 text-center text-xs text-slate-400">
       El correo electrónico no puede modificarse desde aquí.

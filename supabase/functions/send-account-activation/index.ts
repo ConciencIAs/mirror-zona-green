@@ -130,7 +130,7 @@ serve(async (req) => {
               <h2 style="color: #146424; font-size: 20px; font-weight: 600; margin-top: 0; margin-bottom: 16px;">Acceso al sistema</h2>
 
               <p style="font-size: 15px; line-height: 1.6; color: #101d30; margin-bottom: 12px;">
-                Tú registro fue autorizado correctamente.
+                Tu registro fue autorizado correctamente.
               </p>
 
               <p style="font-size: 15px; line-height: 1.6; color: #101d30; margin-bottom: 24px;">
