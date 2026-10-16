@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { EstadoOrden, Orden, Perfil } from '@src/app/shared/models/interfaces/db/db';
-import { MonedaPipe, FechaFormatoPipe } from '@src/app/shared/pipes/';
+import { MonedaPipe, FechaFormatoPipe, EstadoOrdenPipe } from '@src/app/shared/pipes/';
+import { NOMBRE_ESTADO_ORDEN } from '@src/app/shared/utils/estados-orden';
 import { FormsModule } from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
@@ -25,6 +26,7 @@ import { TooltipModule } from 'primeng/tooltip';
     CommonModule,
     FechaFormatoPipe,
     MonedaPipe,
+    EstadoOrdenPipe,
     FormsModule,
     ButtonModule,
     SelectModule,
@@ -56,24 +58,16 @@ export class Ordenes implements OnInit {
   protected readonly selectedOrderForPrint = signal<Orden | null>(null);
   protected readonly customObservaciones = signal<string>('');
 
+  // Los nombres salen de NOMBRE_ESTADO_ORDEN (los mismos que ve el cliente).
+  protected readonly updateStatusOptions: { label: string; value: EstadoOrden }[] = (
+    Object.keys(NOMBRE_ESTADO_ORDEN) as EstadoOrden[]
+  ).map((value) => ({ label: NOMBRE_ESTADO_ORDEN[value], value }));
+
   protected readonly statusOptions: { label: string; value: EstadoOrden | '' }[] = [
     { label: 'Todos', value: '' },
-    { label: 'Selección', value: 'seleccion' },
-    { label: 'Aporte', value: 'aporte' },
-    { label: 'En preparación', value: 'en_proceso' },
-    { label: 'En ruta', value: 'enviado' },
-    { label: 'Entregado', value: 'entregado' },
-    { label: 'Cancelado', value: 'cancelado' },
+    ...this.updateStatusOptions,
   ];
 
-  protected readonly updateStatusOptions: { label: string; value: EstadoOrden }[] = [
-    { label: 'Selección', value: 'seleccion' },
-    { label: 'Aporte', value: 'aporte' },
-    { label: 'En preparación', value: 'en_proceso' },
-    { label: 'En ruta', value: 'enviado' },
-    { label: 'Entregado', value: 'entregado' },
-    { label: 'Cancelado', value: 'cancelado' },
-  ];
 
   protected readonly tipoEntregaOptions = [
     { label: 'Todos', value: '' },

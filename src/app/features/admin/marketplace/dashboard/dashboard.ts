@@ -14,6 +14,7 @@ import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.s
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { Orden, SnapshotAnalitica } from '@src/app/shared/models/interfaces/db/db';
+import { nombreEstadoOrden } from '@src/app/shared/utils/estados-orden';
 
 import { NgApexchartsModule } from 'ng-apexcharts';
 
@@ -357,17 +358,7 @@ export class DashboardComponent implements OnInit {
   }
 
   formatEstado(status: string): string {
-    const map: Record<string, string> = {
-      pendiente: 'Pendiente',
-      pagado: 'Pagado',
-      en_proceso: 'En Proceso',
-      enviado: 'Enviado',
-      entregado: 'Entregado',
-      cancelado: 'Cancelado',
-      seleccion: 'Selección',
-      aporte: 'Aporte',
-    };
-    return map[status] || status;
+    return nombreEstadoOrden(status);
   }
 
   getSeverity(status: string): any {
