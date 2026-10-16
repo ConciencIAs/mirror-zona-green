@@ -1,0 +1,91 @@
+name: Pruebas
+
+# Pruebas de funcionamiento de Cheyn Verde.
+# - En cada PR hacia main: compra de punta a punta y matriz de permisos contra un
+#   Supabase LOCAL creado en el momento (nunca producción).
+# - Cada día y a pedido: control rápido de producción, SOLO LECTURA (no inicia
+#   sesión ni escribe nada).
+# Solo corre en el repositorio principal (no en el espejo del sitio).
+
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 12 * * *' # 7:00 a. m. en Colombia
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  funcionamiento:
+    name: Compra y permisos (Supabase local)
+    if: github.repository == 'ConcienciasPlayground/zona-green' && github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Levantar Supabase local
+        run: supabase start -x studio,imgproxy,logflare,vector,supavisor,realtime
+
+      - name: Armar la base (esquema de producción + datos de prueba + migraciones)
+        run: bash supabase/pruebas/preparar-base-local.sh
+
+      - name: Pruebas de funcionamiento
+        run: npm run e2e
+
+      - name: Guardar el informe si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-pruebas
+          path: |
+            e2e-informe/
+            e2e-resultados/
+          retention-days: 14
+
+  produccion:
+    name: Control de producción (solo lectura)
+    if: github.repository == 'ConcienciasPlayground/zona-green' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium para Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Control de producción
+        run: npm run e2e:produccion
+
+      - name: Guardar el informe si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-produccion
+          path: e2e-resultados/
+          retention-days: 14

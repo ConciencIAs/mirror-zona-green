@@ -7,13 +7,21 @@ se niegan a correr si la API no es `127.0.0.1`/`localhost`. Nunca contra producc
 
 ```bash
 npx supabase start
-# esquema público de producción (sin datos) + auth/storage + datos sintéticos
-docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/pruebas/00_esquema_publico_produccion_2026-10-15.sql
-docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/pruebas/01_local_auth_storage_datos_sinteticos.sql
-# migraciones a probar
-docker exec -i supabase_db_Cheyn_Verde psql -U postgres -d postgres -v ON_ERROR_STOP=1 -q < supabase/migrations/<archivo>.sql
-docker exec supabase_db_Cheyn_Verde psql -U postgres -c "NOTIFY pgrst, 'reload schema'"
+bash supabase/pruebas/preparar-base-local.sh   # solo con una base vacía
 ```
+
+`preparar-base-local.sh` aplica, en orden: `00_esquema_publico_produccion_*.sql` (esquema sin datos),
+`01_local_auth_storage_datos_sinteticos.sql`, `02_config_publica.sql` (roles, etiquetas, menú) y todas las
+migraciones de `supabase/migrations/`. Para empezar de cero: `npx supabase stop --no-backup` y otra vez lo de arriba.
+
+## Pruebas automáticas (Playwright, carpeta `e2e/`)
+
+| Comando | Qué prueba |
+|---|---|
+| `npm run e2e` | Compra de punta a punta (reservar → carrito → checkout → pedido → WhatsApp → Mis órdenes; stock agotado) y matriz de permisos (6 tipos de usuario × tablas y funciones). Supabase local |
+| `npm run e2e:produccion` | Control rápido del sitio publicado, **solo lectura**: portada sin errores, encabezados de seguridad, Tailwind con integridad, login y registro, páginas privadas piden sesión, la API no entrega datos privados |
+
+Corren solas en GitHub Actions (`.github/workflows/pruebas.yml`): la local en cada PR y la de producción todos los días.
 
 ## Edge Functions con correo local (Mailpit, http://127.0.0.1:54324)
 
@@ -60,6 +68,8 @@ npx ng serve --configuration local --port 4202
 
 | `fase3-endurecimiento.mjs` | carrito (cantidades negativas, cero, fraccionarias), pedido normal y de usuario bloqueado, visitante, campos protegidos del perfil, perfil creado como admin, calificaciones, edad mínima, respaldo de "reservado" |
 | `e2e-fase3.mjs [carpeta]` | registro (contraseña con letras y números, 18 años), detalle de producto sin "reservados", `/lab` solo admin, aviso de fecha en Mi perfil, script de Tailwind con versión fija e integridad |
+
+| `concurrencia-compras.mjs [rondas] [salida.json]` | Fase 3b: 10 compradores confirman a la vez el mismo producto por gramos (4 presentaciones) por `create-order`; verifica stock, totales, rechazos y bloqueos mutuos en cada ronda. Necesita `npx supabase functions serve`. Resultados: `docs/auditoria/fase-3b/RESULTADOS.md` |
 
 Notas:
 - En el calendario, la fecha se escribe tecleando y saliendo con Tab (`fill` + `blur` lo deja vacío).

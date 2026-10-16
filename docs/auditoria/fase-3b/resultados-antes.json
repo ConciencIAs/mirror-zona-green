@@ -1,0 +1,966 @@
+{
+  "fecha": "2026-10-16T18:01:46.833Z",
+  "rondas": 10,
+  "informe": [
+    {
+      "ronda": 1,
+      "exitos": 8,
+      "fallos": 2,
+      "deadlocks": 0,
+      "vendidos": {
+        "5": 4,
+        "10": 3,
+        "20": 1,
+        "40": 1
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 0,
+        "20": 1,
+        "40": 0
+      },
+      "gramos_vendidos": 110,
+      "unidades_vendidas": 1,
+      "ms_min": 150,
+      "ms_mediana": 357,
+      "ms_max": 432,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 150,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 307,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 400,
+          "ms": 357,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 5.00g de PRUEBA material seleccionado."
+        },
+        {
+          "u": 4,
+          "status": 201,
+          "ms": 166,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 284,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 432,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 398,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 382,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 400,
+          "ms": 382,
+          "msg": "Stock insuficiente. Quedan 1.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        },
+        {
+          "u": 10,
+          "status": 201,
+          "ms": 339,
+          "msg": "ok total 200000"
+        }
+      ]
+    },
+    {
+      "ronda": 2,
+      "exitos": 8,
+      "fallos": 2,
+      "deadlocks": 0,
+      "vendidos": {
+        "5": 4,
+        "10": 3,
+        "20": 2,
+        "40": 0
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 0,
+        "20": 0,
+        "40": 1
+      },
+      "gramos_vendidos": 90,
+      "unidades_vendidas": 2,
+      "ms_min": 48,
+      "ms_mediana": 208,
+      "ms_max": 273,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 109,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 208,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 201,
+          "ms": 48,
+          "msg": "ok total 30000"
+        },
+        {
+          "u": 4,
+          "status": 400,
+          "ms": 249,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 5.00g de PRUEBA material seleccionado."
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 182,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 232,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 132,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 273,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 201,
+          "ms": 156,
+          "msg": "ok total 140000"
+        },
+        {
+          "u": 10,
+          "status": 400,
+          "ms": 273,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        }
+      ]
+    },
+    {
+      "ronda": 3,
+      "exitos": 8,
+      "fallos": 2,
+      "deadlocks": 1,
+      "vendidos": {
+        "5": 4,
+        "10": 3,
+        "20": 2,
+        "40": 0
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 0,
+        "20": 0,
+        "40": 1
+      },
+      "gramos_vendidos": 90,
+      "unidades_vendidas": 1,
+      "ms_min": 171,
+      "ms_mediana": 1719,
+      "ms_max": 1837,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 410,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 1754,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 400,
+          "ms": 1696,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 4,
+          "status": 201,
+          "ms": 1719,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 506,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 1837,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 1619,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 1736,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 201,
+          "ms": 171,
+          "msg": "ok total 140000"
+        },
+        {
+          "u": 10,
+          "status": 400,
+          "ms": 1766,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        }
+      ]
+    },
+    {
+      "ronda": 4,
+      "exitos": 5,
+      "fallos": 5,
+      "deadlocks": 4,
+      "vendidos": {
+        "5": 2,
+        "10": 2,
+        "20": 2,
+        "40": 0
+      },
+      "stock_final": {
+        "5": 2,
+        "10": 1,
+        "20": 0,
+        "40": 1
+      },
+      "gramos_vendidos": 70,
+      "unidades_vendidas": 1,
+      "ms_min": 83,
+      "ms_mediana": 1200,
+      "ms_max": 1266,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 83,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 132,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 400,
+          "ms": 1200,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 4,
+          "status": 400,
+          "ms": 1151,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 5,
+          "status": 400,
+          "ms": 1224,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 6,
+          "status": 400,
+          "ms": 1150,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 1224,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 1266,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 201,
+          "ms": 148,
+          "msg": "ok total 140000"
+        },
+        {
+          "u": 10,
+          "status": 400,
+          "ms": 1240,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        }
+      ]
+    },
+    {
+      "ronda": 5,
+      "exitos": 7,
+      "fallos": 3,
+      "deadlocks": 2,
+      "vendidos": {
+        "5": 3,
+        "10": 3,
+        "20": 2,
+        "40": 0
+      },
+      "stock_final": {
+        "5": 1,
+        "10": 0,
+        "20": 0,
+        "40": 1
+      },
+      "gramos_vendidos": 85,
+      "unidades_vendidas": 1,
+      "ms_min": 199,
+      "ms_mediana": 1579,
+      "ms_max": 1823,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 374,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 400,
+          "ms": 1476,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 3,
+          "status": 400,
+          "ms": 1533,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 4,
+          "status": 201,
+          "ms": 1602,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 1533,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 1579,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 1653,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 199,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 201,
+          "ms": 1767,
+          "msg": "ok total 140000"
+        },
+        {
+          "u": 10,
+          "status": 400,
+          "ms": 1823,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        }
+      ]
+    },
+    {
+      "ronda": 6,
+      "exitos": 6,
+      "fallos": 4,
+      "deadlocks": 3,
+      "vendidos": {
+        "5": 4,
+        "10": 1,
+        "20": 1,
+        "40": 1
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 2,
+        "20": 1,
+        "40": 0
+      },
+      "gramos_vendidos": 90,
+      "unidades_vendidas": 1,
+      "ms_min": 1035,
+      "ms_mediana": 1146,
+      "ms_max": 1247,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 1122,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 1146,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 201,
+          "ms": 1105,
+          "msg": "ok total 30000"
+        },
+        {
+          "u": 4,
+          "status": 201,
+          "ms": 1247,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 5,
+          "status": 400,
+          "ms": 1036,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 6,
+          "status": 400,
+          "ms": 1035,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 7,
+          "status": 400,
+          "ms": 1079,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 1227,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 400,
+          "ms": 1203,
+          "msg": "Stock insuficiente. Quedan 1.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        },
+        {
+          "u": 10,
+          "status": 201,
+          "ms": 1162,
+          "msg": "ok total 200000"
+        }
+      ]
+    },
+    {
+      "ronda": 7,
+      "exitos": 8,
+      "fallos": 2,
+      "deadlocks": 1,
+      "vendidos": {
+        "5": 4,
+        "10": 3,
+        "20": 1,
+        "40": 1
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 0,
+        "20": 1,
+        "40": 0
+      },
+      "gramos_vendidos": 110,
+      "unidades_vendidas": 1,
+      "ms_min": 48,
+      "ms_mediana": 1291,
+      "ms_max": 1458,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 48,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 97,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 400,
+          "ms": 1157,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 4,
+          "status": 201,
+          "ms": 1190,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 1291,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 1340,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 1382,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 1423,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 400,
+          "ms": 1458,
+          "msg": "Stock insuficiente. Quedan 1.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        },
+        {
+          "u": 10,
+          "status": 201,
+          "ms": 1240,
+          "msg": "ok total 200000"
+        }
+      ]
+    },
+    {
+      "ronda": 8,
+      "exitos": 5,
+      "fallos": 5,
+      "deadlocks": 4,
+      "vendidos": {
+        "5": 4,
+        "10": 0,
+        "20": 2,
+        "40": 0
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 3,
+        "20": 0,
+        "40": 1
+      },
+      "gramos_vendidos": 60,
+      "unidades_vendidas": 1,
+      "ms_min": 41,
+      "ms_mediana": 1082,
+      "ms_max": 1165,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 1106,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 41,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 201,
+          "ms": 1082,
+          "msg": "ok total 30000"
+        },
+        {
+          "u": 4,
+          "status": 400,
+          "ms": 1035,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 1123,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 400,
+          "ms": 1025,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 7,
+          "status": 400,
+          "ms": 1063,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 8,
+          "status": 400,
+          "ms": 1039,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 9,
+          "status": 201,
+          "ms": 1147,
+          "msg": "ok total 140000"
+        },
+        {
+          "u": 10,
+          "status": 400,
+          "ms": 1165,
+          "msg": "Stock insuficiente. Quedan 0.00 paquetes de 20.00g de PRUEBA material seleccionado."
+        }
+      ]
+    },
+    {
+      "ronda": 9,
+      "exitos": 7,
+      "fallos": 3,
+      "deadlocks": 3,
+      "vendidos": {
+        "5": 4,
+        "10": 3,
+        "20": 0,
+        "40": 0
+      },
+      "stock_final": {
+        "5": 0,
+        "10": 0,
+        "20": 2,
+        "40": 1
+      },
+      "gramos_vendidos": 50,
+      "unidades_vendidas": 1,
+      "ms_min": 49,
+      "ms_mediana": 1153,
+      "ms_max": 1266,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 91,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 201,
+          "ms": 109,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 3,
+          "status": 400,
+          "ms": 1153,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 4,
+          "status": 201,
+          "ms": 1153,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 5,
+          "status": 201,
+          "ms": 49,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 1169,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 201,
+          "ms": 1224,
+          "msg": "ok total 48000"
+        },
+        {
+          "u": 8,
+          "status": 201,
+          "ms": 1266,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 9,
+          "status": 400,
+          "ms": 1127,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 10,
+          "status": 400,
+          "ms": 1127,
+          "msg": "deadlock detected"
+        }
+      ]
+    },
+    {
+      "ronda": 10,
+      "exitos": 4,
+      "fallos": 6,
+      "deadlocks": 6,
+      "vendidos": {
+        "5": 2,
+        "10": 1,
+        "20": 1,
+        "40": 1
+      },
+      "stock_final": {
+        "5": 2,
+        "10": 2,
+        "20": 1,
+        "40": 0
+      },
+      "gramos_vendidos": 80,
+      "unidades_vendidas": 1,
+      "ms_min": 53,
+      "ms_mediana": 1038,
+      "ms_max": 1253,
+      "chequeos": {
+        "sin_stock_negativo": true,
+        "stock_cuadra_por_presentacion": true,
+        "stock_total_cuadra": true,
+        "unidades_cuadran": true,
+        "pedidos_igual_a_exitos": true,
+        "precios_y_totales_correctos": true,
+        "no_se_vende_de_mas": true,
+        "fallos_con_mensaje_claro": true,
+        "carritos_ok": true
+      },
+      "detalle": [
+        {
+          "u": 1,
+          "status": 201,
+          "ms": 1213,
+          "msg": "ok total 20000"
+        },
+        {
+          "u": 2,
+          "status": 400,
+          "ms": 1038,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 3,
+          "status": 201,
+          "ms": 1164,
+          "msg": "ok total 30000"
+        },
+        {
+          "u": 4,
+          "status": 400,
+          "ms": 1026,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 5,
+          "status": 400,
+          "ms": 1026,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 6,
+          "status": 201,
+          "ms": 53,
+          "msg": "ok total 38000"
+        },
+        {
+          "u": 7,
+          "status": 400,
+          "ms": 1127,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 8,
+          "status": 400,
+          "ms": 1037,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 9,
+          "status": 400,
+          "ms": 1037,
+          "msg": "deadlock detected"
+        },
+        {
+          "u": 10,
+          "status": 201,
+          "ms": 1253,
+          "msg": "ok total 200000"
+        }
+      ]
+    }
+  ]
+}

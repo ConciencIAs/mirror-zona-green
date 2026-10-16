@@ -53,3 +53,6 @@ Thumbs.db
 # Design source assets / working notes (not part of the app)
 /Mickups VLado/
 /pendientes/
+# Resultados de las pruebas de Playwright
+/e2e-informe/
+/e2e-resultados/
