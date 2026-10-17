@@ -1,12 +1,13 @@
-import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
-import { EstadoOrden, Orden, ProductReview, SnapshotAnalitica } from '@src/app/shared/models/interfaces/db/db';
-import { FechaFormatoPipe, MonedaPipe } from '@src/app/shared/pipes/index';
+import { EstadoOrden, Orden, ProductReview, SnapshotAnalitica, Tracking } from '@src/app/shared/models/interfaces/db/db';
+import { EstadoOrdenPipe, FechaFormatoPipe, MonedaPipe } from '@src/app/shared/pipes/index';
+import { RECORRIDO_ORDEN } from '@src/app/shared/utils/estados-orden';
 import { TimelineModule } from 'primeng/timeline';
 import { ProductReviewModalComponent } from '@src/app/shared/components/product-review-modal/product-review-modal';
 
@@ -18,12 +19,23 @@ import { ProductReviewModalComponent } from '@src/app/shared/components/product-
     RouterModule,
     FechaFormatoPipe,
     MonedaPipe,
+    EstadoOrdenPipe,
     TimelineModule,
     ProductReviewModalComponent,
   ],
   templateUrl: './ordenes.html',
   changeDetection: ChangeDetectionStrategy.Eager,
-  styles: ``,
+  // CSS literal (no utilidades de Tailwind): el Tailwind del CDN puede pisarlas.
+  styles: `
+    /* Solo el margen: p-timeline ya es flex (fila en horizontal, columna en vertical). */
+    :host ::ng-deep p-timeline {
+      margin-top: 1rem;
+    }
+    /* En vertical la columna de fechas tiene ancho fijo para que la línea no se corra. */
+    :host ::ng-deep p-timeline.p-timeline-vertical .p-timeline-event-opposite {
+      flex: 0 0 5.5rem;
+    }
+  `,
 })
 export class Ordenes {
   private readonly dbService = inject(SupabaseDbService);
@@ -49,13 +61,21 @@ export class Ordenes {
   protected readonly userId = computed(() => this.userStore.perfil().id);
   protected readonly hasOrders = computed(() => this.orders().length > 0);
 
-  readonly estados: EstadoOrden[] = [
-    'seleccion',
-    'aporte',
-    'en_proceso',
-    'enviado',
-    'entregado'
-  ];
+  readonly estados: EstadoOrden[] = RECORRIDO_ORDEN;
+
+  /**
+   * Los 5 estados solo caben en una fila en pantallas anchas; en celular y
+   * tablet la línea de tiempo va vertical (si no, ensancha la página).
+   */
+  protected readonly timelineHorizontal = signal(false);
+
+  constructor() {
+    const consulta = window.matchMedia('(min-width: 1280px)');
+    const actualizar = () => this.timelineHorizontal.set(consulta.matches);
+    actualizar();
+    consulta.addEventListener('change', actualizar);
+    inject(DestroyRef).onDestroy(() => consulta.removeEventListener('change', actualizar));
+  }
 
   protected ngOnInit(): void {
     void this.loadOrders();
@@ -183,18 +203,25 @@ export class Ordenes {
 
   buildTimeline(order: Orden) {
     const cancelado = order.status === 'cancelado';
+    // El paso actual es el estado del pedido; el historial (tracking) solo da las fechas.
+    const currentIndex = this.estados.indexOf(order.status);
+    // El checkout guarda el primer registro como { estado: 'pendiente', fecha }
+    // y el admin los siguientes como { status, date }.
+    const registros = (order.tracking ?? []).map((t) => {
+      const r = t as Tracking & { estado?: string; fecha?: string };
+      return { status: r.status ?? (r.estado === 'pendiente' ? 'seleccion' : r.estado), date: r.date ?? r.fecha };
+    });
 
     return this.estados.map((estado, index) => {
-      const tracking = order.tracking.find(x => x.status === estado);
-      const ultimoEstado = order.tracking.at(-1)?.status;
-      const currentIndex = this.estados.indexOf(ultimoEstado as EstadoOrden);
-
+      // Si el pedido pasó varias veces por un estado, vale la última vez.
+      const registro = [...registros].reverse().find((r) => r.status === estado);
+      const alcanzado = !cancelado && index <= currentIndex;
       return {
         status: estado,
-        date: tracking?.date ?? '',
-        completed: cancelado ? false : index < currentIndex,
-        current: cancelado ? false : index === currentIndex,
-        cancelled: cancelado
+        date: alcanzado ? (registro?.date ?? (estado === 'seleccion' ? order.created_at : '')) : '',
+        completed: !cancelado && index < currentIndex,
+        current: !cancelado && index === currentIndex,
+        cancelled: cancelado,
       };
     });
   }
