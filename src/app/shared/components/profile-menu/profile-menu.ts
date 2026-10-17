@@ -25,7 +25,13 @@ export class ProfileMenu implements OnInit {
 
   labelAvater = this.userState.fullName().charAt(0).toUpperCase() || 'U';
 
+  /** Cuenta registrada pero aún no autorizada por el equipo. */
+  get pendiente(): boolean {
+    return this.userState.perfil().status === 'inactivo';
+  }
+
   get displayName(): string {
+    if (this.pendiente) return 'Pendiente autorización';
     const name = this.userState.fullName();
     return name ? name.split(' ')[0] : 'Mi perfil';
   }

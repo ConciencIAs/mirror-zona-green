@@ -68,7 +68,7 @@
 
       <!-- Vista de fichas: solo en tablet/mobile (<1024px), reemplaza la
            tabla de 8 columnas que se recortaba en pantallas angostas. -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:hidden">
         @for (profile of perfiles(); track profile.id) {
         <div
           class="rounded-2xl border border-slate-200 dark:border-slate-700 p-4 flex flex-col gap-3"
@@ -185,7 +185,7 @@
         }
       </div>
 
-      <div class="hidden lg:block">
+      <div class="hidden xl:block">
       <p-table
         [value]="perfiles()"
         [paginator]="true"
@@ -236,11 +236,11 @@
                 <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
                   {{ (profile.full_name ?? profile.correo).charAt(0).toUpperCase() }}
                 </div>
-                <div class="flex flex-col">
-                  <span class="font-medium text-slate-900 dark:text-white">
+                <div class="flex min-w-0 flex-col" style="max-width: 15rem">
+                  <span class="truncate font-medium text-slate-900 dark:text-white" [title]="profile.full_name ?? ''">
                     {{ profile.full_name ?? '—' }}
                   </span>
-                  <span class="text-xs text-slate-400 dark:text-slate-300 font-mono">{{ profile.correo }}</span>
+                  <span class="truncate text-xs text-slate-400 dark:text-slate-300 font-mono" [title]="profile.correo">{{ profile.correo }}</span>
                 </div>
               </div>
             </td>
