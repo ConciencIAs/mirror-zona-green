@@ -30,9 +30,18 @@
           </p>
           <p class="text-sm text-[#55644d]">Fecha: {{ order.created_at | fechaFormato }}</p>
         </div>
-        <span
-          class="inline-flex items-center rounded-full bg-[#eef6df] px-4 py-2 text-sm font-semibold text-[#1f6c2f]">{{
-          order.status | estadoOrden }}</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold"
+            [ngClass]="order.status === 'cancelado' ? 'bg-[#fff1f1] text-[#8d1c1c]' : 'bg-[#eef6df] text-[#1f6c2f]'">{{
+            order.status | estadoOrden }}</span>
+          @if (order.status === 'seleccion') {
+          <button type="button" (click)="cancelarPedido(order)" [disabled]="cancelando() === order.id"
+            class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-[#8d1c1c] transition hover:bg-[#fff1f1] disabled:opacity-50">
+            <i class="pi pi-times text-xs"></i>
+            {{ cancelando() === order.id ? 'Cancelando…' : 'Cancelar pedido' }}
+          </button>
+          }
+        </div>
       </div>
 
       <div class="mt-6 grid gap-4 md:grid-cols-[1fr_1fr]">
@@ -134,7 +143,9 @@
 
         }">
 
-                @if(item.completed || item.current || item.cancelled){
+                @if (item.cancelled) {
+                <i class="pi pi-times text-sm"></i>
+                } @else if (item.completed || item.current) {
                 <i class="pi pi-check text-sm"></i>
                 }
 

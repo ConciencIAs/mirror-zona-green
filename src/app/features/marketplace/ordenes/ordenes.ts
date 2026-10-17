@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { UserStore } from '@src/app/core/state/customer/customer.state';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
+import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
+import { ToastService } from '@src/app/core/services/ui/toast.service';
 
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { EstadoOrden, Orden, ProductReview, SnapshotAnalitica, Tracking } from '@src/app/shared/models/interfaces/db/db';
@@ -40,6 +42,10 @@ import { ProductReviewModalComponent } from '@src/app/shared/components/product-
 export class Ordenes {
   private readonly dbService = inject(SupabaseDbService);
   private readonly userStore = inject(UserStore);
+  private readonly confirmationModal = inject(ConfirmationModalService);
+  private readonly toastService = inject(ToastService);
+  /** Pedido que se está cancelando (deshabilita su botón). */
+  protected readonly cancelando = signal<string | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal('');
   protected readonly orders = signal<Orden[]>([]);
@@ -201,28 +207,64 @@ export class Ordenes {
     this.myReviews.set(map);
   }
 
+  /** El cliente puede cancelar su pedido mientras está en "Selección realizada"; el stock vuelve al inventario. */
+  protected cancelarPedido(order: Orden): void {
+    this.confirmationModal.confirm({
+      header: 'Cancelar pedido',
+      message: '¿Seguro que quieres cancelar este pedido? Esta acción no se puede deshacer.',
+      acceptLabel: 'Sí, cancelar',
+      rejectLabel: 'No',
+      defaultFocus: 'reject',
+      accept: () => void this.confirmarCancelacion(order),
+    });
+  }
+
+  private async confirmarCancelacion(order: Orden): Promise<void> {
+    this.cancelando.set(order.id);
+    const { error } = await this.dbService.rpc('cancelar_mi_pedido', { p_orden_id: order.id });
+    this.cancelando.set(null);
+    if (error) {
+      this.toastService.error(error.message || 'No se pudo cancelar el pedido.');
+      return;
+    }
+    this.toastService.success('Pedido cancelado.');
+    await this.loadOrders();
+  }
+
   buildTimeline(order: Orden) {
-    const cancelado = order.status === 'cancelado';
-    // El paso actual es el estado del pedido; el historial (tracking) solo da las fechas.
-    const currentIndex = this.estados.indexOf(order.status);
     // El checkout guarda el primer registro como { estado: 'pendiente', fecha }
     // y el admin los siguientes como { status, date }.
     const registros = (order.tracking ?? []).map((t) => {
       const r = t as Tracking & { estado?: string; fecha?: string };
       return { status: r.status ?? (r.estado === 'pendiente' ? 'seleccion' : r.estado), date: r.date ?? r.fecha };
     });
+    // Si el pedido pasó varias veces por un estado, vale la última vez.
+    const fecha = (estado: string) =>
+      [...registros].reverse().find((r) => r.status === estado)?.date ?? (estado === 'seleccion' ? order.created_at : '');
 
-    return this.estados.map((estado, index) => {
-      // Si el pedido pasó varias veces por un estado, vale la última vez.
-      const registro = [...registros].reverse().find((r) => r.status === estado);
-      const alcanzado = !cancelado && index <= currentIndex;
-      return {
-        status: estado,
-        date: alcanzado ? (registro?.date ?? (estado === 'seleccion' ? order.created_at : '')) : '',
-        completed: !cancelado && index < currentIndex,
-        current: !cancelado && index === currentIndex,
-        cancelled: cancelado,
-      };
-    });
+    if (order.status === 'cancelado') {
+      // Los pasos que alcanzó antes de cancelarse y, al final, "Cancelado".
+      const alcanzado = Math.max(0, ...registros.map((r) => this.estados.indexOf(r.status as EstadoOrden)));
+      return [
+        ...this.estados.slice(0, alcanzado + 1).map((estado) => ({
+          status: estado,
+          date: fecha(estado),
+          completed: true,
+          current: false,
+          cancelled: false,
+        })),
+        { status: 'cancelado', date: fecha('cancelado'), completed: false, current: false, cancelled: true },
+      ];
+    }
+
+    // El paso actual es el estado del pedido; el historial solo da las fechas.
+    const currentIndex = this.estados.indexOf(order.status);
+    return this.estados.map((estado, index) => ({
+      status: estado,
+      date: index <= currentIndex ? fecha(estado) : '',
+      completed: index < currentIndex,
+      current: index === currentIndex,
+      cancelled: false,
+    }));
   }
 }

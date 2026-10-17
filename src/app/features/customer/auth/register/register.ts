@@ -264,23 +264,15 @@ export class Register {
         }
         if (error) throw error;
 
-        // La función decide la ruta del correo con los datos guardados en la
-        // base; teléfono y código se siguen enviando por compatibilidad.
-        const { error: emailError } = await this.edgeFunctionsService.sendRegistrationEmail({
-          nombre: currentData.full_name,
-          correo: currentData.correo.trim().toLowerCase(),
-          telefono: celular!,
-          token_referido: codigoReferido || null,
-          confirmation_url: data.session ? null : environment.urlHost,
-          user_id: data.user?.id ?? null,
-        });
-
-        if (emailError) {
-          console.error('Error al enviar notificación de registro:', emailError);
-          this.toastService.warn('La cuenta se creó, pero no se pudo enviar la notificación de registro.');
-        }
-
+        // El aviso "tu ingreso está en revisión" se envía cuando la persona
+        // confirma su correo (login.ts). Si Auth no pide confirmación, la
+        // sesión ya existe y se pide aquí.
         if (data.session) {
+          const { error: avisoError } = await this.edgeFunctionsService.avisarRegistroEnRevision(
+            currentData.correo.trim().toLowerCase(),
+            data.session.user.id,
+          );
+          if (avisoError) console.error('Error al enviar el aviso de registro en revisión:', avisoError);
           await this.router.navigate(['/auth/magik-link-callback']);
         } else {
           this.toastService.success('Cuenta creada. Revisa tu correo para confirmar el registro.');

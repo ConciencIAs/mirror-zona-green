@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
+import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
 import { TableName } from '@src/app/shared/models/constans/db/tableName.enum';
 import { EstadoOrden, Orden, Perfil } from '@src/app/shared/models/interfaces/db/db';
 import { MonedaPipe, FechaFormatoPipe, EstadoOrdenPipe } from '@src/app/shared/pipes/';
@@ -46,6 +47,10 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class Ordenes implements OnInit {
   private readonly dbService = inject(SupabaseDbService);
+  private readonly confirmationModal = inject(ConfirmationModalService);
+
+  /** Estado guardado en la base de cada pedido (el p-select edita order.status en memoria). */
+  private readonly estadosGuardados = new Map<string, EstadoOrden>();
 
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
@@ -177,6 +182,8 @@ export class Ordenes implements OnInit {
       }
 
       const orders = (data as Orden[]) || [];
+      this.estadosGuardados.clear();
+      for (const o of orders) this.estadosGuardados.set(o.id, o.status);
       this.orders.set(orders);
 
       // Cargar perfiles para obtener teléfonos y nombres completos
@@ -391,17 +398,45 @@ export class Ordenes implements OnInit {
     printWindow.document.close();
   }
 
+  /** Un pedido cancelado es estado final: la base no deja reactivarlo (su stock ya se devolvió). */
+  protected estaCancelado(order: Orden): boolean {
+    return this.estadosGuardados.get(order.id) === 'cancelado';
+  }
+
   protected async saveOrder(order: Orden): Promise<void> {
+    const anterior = this.estadosGuardados.get(order.id);
+    if (order.status === 'cancelado' && anterior !== 'cancelado') {
+      const confirmado = await new Promise<boolean>((resolve) =>
+        this.confirmationModal.confirm({
+          header: 'Cancelar pedido',
+          message: 'El stock de este pedido vuelve al inventario y el pedido no se podrá reactivar. ¿Continuar?',
+          acceptLabel: 'Sí, cancelar pedido',
+          rejectLabel: 'No',
+          defaultFocus: 'reject',
+          accept: () => resolve(true),
+          reject: () => resolve(false),
+        }),
+      );
+      if (!confirmado) {
+        order.status = anterior ?? order.status;
+        return;
+      }
+    }
+
     this.saving.set(true);
     this.error.set('');
 
     try {
       const newStatus = order.status;
-      const newTrackingRecord = { status: newStatus, date: new Date().toISOString() };
+      // Solo se agrega al historial si el estado cambió (guardar sin cambiarlo lo repetía).
+      const tracking =
+        newStatus === anterior
+          ? order.tracking || []
+          : [...(order.tracking || []), { status: newStatus, date: new Date().toISOString() }];
 
       const updates = {
         status: newStatus,
-        tracking: [...(order.tracking || []), newTrackingRecord],
+        tracking,
       };
 
       const { error } = await this.dbService.update(TableName.ORDENES, updates, {

@@ -107,7 +107,11 @@
             <div class="flex flex-col gap-2">
               <label class="block text-sm font-semibold text-[#425137]">Estado</label>
               <p-select [options]="updateStatusOptions" [(ngModel)]="order.status" placeholder="Seleccione Estado"
-                [editable]="false" optionLabel="label" optionValue="value" class="w-full md:w-56" />
+                [editable]="false" optionLabel="label" optionValue="value" class="w-full md:w-56"
+                [disabled]="estaCancelado(order)" />
+              @if (estaCancelado(order)) {
+              <p class="text-xs text-[#8d1c1c]">Pedido cancelado: su stock ya volvió al inventario y no se puede reactivar.</p>
+              }
             </div>
 
             <span> Tipo de entrega: <strong> {{ order.tipo_entrega }}</strong></span> <br>

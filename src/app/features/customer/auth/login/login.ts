@@ -5,6 +5,7 @@ import { SupabaseAuthService } from '@src/app/core/services/supabase/supabase-au
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { SupabaseDbService } from '@src/app/core/services/supabase/supabase-db.service';
 import { ConfirmationModalService } from '@src/app/core/services/ui/confirmation.service';
+import { EdgeFunctionsService } from '@src/app/core/services/edge-functions.service';
 import { FormInputComponent } from '@src/app/shared/components/form/form-input/form-input';
 import { userSchemaLogin } from '@src/app/shared/models/schemas/auth.schema';
 import { environment } from '@src/environments/environment';
@@ -26,6 +27,7 @@ export class Login {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly userStore = inject(UserStore);
+  private readonly edgeFunctionsService = inject(EdgeFunctionsService);
 
   loading = signal(false);
   generalError = signal<string | null>(null);
@@ -64,6 +66,9 @@ export class Login {
     const { data } = await this.authService.auth.getSession();
     const correo = data.session?.user.email ?? '';
     if (data.session) {
+      // Si su registro queda en revisión, se le avisa por correo (la función
+      // decide y lo envía una sola vez).
+      await this.avisarSiQuedaEnRevision(correo, data.session.user.id);
       await this.authService.auth.signOut({ scope: 'local' });
       this.userStore.clearPerfil();
     }
@@ -71,6 +76,11 @@ export class Login {
     this.avisoConfirmacion.set(
       'Tu correo fue confirmado. Ingresa con tu correo y la contraseña que creaste para conocer la oferta Cheyn Verde.',
     );
+  }
+
+  private async avisarSiQuedaEnRevision(correo: string, userId: string): Promise<void> {
+    const { error } = await this.edgeFunctionsService.avisarRegistroEnRevision(correo, userId);
+    if (error) console.error('Error al enviar el aviso de registro en revisión:', error);
   }
 
   loginModel = signal({
@@ -146,6 +156,10 @@ export class Login {
         }
 
         this.userStore.setPerfil(perfil);
+        if (perfil.status === 'inactivo') {
+          // Por si confirmó el correo en otro navegador (sin sesión aquí).
+          void this.avisarSiQuedaEnRevision(perfil.correo ?? email, perfil.id);
+        }
         if (perfil.status !== 'activo') {
           this.toastService.info(
             'Tu cuenta está registrada y pendiente de autorización. Te avisaremos por correo cuando esté activa.',
