@@ -63,7 +63,7 @@
   [style.box-shadow]="isDark() ? '0 1px 4px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.06)'">
   <!-- Franja de publicidad (Banner superior) -->
   @if (advertisingBannerConfig().items && advertisingBannerConfig().items.length > 0 && isAuthenticated()) {
-  <app-advertising-banner [items]="advertisingBannerConfig().items" />
+  <app-advertising-banner [items]="advertisingBannerConfig().items" [velocidad]="advertisingBannerConfig().velocidad" />
   }
 
   <div

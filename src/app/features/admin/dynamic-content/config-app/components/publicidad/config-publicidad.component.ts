@@ -14,6 +14,8 @@ import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { AppConfigStore } from '@src/app/core/state/app/app-config.state';
 import { PageConfigDbService } from '@src/app/core/services/supabase/dynamic-content/page-config-db.service';
 import { AdvertisingBannerComponent } from '@src/app/shared/components/advertising-banner/advertising-banner';
+import { VELOCIDADES_ANUNCIOS, VELOCIDAD_POR_DEFECTO } from '@src/app/shared/utils/velocidad-anuncios';
+import { ICONOS_ANUNCIOS } from '@src/app/shared/utils/iconos-anuncios';
 
 @Component({
   selector: 'app-config-publicidad',
@@ -30,6 +32,11 @@ export class ConfigPublicidadComponent implements OnInit, OnDestroy {
   loading = signal(false);
   saving = signal(false);
   config = signal<AdvertisingItem[]>([]);
+  velocidad = signal<number>(VELOCIDAD_POR_DEFECTO);
+  protected readonly velocidades = VELOCIDADES_ANUNCIOS;
+  protected readonly iconos = ICONOS_ANUNCIOS;
+  /** Qué selector de íconos está abierto: el de "agregar", el del cuadro de edición o ninguno. */
+  protected readonly selectorIconos = signal<'nuevo' | 'edicion' | null>(null);
   editModalVisible = signal(false);
   editingItemIndex = signal<number | null>(null);
   editDraft = signal<AdvertisingItem>({ text: '', link: '', icon: 'pi pi-megaphone' });
@@ -49,6 +56,7 @@ export class ConfigPublicidadComponent implements OnInit, OnDestroy {
           ? structuredClone(obj)
           : JSON.parse(JSON.stringify(obj));
       this.config.set(deepClone(this.configStore.advertisingConfig().items));
+      this.velocidad.set(this.configStore.advertisingConfig().velocidad ?? VELOCIDAD_POR_DEFECTO);
     } catch (err) {
       this.toastService.error('Error al cargar la configuración de Publicidad');
     } finally {
@@ -59,7 +67,7 @@ export class ConfigPublicidadComponent implements OnInit, OnDestroy {
   async saveConfig() {
     this.saving.set(true);
     try {
-      const payload: AdvertisingBannerConfig = { items: this.config() };
+      const payload: AdvertisingBannerConfig = { items: this.config(), velocidad: this.velocidad() };
       const res = await this.pageConfigDbService.saveConfigByName('advertising_banner', payload);
       if (res.error) throw res.error;
       await this.configStore.ensureAdvertising(true);
@@ -114,6 +122,12 @@ export class ConfigPublicidadComponent implements OnInit, OnDestroy {
     this.editModalVisible.set(false);
     this.editingItemIndex.set(null);
     this.editDraft.set({ text: '', link: '', icon: 'pi pi-megaphone' });
+  }
+
+  elegirIcono(donde: 'nuevo' | 'edicion', icono: string): void {
+    if (donde === 'nuevo') this.newAdvertisingItem.update((n) => ({ ...n, icon: icono }));
+    else this.updateEditDraft('icon', icono);
+    this.selectorIconos.set(null);
   }
 
   updateEditDraft(field: 'text' | 'link' | 'icon', value: string): void {

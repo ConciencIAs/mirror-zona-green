@@ -152,7 +152,7 @@ export class AdminUsersService {
     this.loading.set(false);
   }
 
-  async autorizarUsuario(perfilId: string, origenAutorizacion: string): Promise<void> {
+  async autorizarUsuario(perfilId: string): Promise<void> {
     this.saving.set(perfilId);
     const codigoInvitacion = generarCodigoInvitacion();
     const perfil = this.perfiles().find((item) => item.id === perfilId);
@@ -161,7 +161,6 @@ export class AdminUsersService {
       TableName.PERFILES,
       {
         status: 'activo' as EstadoUsuario,
-        origen_autorizacion: origenAutorizacion,
         codigo_invitacion: codigoInvitacion,
       },
       { id: perfilId },
@@ -177,7 +176,6 @@ export class AdminUsersService {
             ? {
                 ...p,
                 status: 'activo' as EstadoUsuario,
-                origen_autorizacion: origenAutorizacion,
                 codigo_invitacion: codigoInvitacion,
               }
             : p,
@@ -303,6 +301,25 @@ export class AdminUsersService {
     this.saving.set(null);
   }
 
+  /** Teléfonos que ya están en la base de confianza, en formato internacional (la API entrega 1.000 filas por página). */
+  async telefonosBaseConfianza(): Promise<Set<string>> {
+    const normalizados = new Set<string>();
+    for (let desde = 0; ; desde += 1000) {
+      const { data, error } = await this.dbService
+        .from(TableName.BASE_CONFIANZA)
+        .select('telefono')
+        .order('id')
+        .range(desde, desde + 999);
+      if (error) throw error;
+      for (const fila of data ?? []) {
+        const n = normalizarCelular((fila as { telefono: string }).telefono);
+        if (n) normalizados.add(n);
+      }
+      if ((data?.length ?? 0) < 1000) break;
+    }
+    return normalizados;
+  }
+
   async cargarBaseConfianza(telefonos: string[]): Promise<{ success: boolean }> {
     if (!telefonos.length) {
       this.toastService.warn('No se encontraron teléfonos para cargar.');
@@ -315,7 +332,11 @@ export class AdminUsersService {
       telefono: telefono.trim(),
     }));
 
-    const { error } = await this.dbService.insert(TableName.BASE_CONFIANZA, registros);
+    // Por lotes, para no superar el tamaño máximo de una petición.
+    let error: { message: string } | null = null;
+    for (let i = 0; i < registros.length && !error; i += 500) {
+      ({ error } = await this.dbService.insert(TableName.BASE_CONFIANZA, registros.slice(i, i + 500)));
+    }
     this.loading.set(false);
 
     if (error) {
