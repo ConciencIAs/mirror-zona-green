@@ -30,7 +30,7 @@ export const adminRoutes: Routes = [
           {
             path: 'referidos',
             loadComponent: () => import('./referidos/referidos').then(m => m.AdminReferidos),
-            data: { zone: 'admin' },
+            data: { zone: 'admin', soloAdmin: true },
             title: 'Árbol de referidos'
           },
           {
@@ -88,7 +88,7 @@ export const adminRoutes: Routes = [
           {
             path: 'dashboard',
             loadComponent: () => import('./marketplace/dashboard/dashboard').then(m => m.DashboardComponent),
-            data: { zone: 'admin' },
+            data: { zone: 'admin', soloAdmin: true },
             title: 'Ventas'
           },
           {

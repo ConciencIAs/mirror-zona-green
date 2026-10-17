@@ -136,13 +136,16 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
         ]
       },
       {
-        title: 'Agente',
+        // Colaborador (rol "agente" en la base): todo menos Métricas de ventas y Referidos.
+        title: 'Colaboración',
         roles: ['agente'],
         items: [
-          { path: '/admin', label: 'Panel agente' },
-          { path: '/admin/marketplace', label: 'Marketplace agente' },
-          { path: '/admin/marketplace/orders', label: 'Órdenes' },
-          { path: '/admin/marketplace/custom', label: 'Custom search' },
+          { path: '/admin/marketplace/orders', label: 'Gestión Pedidos' },
+          { path: '/admin/marketplace/products', label: 'Gestión Inventario' },
+          { path: '/admin/dynamic-content', label: 'Gestión Contenido' },
+          { path: '/admin/marketplace', label: 'Histórico de Pedidos' },
+          { path: '/admin', label: 'Gestión Usuarios' },
+          { path: '/admin/customer/bulk-upload', label: 'Carga de datos' },
         ]
       }
     ],

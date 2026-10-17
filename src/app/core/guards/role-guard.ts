@@ -16,6 +16,11 @@ export const roleGuard: CanActivateFn = async (route, state) => {
   }
 
   if ((await zonas).includes(zone)) {
+    // Pantallas solo de administrador dentro de la zona admin (Métricas de
+    // ventas, Referidos): el colaborador vuelve a Gestión de usuarios.
+    if (route.routeConfig?.data?.['soloAdmin'] && perfil.rol !== 'admin') {
+      return router.parseUrl('/admin');
+    }
     return true;
   }
 

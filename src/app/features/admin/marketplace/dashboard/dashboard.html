@@ -74,7 +74,7 @@
       </div>
       <div>
         <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Ingresos</p>
-        <h2 class="text-xl font-bold text-slate-800">{{ totalVentas | currency:'COP':'symbol-narrow':'1.0-0' }}</h2>
+        <h2 class="text-xl font-bold text-slate-800">{{ totalVentas | moneda }}</h2>
       </div>
     </div>
 
@@ -85,7 +85,7 @@
       </div>
       <div>
         <p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Ticket Prom.</p>
-        <h2 class="text-xl font-bold text-slate-800">{{ ticketPromedio | currency:'COP':'symbol-narrow':'1.0-0' }}</h2>
+        <h2 class="text-xl font-bold text-slate-800">{{ ticketPromedio | moneda }}</h2>
       </div>
     </div>
 
@@ -245,7 +245,7 @@
                       @for (paq of prod.paquetesVendidos; track paq.gramos) {
                         <span
                           class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 cursor-help"
-                          [pTooltip]="'Paquete de ' + formatGramos(paq.gramos) + ' — Vendidos: ' + paq.cantidadVendida + ' — Ingresos: $' + paq.ingresos.toLocaleString('es-CO')"
+                          [pTooltip]="'Paquete de ' + formatGramos(paq.gramos) + ' — Vendidos: ' + paq.cantidadVendida + ' — Ingresos: $ ' + paq.ingresos.toLocaleString('es-CO')"
                           tooltipPosition="top">
                           <i class="pi pi-box text-[10px]"></i>
                           {{ formatGramos(paq.gramos) }}
@@ -263,7 +263,7 @@
                   </td>
                   <td class="text-center font-medium text-teal-600">{{ formatGramos(prod.totalGramos) }}</td>
                   <td class="text-center text-slate-600">{{ prod.ordenes }}</td>
-                  <td class="text-right font-bold text-emerald-600">{{ prod.ingresos | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                  <td class="text-right font-bold text-emerald-600">{{ prod.ingresos | moneda }}</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
@@ -307,7 +307,7 @@
                     <p-tag [value]="prod.cantidad.toString()" severity="info"></p-tag>
                   </td>
                   <td class="text-center text-slate-600">{{ prod.ordenes }}</td>
-                  <td class="text-right font-bold text-emerald-600">{{ prod.ingresos | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+                  <td class="text-right font-bold text-emerald-600">{{ prod.ingresos | moneda }}</td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
@@ -368,7 +368,7 @@
                 <span class="text-slate-300">—</span>
               }
             </td>
-            <td class="text-right font-bold text-emerald-600">{{ user.gastado | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+            <td class="text-right font-bold text-emerald-600">{{ user.gastado | moneda }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
@@ -409,7 +409,7 @@
             <td>
               <p-tag [value]="formatEstado(orden.status)" [severity]="getSeverity(orden.status)"></p-tag>
             </td>
-            <td class="text-right text-sm font-bold text-slate-800">{{ orden.precio_total | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+            <td class="text-right text-sm font-bold text-slate-800">{{ orden.precio_total | moneda }}</td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
