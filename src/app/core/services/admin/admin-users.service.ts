@@ -48,12 +48,17 @@ export class AdminUsersService {
 
     const term = this.searchTerm().toLowerCase().trim();
     if (term) {
+      // Si lo escrito parece un número (dígitos, espacios, +, guiones, paréntesis)
+      // también se busca por celular, sin importar cómo esté escrito.
+      const digitos = /^[\d\s+\-().]+$/.test(term) ? term.replace(/\D/g, '') : '';
+      const buscaCelular = digitos.length >= 3;
       list = list.filter(
         (p) =>
           p.full_name?.toLowerCase().includes(term) ||
           p.correo.toLowerCase().includes(term) ||
           p.codigo_invitacion?.toLowerCase().includes(term) ||
-          p.referido_por?.toLowerCase().includes(term),
+          p.referido_por?.toLowerCase().includes(term) ||
+          (buscaCelular && this.coincideCelular(p, digitos)),
       );
     }
 
@@ -124,6 +129,15 @@ export class AdminUsersService {
   }
 
   readonly totalPerfiles = computed(() => this.perfiles().length);
+
+  /** Compara los dígitos buscados con el celular guardado y su forma internacional (+57…). */
+  private coincideCelular(perfil: Perfil, digitos: string): boolean {
+    const soloDigitos = (v: string | null | undefined) => (v ?? '').replace(/\D/g, '');
+    const candidatos = [soloDigitos(perfil.telefono), soloDigitos(perfil.telefono_normalizado)];
+    // 3001234567 también debe encontrar +57 300 123 4567 y al revés (573001234567).
+    const sin57 = digitos.startsWith('57') && digitos.length > 4 ? digitos.slice(2) : digitos;
+    return candidatos.some((c) => c.includes(digitos) || (sin57 !== digitos && c.includes(sin57)));
+  }
 
   setStatusFilter(filter: StatusFilter): void {
     this.statusFilter.set(filter);

@@ -161,9 +161,16 @@ export class Login {
           void this.avisarSiQuedaEnRevision(perfil.correo ?? email, perfil.id);
         }
         if (perfil.status !== 'activo') {
-          this.toastService.info(
-            'Tu cuenta está registrada y pendiente de autorización. Te avisaremos por correo cuando esté activa.',
-          );
+          // Ventana (como la de mayoría de edad) en lugar de un aviso que desaparece
+          // y se traslapa con el de guardar contraseña del navegador.
+          this.confirmationModalService.confirm({
+            header: 'Tu ingreso está pendiente de autorización',
+            message:
+              'Tu cuenta quedó registrada, pero todavía no está habilitada para ver la oferta. El equipo de Cheyn Verde está revisando tu ingreso y te avisaremos por correo cuando esté activa.',
+            icon: 'pi pi-clock',
+            acceptLabel: 'Entendido',
+            rejectVisible: false,
+          });
         }
         await this.router.navigate(['/home']);
       } else {
