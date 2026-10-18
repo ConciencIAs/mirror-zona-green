@@ -16,6 +16,7 @@ import { TagModule } from 'primeng/tag';
 
 // Service y tipos
 import { AdminUsersService } from '@src/app/core/services/admin/admin-users.service';
+import { nombreOrigenAutorizacion } from '@src/app/shared/utils/origen-autorizacion';
 import { ToastService } from '@src/app/core/services/ui/toast.service';
 import { Perfil, EstadoUsuario, RolUsuario } from '@src/app/shared/models/interfaces/db/db';
 import { SelectOption } from '@src/app/shared/components/form/form-select/form-select';
@@ -62,13 +63,9 @@ export class Customer {
   // ── Modal de autorización ──
   readonly showAuthModal = signal(false);
   readonly selectedProfile = signal<Perfil | null>(null);
-  readonly selectedOrigen = signal<string | null>(null);
 
-  readonly origenOptions: SelectOption[] = [
-    { label: 'Invitación de Admin', value: 'invitacion_de_admin' },
-    { label: 'Por Referido', value: 'por_referido' },
-    { label: 'Otros', value: 'otros' },
-  ];
+  /** El origen se asigna solo al registrarse (base de confianza, con o sin código). */
+  protected readonly nombreOrigen = nombreOrigenAutorizacion;
 
   // Mantenemos los status originales que tenía la aplicación
   readonly statusFilterOptions: SelectOption[] = [
@@ -169,25 +166,21 @@ export class Customer {
   // ── Modal de Autorización ──
   abrirModalAutorizacion(profile: Perfil): void {
     this.selectedProfile.set(profile);
-    this.selectedOrigen.set(null);
     this.showAuthModal.set(true);
   }
 
   async confirmarAutorizacion(): Promise<void> {
     const profile = this.selectedProfile();
-    const origen = this.selectedOrigen();
-    if (!profile || !origen) return;
+    if (!profile) return;
 
-    await this.adminUsersService.autorizarUsuario(profile.id, origen);
+    await this.adminUsersService.autorizarUsuario(profile.id);
     this.showAuthModal.set(false);
     this.selectedProfile.set(null);
-    this.selectedOrigen.set(null);
   }
 
   cancelarAutorizacion(): void {
     this.showAuthModal.set(false);
     this.selectedProfile.set(null);
-    this.selectedOrigen.set(null);
   }
 
   async generarCodigo(profile: Perfil): Promise<void> {

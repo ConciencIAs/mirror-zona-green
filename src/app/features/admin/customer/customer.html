@@ -113,7 +113,7 @@
             </div>
             <div>
               <div class="text-xs text-slate-400 dark:text-slate-400">Origen autorización</div>
-              <div class="text-slate-600 dark:text-slate-300">{{ profile.origen_autorizacion ?? '—' }}</div>
+              <div class="text-slate-600 dark:text-slate-300">{{ nombreOrigen(profile.origen_autorizacion) }}</div>
             </div>
             <div>
               <div class="text-xs text-slate-400 dark:text-slate-400">Código invitación</div>
@@ -356,7 +356,7 @@
             <!-- Origen Autorización -->
             <td class="!py-3">
               <span class="text-sm text-slate-600 dark:text-slate-300">
-                {{ profile.origen_autorizacion ?? '—' }}
+                {{ nombreOrigen(profile.origen_autorizacion) }}
               </span>
             </td>
 
@@ -473,20 +473,6 @@
         como usuario activo.
       </p>
 
-      <div>
-        <label class="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
-          Origen de autorización
-        </label>
-        <p-select
-          [options]="origenOptions"
-          optionLabel="label"
-          optionValue="value"
-          [ngModel]="selectedOrigen()"
-          (ngModelChange)="selectedOrigen.set($event)"
-          placeholder="Selecciona el origen..."
-          styleClass="w-full"
-        />
-      </div>
 
       <div class="flex items-center justify-end gap-3 pt-2">
         <button
@@ -497,7 +483,6 @@
         </button>
         <button
           class="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
-          [disabled]="!selectedOrigen()"
           (click)="confirmarAutorizacion()"
         >
           Confirmar Autorización

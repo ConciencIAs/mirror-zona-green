@@ -3,7 +3,7 @@
 import { ANON, API, PASSWORD, expect, sql, test } from './apoyo';
 
 /** Registro por la API de Auth, como lo hace el formulario (sin tocar el estado). */
-async function registrar(telefono: string) {
+async function registrar(telefono: string, referido?: string) {
   const correo = `e2e.registro.${Date.now()}.${Math.floor(Math.random() * 1e4)}@cheyn.test`;
   const r = await fetch(`${API}/auth/v1/signup`, {
     method: 'POST',
@@ -11,7 +11,7 @@ async function registrar(telefono: string) {
     body: JSON.stringify({
       email: correo,
       password: PASSWORD,
-      data: { full_name: 'E2E registro', telefono, documento: '12345678', tipo_documento: 'CC', fecha_nacimiento: '1990-05-05', ubicacion: 'Bogotá' },
+      data: { full_name: 'E2E registro', telefono, ...(referido ? { referido_por: referido } : {}), documento: '12345678', tipo_documento: 'CC', fecha_nacimiento: '1990-05-05', ubicacion: 'Bogotá' },
     }),
   });
   const cuerpo = (await r.json()) as { id?: string };
@@ -58,13 +58,20 @@ test.describe('Registro y base de confianza', () => {
     const numero = `305${sufijo()}1`;
     enBase(numero);
     const perfil = await registrar(`+1 ${numero}`);
-    expect(perfil).toMatchObject({ status: 'inactivo', origen: 'registro_web' });
+    expect(perfil).toMatchObject({ status: 'inactivo', origen: 'registro_web_sin_codigo' });
     // El número extranjero se guarda completo, no cortado a 10 dígitos.
     expect(perfil.normalizado).toBe(`+1${numero}`);
   });
 
   test('un número que no está en la base queda inactivo', async () => {
     const perfil = await registrar(`315${sufijo()}9`);
-    expect(perfil).toMatchObject({ status: 'inactivo', origen: 'registro_web' });
+    expect(perfil).toMatchObject({ status: 'inactivo', origen: 'registro_web_sin_codigo' });
+  });
+
+  test('el origen distingue registro con y sin código de referido', async () => {
+    const con = await registrar(`316${sufijo()}1`, 'ABC123');
+    expect(con).toMatchObject({ status: 'inactivo', origen: 'registro_web_con_codigo' });
+    const sin = await registrar(`316${sufijo()}2`);
+    expect(sin).toMatchObject({ status: 'inactivo', origen: 'registro_web_sin_codigo' });
   });
 });

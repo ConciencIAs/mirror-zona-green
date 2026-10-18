@@ -56,3 +56,6 @@ Thumbs.db
 # Resultados de las pruebas de Playwright
 /e2e-informe/
 /e2e-resultados/
+
+# Contactos reales del cliente (datos personales): nunca van al repositorio
+/Archivos de contactos/

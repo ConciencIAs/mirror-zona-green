@@ -4,7 +4,8 @@
 
     <div class="flex w-max items-center gap-16 py-2
                animate-[marquee_35s_linear_infinite]
-               group-hover:[animation-play-state:paused]">
+               group-hover:[animation-play-state:paused]"
+         [style.animation-duration.s]="segundos()">
 
         @for (item of items(); track $index) {
 

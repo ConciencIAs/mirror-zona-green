@@ -68,6 +68,8 @@ export interface SettingsConfig {
 
 export interface AdvertisingBannerConfig {
   items: AdvertisingItem[];
+  /** Velocidad de rotación de la franja, de 1 (muy lenta) a 5 (muy rápida). Por defecto 3. */
+  velocidad?: number;
 }
 
 // Union type for config names
